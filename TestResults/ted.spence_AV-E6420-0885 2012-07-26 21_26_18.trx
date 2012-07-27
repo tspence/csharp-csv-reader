@@ -1,0 +1,84 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<TestRun id="6ae30a36-75f6-47f9-9308-c64749ae13f8" name="ted.spence@AV-E6420-0885 2012-07-26 21:26:18" runUser="SANJUAN\ted.spence" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <TestSettings name="Local" id="26f8abad-c228-4580-b422-42932cdd298a">
+    <Description>These are default test settings for a local test run.</Description>
+    <Deployment enabled="false" runDeploymentRoot="ted.spence_AV-E6420-0885 2012-07-26 21_26_18">
+      <DeploymentItem filename="C:\svn\CSVFile\CSVFile\CSVFile\bin\Debug\CSVFile.dll" />
+    </Deployment>
+    <Execution>
+      <TestTypeSpecific />
+      <AgentRule name="Execution Agents">
+      </AgentRule>
+    </Execution>
+  </TestSettings>
+  <Times creation="2012-07-26T21:26:18.6652263-07:00" queuing="2012-07-26T21:26:19.1764839-07:00" start="2012-07-26T21:26:19.2728519-07:00" finish="2012-07-26T21:26:19.6349927-07:00" />
+  <ResultSummary outcome="Completed">
+    <Counters total="8" executed="8" passed="8" error="0" failed="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+  </ResultSummary>
+  <TestDefinitions>
+    <UnitTest name="TestMethod1" storage="c:\svn\csvfile\csvfile\csvtestsuite\bin\debug\csvtestsuite.dll" id="0b28e22e-194e-250b-cf96-7d71df2fa0fd">
+      <Execution id="3bb0dc30-4fbc-4219-98db-00f2bf72e845" />
+      <TestMethod codeBase="C:/svn/CSVFile/CSVFile/CSVTestSuite/bin/Debug/CSVTestSuite.DLL" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="CSVTestSuite.DataTableReaderTest, CSVTestSuite, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" name="TestMethod1" />
+    </UnitTest>
+    <UnitTest name="ParseTSV" storage="c:\svn\csvfile\csvfile\csvtestsuite\bin\debug\csvtestsuite.dll" id="9b9e845b-4cd0-5430-9d15-3af5b7ca59cf">
+      <Execution id="d7234690-4b97-4b48-ab84-4703d82f1efe" />
+      <TestMethod codeBase="C:/svn/CSVFile/CSVFile/CSVTestSuite/bin/Debug/CSVTestSuite.DLL" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="CSVTestSuite.BasicParseTests, CSVTestSuite, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" name="ParseTSV" />
+    </UnitTest>
+    <UnitTest name="TestMethod1" storage="c:\svn\csvfile\csvfile\csvtestsuite\bin\debug\csvtestsuite.dll" id="a7e98abc-207b-99ba-5e53-b3304ba4e478">
+      <Execution id="f5786f73-ae1f-4f7f-b374-1783f5a868fd" />
+      <TestMethod codeBase="C:/svn/CSVFile/CSVFile/CSVTestSuite/bin/Debug/CSVTestSuite.DLL" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="CSVTestSuite.StreamReaderTest, CSVTestSuite, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" name="TestMethod1" />
+    </UnitTest>
+    <UnitTest name="TestWritingLines" storage="c:\svn\csvfile\csvfile\csvtestsuite\bin\debug\csvtestsuite.dll" id="5acecdfe-08b9-da60-f7eb-fc08c674f479">
+      <Execution id="745c145f-0917-442a-903e-9cb0c27df9c7" />
+      <TestMethod codeBase="C:/svn/CSVFile/CSVFile/CSVTestSuite/bin/Debug/CSVTestSuite.DLL" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="CSVTestSuite.WriterTest, CSVTestSuite, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" name="TestWritingLines" />
+    </UnitTest>
+    <UnitTest name="ParseTextQualifiedCSV" storage="c:\svn\csvfile\csvfile\csvtestsuite\bin\debug\csvtestsuite.dll" id="d908f60d-72bd-6d21-8d8f-1487796b5c1e">
+      <Execution id="ebe2de66-6256-4628-a8a5-a54faa3347b4" />
+      <TestMethod codeBase="C:/svn/CSVFile/CSVFile/CSVTestSuite/bin/Debug/CSVTestSuite.DLL" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="CSVTestSuite.BasicParseTests, CSVTestSuite, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" name="ParseTextQualifiedCSV" />
+    </UnitTest>
+    <UnitTest name="TestFailingCSVLine" storage="c:\svn\csvfile\csvfile\csvtestsuite\bin\debug\csvtestsuite.dll" id="895d8cd3-f1a1-20b6-2512-9eb78f385bca">
+      <Execution id="224df583-6377-48e4-8186-22f5360a7b35" />
+      <TestMethod codeBase="C:/svn/CSVFile/CSVFile/CSVTestSuite/bin/Debug/CSVTestSuite.DLL" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="CSVTestSuite.BasicParseTests, CSVTestSuite, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" name="TestFailingCSVLine" />
+    </UnitTest>
+    <UnitTest name="ParseTextQualifiedCSVWithSpacing" storage="c:\svn\csvfile\csvfile\csvtestsuite\bin\debug\csvtestsuite.dll" id="6e862f7d-1f5c-7d0a-5ea4-bb11f5c8c79f">
+      <Execution id="85e6bda3-1cb5-4673-a686-38be3e98fdd5" />
+      <TestMethod codeBase="C:/svn/CSVFile/CSVFile/CSVTestSuite/bin/Debug/CSVTestSuite.DLL" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="CSVTestSuite.BasicParseTests, CSVTestSuite, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" name="ParseTextQualifiedCSVWithSpacing" />
+    </UnitTest>
+    <UnitTest name="ParseBasicCSV" storage="c:\svn\csvfile\csvfile\csvtestsuite\bin\debug\csvtestsuite.dll" id="8baacc99-8db4-caee-f32a-90006b83b06c">
+      <Execution id="5bfaf41e-ead3-4a6f-ada9-4adaff4d7891" />
+      <TestMethod codeBase="C:/svn/CSVFile/CSVFile/CSVTestSuite/bin/Debug/CSVTestSuite.DLL" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="CSVTestSuite.BasicParseTests, CSVTestSuite, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" name="ParseBasicCSV" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <TestEntries>
+    <TestEntry testId="0b28e22e-194e-250b-cf96-7d71df2fa0fd" executionId="3bb0dc30-4fbc-4219-98db-00f2bf72e845" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5acecdfe-08b9-da60-f7eb-fc08c674f479" executionId="745c145f-0917-442a-903e-9cb0c27df9c7" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6e862f7d-1f5c-7d0a-5ea4-bb11f5c8c79f" executionId="85e6bda3-1cb5-4673-a686-38be3e98fdd5" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="895d8cd3-f1a1-20b6-2512-9eb78f385bca" executionId="224df583-6377-48e4-8186-22f5360a7b35" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8baacc99-8db4-caee-f32a-90006b83b06c" executionId="5bfaf41e-ead3-4a6f-ada9-4adaff4d7891" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9b9e845b-4cd0-5430-9d15-3af5b7ca59cf" executionId="d7234690-4b97-4b48-ab84-4703d82f1efe" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a7e98abc-207b-99ba-5e53-b3304ba4e478" executionId="f5786f73-ae1f-4f7f-b374-1783f5a868fd" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d908f60d-72bd-6d21-8d8f-1487796b5c1e" executionId="ebe2de66-6256-4628-a8a5-a54faa3347b4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <Results>
+    <UnitTestResult executionId="3bb0dc30-4fbc-4219-98db-00f2bf72e845" testId="0b28e22e-194e-250b-cf96-7d71df2fa0fd" testName="TestMethod1" computerName="AV-E6420-0885" duration="00:00:00.0148026" startTime="2012-07-26T21:26:19.3215431-07:00" endTime="2012-07-26T21:26:19.5731143-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3bb0dc30-4fbc-4219-98db-00f2bf72e845">
+    </UnitTestResult>
+    <UnitTestResult executionId="745c145f-0917-442a-903e-9cb0c27df9c7" testId="5acecdfe-08b9-da60-f7eb-fc08c674f479" testName="TestWritingLines" computerName="AV-E6420-0885" duration="00:00:00.0001492" startTime="2012-07-26T21:26:19.5741287-07:00" endTime="2012-07-26T21:26:19.5761575-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="745c145f-0917-442a-903e-9cb0c27df9c7">
+    </UnitTestResult>
+    <UnitTestResult executionId="85e6bda3-1cb5-4673-a686-38be3e98fdd5" testId="6e862f7d-1f5c-7d0a-5ea4-bb11f5c8c79f" testName="ParseTextQualifiedCSVWithSpacing" computerName="AV-E6420-0885" duration="00:00:00.0001620" startTime="2012-07-26T21:26:19.5771719-07:00" endTime="2012-07-26T21:26:19.5792007-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="85e6bda3-1cb5-4673-a686-38be3e98fdd5">
+    </UnitTestResult>
+    <UnitTestResult executionId="224df583-6377-48e4-8186-22f5360a7b35" testId="895d8cd3-f1a1-20b6-2512-9eb78f385bca" testName="TestFailingCSVLine" computerName="AV-E6420-0885" duration="00:00:00.0000816" startTime="2012-07-26T21:26:19.5802151-07:00" endTime="2012-07-26T21:26:19.5822439-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="224df583-6377-48e4-8186-22f5360a7b35">
+    </UnitTestResult>
+    <UnitTestResult executionId="5bfaf41e-ead3-4a6f-ada9-4adaff4d7891" testId="8baacc99-8db4-caee-f32a-90006b83b06c" testName="ParseBasicCSV" computerName="AV-E6420-0885" duration="00:00:00.0029946" startTime="2012-07-26T21:26:19.5822439-07:00" endTime="2012-07-26T21:26:19.5873159-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5bfaf41e-ead3-4a6f-ada9-4adaff4d7891">
+    </UnitTestResult>
+    <UnitTestResult executionId="d7234690-4b97-4b48-ab84-4703d82f1efe" testId="9b9e845b-4cd0-5430-9d15-3af5b7ca59cf" testName="ParseTSV" computerName="AV-E6420-0885" duration="00:00:00.0002381" startTime="2012-07-26T21:26:19.5883303-07:00" endTime="2012-07-26T21:26:19.5903591-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d7234690-4b97-4b48-ab84-4703d82f1efe">
+    </UnitTestResult>
+    <UnitTestResult executionId="f5786f73-ae1f-4f7f-b374-1783f5a868fd" testId="a7e98abc-207b-99ba-5e53-b3304ba4e478" testName="TestMethod1" computerName="AV-E6420-0885" duration="00:00:00.0001787" startTime="2012-07-26T21:26:19.5903591-07:00" endTime="2012-07-26T21:26:19.5923879-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f5786f73-ae1f-4f7f-b374-1783f5a868fd">
+    </UnitTestResult>
+    <UnitTestResult executionId="ebe2de66-6256-4628-a8a5-a54faa3347b4" testId="d908f60d-72bd-6d21-8d8f-1487796b5c1e" testName="ParseTextQualifiedCSV" computerName="AV-E6420-0885" duration="00:00:00.0000957" startTime="2012-07-26T21:26:19.5934023-07:00" endTime="2012-07-26T21:26:19.5954311-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ebe2de66-6256-4628-a8a5-a54faa3347b4">
+    </UnitTestResult>
+  </Results>
+</TestRun>
