@@ -1,7 +1,0 @@
-C:\svn\CSVFile\CSVFile\CSVTestSuite\bin\Debug\CSVTestSuite.dll
-C:\svn\CSVFile\CSVFile\CSVTestSuite\bin\Debug\CSVTestSuite.pdb
-C:\svn\CSVFile\CSVFile\CSVTestSuite\obj\Debug\ResolveAssemblyReference.cache
-C:\svn\CSVFile\CSVFile\CSVTestSuite\obj\Debug\CSVTestSuite.dll
-C:\svn\CSVFile\CSVFile\CSVTestSuite\obj\Debug\CSVTestSuite.pdb
-C:\svn\CSVFile\CSVFile\CSVTestSuite\bin\Debug\CSVFile.dll
-C:\svn\CSVFile\CSVFile\CSVTestSuite\bin\Debug\CSVFile.pdb
