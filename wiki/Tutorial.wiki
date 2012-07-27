@@ -1,0 +1,32 @@
+Want to get started?  Here are a few walkthroughs.
+
+== Read Into Data Table ==
+
+The simplest way to get started is to read a file on disk into memory as a DataTable.  Here's how you do it:
+
+ // This code assumes the file is on disk, and the first row of the file
+ // has the names of the columns on it
+ DataTable dt = CSVReader.LoadDataTable(myfilename);
+
+== Iterate Through A Massive File ==
+
+When you receive a gigantic 20GB file that is formatted CSV, you obviously can't parse it all into memory at once.  Here's how you do that:
+
+ using (CSVReader cr = new CSVReader(myfilename, delim, qual)) {
+     foreach (string[] line in cr.Lines()) {
+         // Do whatever you want with this one line - the buffer will
+         // only hold a small amount of memory at once, so you can 
+         // iterate at your own pace!
+     }
+ }
+
+== Output a Data Table ==
+
+If you've got a datatable and want to put it on disk in a particular location, you can use the extension method to write it 
+
+ DataTable dt;
+ dt.SaveAsCSV(myfilename, true);
+
+== Hand Roll Your Own ==
+
+The class CSV contains a lot of useful functions for hand rolling your own CSV related code.  Pay special attention to TryParseLine() - it's the core of the project.
