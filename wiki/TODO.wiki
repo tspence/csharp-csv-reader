@@ -1,0 +1,9 @@
+#summary Ideas for improving the CSV reader
+
+= Introduction =
+
+Ideas submitted by various users.
+
+= TODO =
+  * Unit tests for writing to a CSV file
+  * Support for different newline characters
