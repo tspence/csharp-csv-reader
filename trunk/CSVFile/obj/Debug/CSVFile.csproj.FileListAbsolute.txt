@@ -1,0 +1,5 @@
+C:\svn\CSVFile\CSVFile\CSVFile\bin\Debug\CSVFile.dll
+C:\svn\CSVFile\CSVFile\CSVFile\bin\Debug\CSVFile.pdb
+C:\svn\CSVFile\CSVFile\CSVFile\obj\Debug\ResolveAssemblyReference.cache
+C:\svn\CSVFile\CSVFile\CSVFile\obj\Debug\CSVFile.dll
+C:\svn\CSVFile\CSVFile\CSVFile\obj\Debug\CSVFile.pdb
