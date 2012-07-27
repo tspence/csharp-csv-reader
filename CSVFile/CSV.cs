@@ -145,20 +145,32 @@ namespace CSVFile
         public static void SaveAsCSV(this DataTable dt, string filename, bool save_column_names, char delim = DEFAULT_DELIMITER, char qual = DEFAULT_QUALIFIER)
         {
             using (StreamWriter sw = new StreamWriter(filename)) {
+                WriteToStream(dt, sw, save_column_names, delim, qual);
+            }
+        }
 
-                // Write headers, if the caller requested we do so
-                if (save_column_names) {
-                    List<string> headers = new List<string>();
-                    foreach (DataColumn col in dt.Columns) {
-                        headers.Add(col.ColumnName);
-                    }
-                    sw.WriteLine(Output(headers, delim, qual));
+        /// <summary>
+        /// Write the data table to a stream in CSV format
+        /// </summary>
+        /// <param name="dt">The data table to write</param>
+        /// <param name="sw">The stream where the CSV text will be written</param>
+        /// <param name="save_column_names">True if you wish the first line of the file to have column names</param>
+        /// <param name="delim">The delimiter (comma, tab, pipe, etc) to separate fields</param>
+        /// <param name="qual">The text qualifier (double-quote) that encapsulates fields that include delimiters</param>
+        public static void WriteToStream(this DataTable dt, StreamWriter sw, bool save_column_names, char delim = DEFAULT_DELIMITER, char qual = DEFAULT_QUALIFIER)
+        {
+            // Write headers, if the caller requested we do so
+            if (save_column_names) {
+                List<string> headers = new List<string>();
+                foreach (DataColumn col in dt.Columns) {
+                    headers.Add(col.ColumnName);
                 }
+                sw.WriteLine(Output(headers, delim, qual));
+            }
 
-                // Now produce the rows
-                foreach (DataRow dr in dt.Rows) {
-                    sw.WriteLine(Output(dr.ItemArray, delim, qual));
-                }
+            // Now produce the rows
+            foreach (DataRow dr in dt.Rows) {
+                sw.WriteLine(Output(dr.ItemArray, delim, qual));
             }
         }
 
