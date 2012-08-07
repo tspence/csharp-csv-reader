@@ -150,6 +150,45 @@ namespace CSVFile
         }
 
         /// <summary>
+        /// Send this 
+        /// </summary>
+        /// <param name="dt"></param>
+        /// <param name="from_address"></param>
+        /// <param name="to_address"></param>
+        /// <param name="subject"></param>
+        /// <param name="body"></param>
+        /// <param name="?"></param>
+        public static void SendCsvAttachment(this DataTable dt, string from_address, string to_address, string subject, string body, string smtp_host, string attachment_filename)
+        {
+            // Save this CSV to a string
+            string csv = null;
+            using (var ms = new MemoryStream()) {
+                var sw = new StreamWriter(ms);
+                WriteToStream(dt, sw, true);
+                sw.Flush();
+                ms.Position = 0;
+                using (var sr = new StreamReader(ms)) {
+                    csv = sr.ReadToEnd();
+                }
+            }
+
+            // Prepare the email message and attachment
+            System.Net.Mail.MailMessage message = new System.Net.Mail.MailMessage();
+            message.To.Add(to_address);
+            message.Subject = subject;
+            message.From = new System.Net.Mail.MailAddress(from_address);
+            message.Body = body;
+            System.Net.Mail.Attachment a = System.Net.Mail.Attachment.CreateAttachmentFromString(csv, "text/csv");
+            a.Name = attachment_filename;
+            message.Attachments.Add(a);
+
+            // Send the email
+            using (System.Net.Mail.SmtpClient smtp = new System.Net.Mail.SmtpClient(smtp_host)) {
+                smtp.Send(message);
+            }
+        }
+
+        /// <summary>
         /// Write the data table to a stream in CSV format
         /// </summary>
         /// <param name="dt">The data table to write</param>
