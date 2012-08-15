@@ -29,6 +29,22 @@ namespace CSVTestSuite
             Assert.AreEqual(line.Length, 6);
             Assert.AreEqual(line[0], "1");
             Assert.AreEqual(line[5], "");
+
+            // Parse oddly formatted CSV from this page: http://stackoverflow.com/questions/11974341/using-filehelper-library-to-parse-csv-strings-but-need-to-ignore-newlines
+            line = CSV.ParseLine(@"30: ""NY"", 41: ""JOHN S."", 36: ""HAMPTON"", 42: ""123 Road Street, NY"", 68: ""Y""");
+            Assert.AreEqual(line.Length, 6);
+            Assert.AreEqual(line[0], @"30: ""NY""");
+            Assert.AreEqual(line[1], @" 41: ""JOHN S.""");
+            Assert.AreEqual(line[2], @" 36: ""HAMPTON""");
+            Assert.AreEqual(line[3], @" 42: ""123 Road Street");
+            Assert.AreEqual(line[4], @" NY""");
+            Assert.AreEqual(line[5], @" 68: ""Y""");
+
+            line = CSV.ParseLine(@"123,""Sue said, """"Hi, this is a test!"""""",2012-08-15");
+            Assert.AreEqual(line.Length, 3);
+            Assert.AreEqual(line[0], @"123");
+            Assert.AreEqual(line[1], @"Sue said, ""Hi, this is a test!""");
+            Assert.AreEqual(line[2], @"2012-08-15");
         }
 
         [TestMethod]
