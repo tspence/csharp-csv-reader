@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using System.Data;
+using System.Reflection;
 
 namespace CSVFile
 {
@@ -68,6 +69,58 @@ namespace CSVFile
             // Now produce the rows
             foreach (DataRow dr in dt.Rows) {
                 _outstream.WriteLine(CSV.Output(dr.ItemArray, _delimiter, _text_qualifier));
+            }
+        }
+
+        /// <summary>
+        /// Serialize a list of objects to CSV using this writer
+        /// </summary>
+        /// <typeparam name="IEnumerable">An IEnumerable that produces the list of objects to serialize.</typeparam>
+        public void Write<T>(IEnumerable<T> list, bool save_column_names)
+        {
+            // Extract information about the type we're writing to disk
+            Type list_type = typeof(T);
+            FieldInfo[] filist = list_type.GetFields();
+            PropertyInfo[] pilist = list_type.GetProperties();
+
+            // Produce headers
+            if (save_column_names) {
+                List<string> headers = new List<string>();
+                foreach (FieldInfo fi in filist) {
+                    headers.Add(fi.Name);
+                }
+                foreach (PropertyInfo pi in pilist) {
+                    headers.Add(pi.Name);
+                }
+                _outstream.WriteLine(CSV.Output(headers, _delimiter, _text_qualifier));
+            }
+
+            // Iterate through all the objects
+            List<string> values = new List<string>();
+            object val = null;
+            foreach (T obj in list) {
+
+                // Retrieve all the fields and properties
+                values.Clear();
+                foreach (FieldInfo fi in filist) {
+                    val = fi.GetValue(obj);
+                    if (val == null) {
+                        values.Add("");
+                    } else {
+                        values.Add(val.ToString());
+                    }
+                }
+                foreach (PropertyInfo pi in pilist) {
+                    val = pi.GetValue(obj, null);
+                    if (val == null) {
+                        values.Add("");
+                    } else {
+                        values.Add(val.ToString());
+                    }
+                }
+
+                // Output one line of CSV
+                _outstream.WriteLine(CSV.Output(values, _delimiter, _text_qualifier));
             }
         }
         #endregion

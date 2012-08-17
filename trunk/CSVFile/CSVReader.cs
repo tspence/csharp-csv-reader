@@ -134,34 +134,6 @@ namespace CSVFile
         }
         #endregion
 
-        #region Static interface
-        /// <summary>
-        /// Read in a single CSV file into a datatable in memory in one call
-        /// </summary>
-        /// <param name="filename"></param>
-        /// <param name="delim"></param>
-        /// <param name="qual"></param>
-        /// <returns></returns>
-        public static DataTable LoadDataTable(string filename, bool first_row_are_headers = true, bool ignore_dimension_errors = true, char delim = CSV.DEFAULT_DELIMITER, char qual = CSV.DEFAULT_QUALIFIER)
-        {
-            return LoadDataTable(new StreamReader(filename), first_row_are_headers, ignore_dimension_errors, delim, qual);
-        }
-
-        /// <summary>
-        /// Read in a single CSV file into a datatable in memory in one call
-        /// </summary>
-        /// <param name="filename"></param>
-        /// <param name="delim"></param>
-        /// <param name="qual"></param>
-        /// <returns></returns>
-        public static DataTable LoadDataTable(StreamReader stream, bool first_row_are_headers = true, bool ignore_dimension_errors = true, char delim = CSV.DEFAULT_DELIMITER, char qual = CSV.DEFAULT_QUALIFIER)
-        {
-            using (CSVReader cr = new CSVReader(stream, delim, qual)) {
-                return cr.ReadAsDataTable(first_row_are_headers, ignore_dimension_errors);
-            }
-        }
-        #endregion
-
         #region Disposables
         /// <summary>
         /// Close our resources - specifically, the stream reader
@@ -179,7 +151,7 @@ namespace CSVFile
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        public List<T> Deserialize<T>(bool ignore_dimension_errors = false, bool ignore_bad_columns = false, bool ignore_type_conversion_errors = false) where T : new()
+        public List<T> Deserialize<T>(bool ignore_dimension_errors = false, bool ignore_bad_columns = false, bool ignore_type_conversion_errors = false) where T : class, new()
         {
             List<T> result = new List<T>();
             Type return_type = typeof(T);
@@ -190,6 +162,7 @@ namespace CSVFile
 
             // Determine how to handle each column in the file - check properties, fields, and methods
             Type[] column_types = new Type[num_columns];
+            TypeConverter[] column_convert = new TypeConverter[num_columns];
             PropertyInfo[] prop_handlers = new PropertyInfo[num_columns];
             FieldInfo[] field_handlers = new FieldInfo[num_columns];
             MethodInfo[] method_handlers = new MethodInfo[num_columns];
@@ -223,6 +196,12 @@ namespace CSVFile
                 } else {
                     column_types[i] = prop_handlers[i].PropertyType;
                 }
+
+                // Retrieve a converter
+                column_convert[i] = TypeDescriptor.GetConverter(column_types[i]);
+                if (column_convert[i] == null) {
+                    throw new Exception(String.Format("The column {0} (type {1}) does not have a type converter.", first_line[i], column_types[i]));
+                }
             }
 
             // Alright, let's retrieve CSV lines and parse each one!
@@ -242,14 +221,10 @@ namespace CSVFile
 
                     // Attempt to convert this to the specified type
                     object value = null;
-                    if (ignore_type_conversion_errors) {
-                        try {
-                            value = Convert.ChangeType(line[i], column_types[i]);
-                        } catch {
-                            // ignore this error
-                        }
-                    } else {
-                        value = Convert.ChangeType(line[i], column_types[i]);
+                    if (column_convert[i].IsValid(line[i])) {
+                        value = column_convert[i].ConvertFromString(line[i]);
+                    } else if (!ignore_type_conversion_errors) {
+                        throw new Exception(String.Format("The value '{0}' cannot be converted to the type {1}.", line[i], column_types[i]));
                     }
 
                     // Can we set this value to the object as a property?

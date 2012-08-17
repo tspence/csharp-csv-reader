@@ -22,6 +22,15 @@ namespace CSVTestSuite
             public DateTime timestamp;
         }
 
+        public enum EnumTestType { First = 1, Second = 2, Third = 3 };
+
+        public class SerializeStruct
+        {
+            public string FirstColumn;
+            public int SecondColumn;
+            public EnumTestType ThirdColumn;
+        }
+
         [TestMethod]
         public void TestObjectSerialization()
         {
@@ -57,6 +66,30 @@ namespace CSVTestSuite
             Assert.AreEqual(list[2].IntField, 12);
             Assert.AreEqual(list[2].IntProperty, 13);
             Assert.AreEqual(list[2].timestamp, new DateTime(1975, 6, 3));
+        }
+
+        [TestMethod]
+        public void TestStructSerialization()
+        {
+            List<SerializeStruct> list = new List<SerializeStruct>();
+            list.Add(new SerializeStruct() { FirstColumn = "hi1!", SecondColumn = 12, ThirdColumn = EnumTestType.First });
+            list.Add(new SerializeStruct() { FirstColumn = "hi2, hi2, hi2!", SecondColumn = 34, ThirdColumn = EnumTestType.Second });
+            list.Add(new SerializeStruct() { FirstColumn = @"hi3 says, ""Hi Three!""", SecondColumn = 56, ThirdColumn = EnumTestType.Third });
+
+            // Serialize to a CSV string
+            string csv = list.WriteToString(true);
+
+            // Deserialize back from a CSV string - should not throw any errors!
+            byte[] byteArray = Encoding.ASCII.GetBytes(csv);
+            MemoryStream stream = new MemoryStream(byteArray);
+            List<SerializeStruct> newlist = CSV.LoadArray<SerializeStruct>(new StreamReader(stream), false, false, false);
+
+            // Compare original objects to new ones
+            for (int i = 0; i < list.Count; i++) {
+                Assert.AreEqual(list[i].FirstColumn, newlist[i].FirstColumn);
+                Assert.AreEqual(list[i].SecondColumn, newlist[i].SecondColumn);
+                Assert.AreEqual(list[i].ThirdColumn, newlist[i].ThirdColumn);
+            }
         }
     }
 }
