@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using System.Data;
+using System.Reflection;
 
 namespace CSVFile
 {
@@ -171,6 +172,109 @@ namespace CSVFile
         {
             _instream.Close();
             _instream.Dispose();
+        }
+        #endregion
+
+        #region Deserialization
+        /// <summary>
+        /// Deserialize a CSV file into a list of typed objects
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        public List<T> Deserialize<T>(bool ignore_dimension_errors = false, bool ignore_bad_columns = false, bool ignore_type_conversion_errors = false) where T : class, new()
+        {
+            List<T> result = new List<T>();
+            Type return_type = typeof(T);
+
+            // Read in the first line - we have to have headers!
+            string[] first_line = CSV.ParseMultiLine(_instream, _delimiter, _text_qualifier);
+            int num_columns = first_line.Length;
+
+            // Determine how to handle each column in the file - check properties, fields, and methods
+            Type[] column_types = new Type[num_columns];
+            PropertyInfo[] prop_handlers = new PropertyInfo[num_columns];
+            FieldInfo[] field_handlers = new FieldInfo[num_columns];
+            MethodInfo[] method_handlers = new MethodInfo[num_columns];
+            for (int i = 0; i < num_columns; i++) {
+                prop_handlers[i] = return_type.GetProperty(first_line[i]);
+
+                // If we failed to get a property handler, let's try a field handler
+                if (prop_handlers[i] == null) {
+                    field_handlers[i] = return_type.GetField(first_line[i]);
+
+                    // If we failed to get a field handler, let's try a method
+                    if (field_handlers[i] == null) {
+
+                        // Methods must be treated differently - we have to ensure that the method has a single parameter
+                        MethodInfo mi = return_type.GetMethod(first_line[i]);
+                        if (mi != null) {
+                            if (mi.GetParameters().Length == 1) {
+                                method_handlers[i] = mi;
+                                column_types[i] = mi.GetParameters()[0].ParameterType;
+                            } else if (!ignore_bad_columns) {
+                                throw new Exception(String.Format("The column header '{0}' matched a method with more than one parameter.", first_line[i]));
+                            }
+
+                        // Does the caller want us to throw an error on bad columns?
+                        } else if (!ignore_bad_columns) {
+                            throw new Exception(String.Format("The column header '{0}' was not found in the class '{1}'.", first_line[i], return_type.FullName));
+                        }
+                    } else {
+                        column_types[i] = field_handlers[i].FieldType;
+                    }
+                } else {
+                    column_types[i] = prop_handlers[i].PropertyType;
+                }
+            }
+
+            // Alright, let's retrieve CSV lines and parse each one!
+            int row_num = 1;
+            foreach (string[] line in Lines()) {
+
+                // Does this line match the length of the first line?  Does the caller want us to complain?
+                if (line.Length != num_columns) {
+                    if (!ignore_dimension_errors) {
+                        throw new Exception(String.Format("Line #{0} contains {1} columns; expected {2}", row_num, line.Length, num_columns));
+                    }
+                }
+
+                // Construct a new object and execute each column on it
+                T obj = new T();
+                for (int i = 0; i < Math.Min(line.Length, num_columns); i++) {
+
+                    // Attempt to convert this to the specified type
+                    object value = null;
+                    if (ignore_type_conversion_errors) {
+                        try {
+                            value = Convert.ChangeType(line[i], column_types[i]);
+                        } catch {
+                            // ignore this error
+                        }
+                    } else {
+                        value = Convert.ChangeType(line[i], column_types[i]);
+                    }
+
+                    // Can we set this value to the object as a property?
+                    if (prop_handlers[i] != null) {
+                        prop_handlers[i].SetValue(obj, value, null);
+
+                    // Can we set this value to the object as a property?
+                    } else if (field_handlers[i] != null) {
+                        field_handlers[i].SetValue(obj, value);
+
+                    // Can we set this value to the object as a property?
+                    } else if (method_handlers[i] != null) {
+                        method_handlers[i].Invoke(obj, new object[] { value });
+                    }
+                }
+
+                // Keep track of where we are in the file
+                result.Add(obj);
+                row_num++;
+            }
+
+            // Here's your array!
+            return result;
         }
         #endregion
     }
