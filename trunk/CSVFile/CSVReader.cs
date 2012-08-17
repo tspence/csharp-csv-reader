@@ -181,7 +181,7 @@ namespace CSVFile
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        public List<T> Deserialize<T>(bool ignore_dimension_errors = false, bool ignore_bad_columns = false, bool ignore_type_conversion_errors = false) where T : class, new()
+        public List<T> Deserialize<T>(bool ignore_dimension_errors = false, bool ignore_bad_columns = false, bool ignore_type_conversion_errors = false) where T : new()
         {
             List<T> result = new List<T>();
             Type return_type = typeof(T);
