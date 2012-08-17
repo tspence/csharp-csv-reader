@@ -11,7 +11,7 @@ namespace CSVTestSuite
     [TestClass]
     public class SerializationTest
     {
-        public class SerializeTest
+        public class TestClassOne
         {
             public string TestString;
             public string PropertyString { get; set; }
@@ -24,7 +24,7 @@ namespace CSVTestSuite
 
         public enum EnumTestType { First = 1, Second = 2, Third = 3 };
 
-        public class SerializeStruct
+        public class TestClassTwo
         {
             public string FirstColumn;
             public int SecondColumn;
@@ -35,7 +35,7 @@ namespace CSVTestSuite
         public void TestObjectSerialization()
         {
             // Deserialize an array to a list of objects!
-            List<SerializeTest> list = null;
+            List<TestClassOne> list = null;
             string source = @"timestamp,TestString,SetComment,PropertyString,IntField,IntProperty
 2012-05-01,test1,""Hi there, I said!"",Bob,57,0
 2011-04-01,test2,""What's up, buttercup?"",Ralph,1,-999
@@ -43,7 +43,7 @@ namespace CSVTestSuite
             byte[] byteArray = Encoding.ASCII.GetBytes(source);
             MemoryStream stream = new MemoryStream(byteArray);
             using (CSVReader cr = new CSVReader(new StreamReader(stream))) {
-                list = cr.Deserialize<SerializeTest>();
+                list = cr.Deserialize<TestClassOne>();
             }
 
             // Test the array
@@ -71,10 +71,10 @@ namespace CSVTestSuite
         [TestMethod]
         public void TestStructSerialization()
         {
-            List<SerializeStruct> list = new List<SerializeStruct>();
-            list.Add(new SerializeStruct() { FirstColumn = "hi1!", SecondColumn = 12, ThirdColumn = EnumTestType.First });
-            list.Add(new SerializeStruct() { FirstColumn = "hi2, hi2, hi2!", SecondColumn = 34, ThirdColumn = EnumTestType.Second });
-            list.Add(new SerializeStruct() { FirstColumn = @"hi3 says, ""Hi Three!""", SecondColumn = 56, ThirdColumn = EnumTestType.Third });
+            List<TestClassTwo> list = new List<TestClassTwo>();
+            list.Add(new TestClassTwo() { FirstColumn = "hi1!", SecondColumn = 12, ThirdColumn = EnumTestType.First });
+            list.Add(new TestClassTwo() { FirstColumn = "hi2, hi2, hi2!", SecondColumn = 34, ThirdColumn = EnumTestType.Second });
+            list.Add(new TestClassTwo() { FirstColumn = @"hi3 says, ""Hi Three!""", SecondColumn = 56, ThirdColumn = EnumTestType.Third });
 
             // Serialize to a CSV string
             string csv = list.WriteToString(true);
@@ -82,7 +82,7 @@ namespace CSVTestSuite
             // Deserialize back from a CSV string - should not throw any errors!
             byte[] byteArray = Encoding.ASCII.GetBytes(csv);
             MemoryStream stream = new MemoryStream(byteArray);
-            List<SerializeStruct> newlist = CSV.LoadArray<SerializeStruct>(new StreamReader(stream), false, false, false);
+            List<TestClassTwo> newlist = CSV.LoadArray<TestClassTwo>(new StreamReader(stream), false, false, false);
 
             // Compare original objects to new ones
             for (int i = 0; i < list.Count; i++) {
