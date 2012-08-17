@@ -10,6 +10,7 @@ using System.Text;
 using System.IO;
 using System.Data;
 using System.Reflection;
+using System.ComponentModel;
 
 namespace CSVFile
 {
@@ -18,8 +19,6 @@ namespace CSVFile
         protected char _delimiter, _text_qualifier;
 
         protected StreamReader _instream;
-
-        protected static readonly List<string> allowed_extensions = new List<string>() { ".csv", ".tsv", ".data" };
 
         #region Constructors
         /// <summary>
@@ -43,14 +42,13 @@ namespace CSVFile
         }
 
         /// <summary>
-        /// Initialize a new CSV file structure in memory
+        /// Initialize a new CSV file structure to write to disk
         /// </summary>
         public CSVReader(string filename, char delim = CSV.DEFAULT_DELIMITER, char qual = CSV.DEFAULT_QUALIFIER)
         {
             _instream = new StreamReader(filename);
             _delimiter = delim;
             _text_qualifier = qual;
-
         }
         #endregion
 
