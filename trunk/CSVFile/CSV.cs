@@ -161,16 +161,7 @@ namespace CSVFile
         public static void SendCsvAttachment(this DataTable dt, string from_address, string to_address, string subject, string body, string smtp_host, string attachment_filename)
         {
             // Save this CSV to a string
-            string csv = null;
-            using (var ms = new MemoryStream()) {
-                var sw = new StreamWriter(ms);
-                WriteToStream(dt, sw, true);
-                sw.Flush();
-                ms.Position = 0;
-                using (var sr = new StreamReader(ms)) {
-                    csv = sr.ReadToEnd();
-                }
-            }
+            string csv = WriteToString(dt, true);
 
             // Prepare the email message and attachment
             System.Net.Mail.MailMessage message = new System.Net.Mail.MailMessage();
@@ -198,18 +189,31 @@ namespace CSVFile
         /// <param name="qual">The text qualifier (double-quote) that encapsulates fields that include delimiters</param>
         public static void WriteToStream(this DataTable dt, StreamWriter sw, bool save_column_names, char delim = DEFAULT_DELIMITER, char qual = DEFAULT_QUALIFIER)
         {
-            // Write headers, if the caller requested we do so
-            if (save_column_names) {
-                List<string> headers = new List<string>();
-                foreach (DataColumn col in dt.Columns) {
-                    headers.Add(col.ColumnName);
-                }
-                sw.WriteLine(Output(headers, delim, qual));
+            using (CSVWriter cw = new CSVWriter(sw, delim, qual)) {
+                cw.Write(dt, save_column_names);
             }
+        }
 
-            // Now produce the rows
-            foreach (DataRow dr in dt.Rows) {
-                sw.WriteLine(Output(dr.ItemArray, delim, qual));
+        /// <summary>
+        /// Write a DataTable to a string in CSV format
+        /// </summary>
+        /// <param name="dt"></param>
+        /// <param name="sw"></param>
+        /// <param name="save_column_names"></param>
+        /// <param name="delim"></param>
+        /// <param name="qual"></param>
+        /// <returns></returns>
+        public static string WriteToString(this DataTable dt, bool save_column_names, char delim = DEFAULT_DELIMITER, char qual = DEFAULT_QUALIFIER)
+        {
+            using (var ms = new MemoryStream()) {
+                var sw = new StreamWriter(ms);
+                var cw = new CSVWriter(sw, delim, qual);
+                cw.Write(dt, save_column_names);
+                sw.Flush();
+                ms.Position = 0;
+                using (var sr = new StreamReader(ms)) {
+                    return sr.ReadToEnd();
+                }
             }
         }
 
