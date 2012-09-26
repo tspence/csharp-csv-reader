@@ -70,6 +70,9 @@ namespace CSVFile
             foreach (DataRow dr in dt.Rows) {
                 _outstream.WriteLine(CSV.Output(dr.ItemArray, _delimiter, _text_qualifier, force_qualifiers));
             }
+
+            // Flush the stream
+            _outstream.Flush();
         }
 
         /// <summary>
@@ -122,6 +125,9 @@ namespace CSVFile
                 // Output one line of CSV
                 _outstream.WriteLine(CSV.Output(values, _delimiter, _text_qualifier, force_qualifiers));
             }
+
+            // Flush the stream
+            _outstream.Flush();
         }
         #endregion
 
@@ -131,6 +137,7 @@ namespace CSVFile
         /// </summary>
         public void Dispose()
         {
+            _outstream.Flush();
             _outstream.Close();
             _outstream.Dispose();
         }
