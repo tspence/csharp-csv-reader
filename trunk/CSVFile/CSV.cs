@@ -260,7 +260,7 @@ namespace CSVFile
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
-        public static string Output(IEnumerable<object> line, char delimiter, char qualifier)
+        public static string Output(IEnumerable<object> line, char delimiter = DEFAULT_DELIMITER, char qualifier = DEFAULT_QUALIFIER, bool force_qualifiers = false)
         {
             StringBuilder sb = new StringBuilder();
             foreach (object o in line) {
@@ -271,7 +271,7 @@ namespace CSVFile
                     if (s.Length > 0) {
 
                         // Does this string contain any risky characters?  Risky is defined as delim, qual, or newline
-                        if (s.Contains(delimiter) || s.Contains(qualifier) || s.Contains(Environment.NewLine)) {
+                        if (force_qualifiers || s.Contains(delimiter) || s.Contains(qualifier) || s.Contains(Environment.NewLine)) {
                             sb.Append(qualifier);
 
                             // Double up any qualifiers that may occur
