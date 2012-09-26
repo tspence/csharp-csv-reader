@@ -55,7 +55,7 @@ namespace CSVFile
         /// <param name="save_column_names">True if you wish the first line of the file to have column names</param>
         /// <param name="delim">The delimiter (comma, tab, pipe, etc) to separate fields</param>
         /// <param name="qual">The text qualifier (double-quote) that encapsulates fields that include delimiters</param>
-        public void Write(DataTable dt, bool save_column_names)
+        public void Write(DataTable dt, bool save_column_names, bool force_qualifiers = false)
         {
             // Write headers, if the caller requested we do so
             if (save_column_names) {
@@ -63,12 +63,12 @@ namespace CSVFile
                 foreach (DataColumn col in dt.Columns) {
                     headers.Add(col.ColumnName);
                 }
-                _outstream.WriteLine(CSV.Output(headers, _delimiter, _text_qualifier));
+                _outstream.WriteLine(CSV.Output(headers, _delimiter, _text_qualifier, force_qualifiers));
             }
 
             // Now produce the rows
             foreach (DataRow dr in dt.Rows) {
-                _outstream.WriteLine(CSV.Output(dr.ItemArray, _delimiter, _text_qualifier));
+                _outstream.WriteLine(CSV.Output(dr.ItemArray, _delimiter, _text_qualifier, force_qualifiers));
             }
         }
 
@@ -76,7 +76,7 @@ namespace CSVFile
         /// Serialize a list of objects to CSV using this writer
         /// </summary>
         /// <typeparam name="IEnumerable">An IEnumerable that produces the list of objects to serialize.</typeparam>
-        public void Write<T>(IEnumerable<T> list, bool save_column_names)
+        public void Write<T>(IEnumerable<T> list, bool save_column_names, bool force_qualifiers = false)
         {
             // Extract information about the type we're writing to disk
             Type list_type = typeof(T);
@@ -92,7 +92,7 @@ namespace CSVFile
                 foreach (PropertyInfo pi in pilist) {
                     headers.Add(pi.Name);
                 }
-                _outstream.WriteLine(CSV.Output(headers, _delimiter, _text_qualifier));
+                _outstream.WriteLine(CSV.Output(headers, _delimiter, _text_qualifier, force_qualifiers));
             }
 
             // Iterate through all the objects
@@ -120,7 +120,7 @@ namespace CSVFile
                 }
 
                 // Output one line of CSV
-                _outstream.WriteLine(CSV.Output(values, _delimiter, _text_qualifier));
+                _outstream.WriteLine(CSV.Output(values, _delimiter, _text_qualifier, force_qualifiers));
             }
         }
         #endregion

@@ -14,7 +14,7 @@ using System.ComponentModel;
 
 namespace CSVFile
 {
-    public class CSVReader : IDisposable
+    public class CSVReader : IEnumerable<string[]>, IDisposable
     {
         protected char _delimiter, _text_qualifier;
 
@@ -56,8 +56,26 @@ namespace CSVFile
         /// <summary>
         /// Iterate through all lines in this CSV file
         /// </summary>
-        /// <returns></returns>
-        IEnumerable<string[]> Lines()
+        /// <returns>An array of all data columns in the line</returns>
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+        {
+            return Lines().GetEnumerator();
+        }
+
+        /// <summary>
+        /// Iterate through all lines in this CSV file
+        /// </summary>
+        /// <returns>An array of all data columns in the line</returns>
+        IEnumerator<string[]> System.Collections.Generic.IEnumerable<string[]>.GetEnumerator()
+        {
+            return Lines().GetEnumerator();
+        }
+
+        /// <summary>
+        /// Iterate through all lines in this CSV file
+        /// </summary>
+        /// <returns>An array of all data columns in the line</returns>
+        public IEnumerable<string[]> Lines()
         {
             while (true) {
 

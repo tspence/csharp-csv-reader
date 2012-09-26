@@ -8,6 +8,7 @@ using System.Text;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using CSVFile;
 
 namespace CSVTestSuite
 {
@@ -15,8 +16,13 @@ namespace CSVTestSuite
     public class WriterTest
     {
         [TestMethod]
-        public void TestWritingLines()
+        public void TestForceQualifiers()
         {
+            string[] array = new string[] { "one", "two", "three", "four, five" };
+            string s = CSV.Output(array);
+            Assert.AreEqual(s, "one,two,three,\"four, five\"");
+            s = CSV.Output(array, '|', '\'', true);
+            Assert.AreEqual(s, "'one'|'two'|'three'|'four, five'");
         }
     }
 }
