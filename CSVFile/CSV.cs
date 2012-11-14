@@ -210,6 +210,21 @@ namespace CSVFile
         }
 
         /// <summary>
+        /// Serialize an object array to a stream in CSV format
+        /// </summary>
+        /// <param name="list">The object array to write</param>
+        /// <param name="sw">The stream where the CSV text will be written</param>
+        /// <param name="save_column_names">True if you wish the first line of the file to have column names</param>
+        /// <param name="delim">The delimiter (comma, tab, pipe, etc) to separate fields</param>
+        /// <param name="qual">The text qualifier (double-quote) that encapsulates fields that include delimiters</param>
+        public static void WriteToStream<T>(this IEnumerable<T> list, string filename, bool save_column_names, char delim = DEFAULT_DELIMITER, char qual = DEFAULT_QUALIFIER)
+        {
+            using (StreamWriter sw = new StreamWriter(filename)) {
+                WriteToStream<T>(list, sw, save_column_names, delim, qual);
+            }
+        }
+
+        /// <summary>
         /// Write a DataTable to a string in CSV format
         /// </summary>
         /// <param name="dt">The datatable to write</param>
