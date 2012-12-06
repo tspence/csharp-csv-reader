@@ -176,6 +176,7 @@ namespace CSVFile
 
             // Read in the first line - we have to have headers!
             string[] first_line = CSV.ParseMultiLine(_instream, _delimiter, _text_qualifier);
+            if (first_line == null) return result;
             int num_columns = first_line.Length;
 
             // Determine how to handle each column in the file - check properties, fields, and methods
