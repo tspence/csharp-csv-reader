@@ -352,6 +352,30 @@ namespace CSVFile
         }
 
         /// <summary>
+        /// Saves an array of objects to a CSV string in memory.
+        /// </summary>
+        /// <typeparam name="T">The type of objects to serialize from this CSV.</typeparam>
+        /// <param name="list">The array of objects to serialize.</param>
+        /// <param name="save_column_names">Set to true if you wish the first line of the CSV to contain the field names.</param>
+        /// <param name="force_qualifiers">Set to true to force qualifier characters around each field.</param>
+        /// <param name="delim">The CSV field delimiter character.</param>
+        /// <param name="qual">The CSV text qualifier character.</param>
+        /// <returns>The CSV string.</returns>
+        public static string SaveArray<T>(IEnumerable<T> list, bool save_column_names = true, bool force_qualifiers = false, char delim = CSV.DEFAULT_DELIMITER, char qual = CSV.DEFAULT_QUALIFIER) where T : class, new()
+        {
+            using (var ms = new MemoryStream()) {
+                var sw = new StreamWriter(ms);
+                var cw = new CSVWriter(sw, delim, qual);
+                cw.Write<T>(list, save_column_names, force_qualifiers);
+                sw.Flush();
+                ms.Position = 0;
+                using (var sr = new StreamReader(ms)) {
+                    return sr.ReadToEnd();
+                }
+            }
+        }
+
+        /// <summary>
         /// Read in a single CSV file as an array of objects
         /// </summary>
         /// <typeparam name="T">The type of objects to deserialize from this CSV.</typeparam>
