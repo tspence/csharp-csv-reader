@@ -97,7 +97,7 @@ namespace CSVFile
         /// </summary>
         /// <param name="first_row_are_headers"></param>
         /// <returns></returns>
-        public DataTable ReadAsDataTable(bool first_row_are_headers, bool ignore_dimension_errors)
+        public DataTable ReadAsDataTable(bool first_row_are_headers, bool ignore_dimension_errors, string[] headers = null)
         {
             DataTable dt = new DataTable();
 
@@ -113,8 +113,14 @@ namespace CSVFile
 
             // Okay, just create some untitled columns
             } else {
-                for (int i = 0; i < num_columns; i++) {
-                    dt.Columns.Add(new DataColumn(String.Format("Column{0}", i), typeof(string)));
+                if (headers == null) {
+                    for (int i = 0; i < num_columns; i++) {
+                        dt.Columns.Add(new DataColumn(String.Format("Column{0}", i), typeof(string)));
+                    }
+                } else {
+                    for (int i = 0; i < headers.Length; i++) {
+                        dt.Columns.Add(new DataColumn(headers[i], typeof(string)));
+                    }
                 }
 
                 // Add this first line
