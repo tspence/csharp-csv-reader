@@ -331,7 +331,33 @@ namespace CSVFile
         public static DataTable LoadDataTable(StreamReader stream, bool first_row_are_headers = true, bool ignore_dimension_errors = true, char delim = CSV.DEFAULT_DELIMITER, char qual = CSV.DEFAULT_QUALIFIER)
         {
             using (CSVReader cr = new CSVReader(stream, delim, qual)) {
-                return cr.ReadAsDataTable(first_row_are_headers, ignore_dimension_errors);
+                return cr.ReadAsDataTable(first_row_are_headers, ignore_dimension_errors, null);
+            }
+        }
+
+        /// <summary>
+        /// Read in a single CSV file into a datatable in memory
+        /// </summary>
+        /// <param name="filename"></param>
+        /// <param name="delim">The CSV field delimiter character.</param>
+        /// <param name="qual">The CSV text qualifier character.</param>
+        /// <returns>An data table of strings that were retrieved from the CSV file.</returns>
+        public static DataTable LoadDataTable(string filename, string[] headers, bool ignore_dimension_errors = true, char delim = CSV.DEFAULT_DELIMITER, char qual = CSV.DEFAULT_QUALIFIER)
+        {
+            return LoadDataTable(new StreamReader(filename), headers, ignore_dimension_errors, delim, qual);
+        }
+
+        /// <summary>
+        /// Read in a single CSV file into a datatable in memory
+        /// </summary>
+        /// <param name="filename"></param>
+        /// <param name="delim">The CSV field delimiter character.</param>
+        /// <param name="qual">The CSV text qualifier character.</param>
+        /// <returns>An data table of strings that were retrieved from the CSV file.</returns>
+        public static DataTable LoadDataTable(StreamReader stream, string[] headers, bool ignore_dimension_errors = true, char delim = CSV.DEFAULT_DELIMITER, char qual = CSV.DEFAULT_QUALIFIER)
+        {
+            using (CSVReader cr = new CSVReader(stream, delim, qual)) {
+                return cr.ReadAsDataTable(false, ignore_dimension_errors, headers);
             }
         }
 
@@ -393,6 +419,5 @@ namespace CSVFile
             }
         }
         #endregion
-
     }
 }
