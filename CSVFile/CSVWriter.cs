@@ -1,4 +1,9 @@
-﻿using System;
+﻿/*
+ * 2006 - 2012 Ted Spence, http://tedspence.com
+ * License: http://www.apache.org/licenses/LICENSE-2.0 
+ * Home page: https://code.google.com/p/csharp-csv-reader/
+ */
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -48,6 +53,16 @@ namespace CSVFile
 
         #region Writing values
         /// <summary>
+        /// Write one line to the file
+        /// </summary>
+        /// <param name="line">The array of values for this line</param>
+        /// <param name="force_qualifiers">True if you want to force qualifiers for this line.</param>
+        public void WriteLine(IEnumerable<object> line, bool force_qualifiers = false)
+        {
+            _outstream.WriteLine(CSV.Output(line, _delimiter, _text_qualifier, force_qualifiers));
+        }
+
+        /// <summary>
         /// Write the data table to a stream in CSV format
         /// </summary>
         /// <param name="dt">The data table to write</param>
@@ -63,12 +78,12 @@ namespace CSVFile
                 foreach (DataColumn col in dt.Columns) {
                     headers.Add(col.ColumnName);
                 }
-                _outstream.WriteLine(CSV.Output(headers, _delimiter, _text_qualifier, force_qualifiers));
+                WriteLine(headers, force_qualifiers);
             }
 
             // Now produce the rows
             foreach (DataRow dr in dt.Rows) {
-                _outstream.WriteLine(CSV.Output(dr.ItemArray, _delimiter, _text_qualifier, force_qualifiers));
+                WriteLine(dr.ItemArray, force_qualifiers);
             }
 
             // Flush the stream
@@ -79,7 +94,7 @@ namespace CSVFile
         /// Serialize a list of objects to CSV using this writer
         /// </summary>
         /// <typeparam name="IEnumerable">An IEnumerable that produces the list of objects to serialize.</typeparam>
-        public void Write<T>(IEnumerable<T> list, bool save_column_names, bool force_qualifiers = false)
+        public void WriteObjects<T>(IEnumerable<T> list, bool save_column_names, bool force_qualifiers = false)
         {
             // Extract information about the type we're writing to disk
             Type list_type = typeof(T);
@@ -95,7 +110,7 @@ namespace CSVFile
                 foreach (PropertyInfo pi in pilist) {
                     headers.Add(pi.Name);
                 }
-                _outstream.WriteLine(CSV.Output(headers, _delimiter, _text_qualifier, force_qualifiers));
+                WriteLine(headers, force_qualifiers);
             }
 
             // Iterate through all the objects
@@ -123,7 +138,7 @@ namespace CSVFile
                 }
 
                 // Output one line of CSV
-                _outstream.WriteLine(CSV.Output(values, _delimiter, _text_qualifier, force_qualifiers));
+                WriteLine(values, force_qualifiers);
             }
 
             // Flush the stream

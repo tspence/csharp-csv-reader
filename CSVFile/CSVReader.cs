@@ -20,35 +20,51 @@ namespace CSVFile
 
         protected StreamReader _instream;
 
+        #region Public Variables
+        /// <summary>
+        /// If the first row in the file is a header row, this will be populated
+        /// </summary>
+        public string[] Headers = null;
+        #endregion
+
         #region Constructors
         /// <summary>
         /// Construct a new CSV reader off a streamed source
         /// </summary>
-        public CSVReader(StreamReader source, char delim = CSV.DEFAULT_DELIMITER, char qual = CSV.DEFAULT_QUALIFIER)
+        public CSVReader(StreamReader source, char delim = CSV.DEFAULT_DELIMITER, char qual = CSV.DEFAULT_QUALIFIER, bool first_row_are_headers = false)
         {
             _instream = source;
             _delimiter = delim;
             _text_qualifier = qual;
+            if (first_row_are_headers) {
+                Headers = NextLine();
+            }
         }
 
         /// <summary>
         /// Construct a new CSV reader off a streamed source
         /// </summary>
-        public CSVReader(Stream source, char delim = CSV.DEFAULT_DELIMITER, char qual = CSV.DEFAULT_QUALIFIER)
+        public CSVReader(Stream source, char delim = CSV.DEFAULT_DELIMITER, char qual = CSV.DEFAULT_QUALIFIER, bool first_row_are_headers = false)
         {
             _instream = new StreamReader(source);
             _delimiter = delim;
             _text_qualifier = qual;
+            if (first_row_are_headers) {
+                Headers = NextLine();
+            }
         }
 
         /// <summary>
         /// Initialize a new CSV file structure to write to disk
         /// </summary>
-        public CSVReader(string filename, char delim = CSV.DEFAULT_DELIMITER, char qual = CSV.DEFAULT_QUALIFIER)
+        public CSVReader(string filename, char delim = CSV.DEFAULT_DELIMITER, char qual = CSV.DEFAULT_QUALIFIER, bool first_row_are_headers = false)
         {
             _instream = new StreamReader(filename);
             _delimiter = delim;
             _text_qualifier = qual;
+            if (first_row_are_headers) {
+                Headers = NextLine();
+            }
         }
         #endregion
 
@@ -80,7 +96,7 @@ namespace CSVFile
             while (true) {
 
                 // Attempt to parse the line successfully
-                string[] line = CSV.ParseMultiLine(_instream, _delimiter, _text_qualifier);
+                string[] line = NextLine();
 
                 // If we were unable to parse the line successfully, that's all the file has
                 if (line == null) break;
@@ -88,6 +104,15 @@ namespace CSVFile
                 // We got something - give the caller an object
                 yield return line;
             }
+        }
+
+        /// <summary>
+        /// Retrieve the next line from the file.
+        /// </summary>
+        /// <returns>One line from the file.</returns>
+        public string[] NextLine()
+        {
+            return CSV.ParseMultiLine(_instream, _delimiter, _text_qualifier);
         }
         #endregion
 

@@ -26,9 +26,7 @@ namespace CSVTestSuite
                 "\"Dr. Reed, Eliot\",Private Practice,x236\n" +
                 "Dr. Kelso,Chief of Medicine,x100";
 
-            byte[] byteArray = Encoding.ASCII.GetBytes(source);
-            MemoryStream stream = new MemoryStream(byteArray);
-            DataTable dt = CSV.LoadDataTable(new StreamReader(stream), true, false);
+            DataTable dt = CSV.LoadString(source, true, false);
             Assert.AreEqual(dt.Columns.Count, 3);
             Assert.AreEqual(dt.Rows.Count, 4);
             Assert.AreEqual(dt.Rows[0].ItemArray[0], "JD");
@@ -54,9 +52,7 @@ namespace CSVTestSuite
                 "\"Dr. Reed, \nEliot\",\"Private \"\"Practice\"\"\",x236\n" +
                 "Dr. Kelso,Chief of Medicine,x100";
 
-            byte[] byteArray = Encoding.ASCII.GetBytes(source);
-            MemoryStream stream = new MemoryStream(byteArray);
-            DataTable dt = CSV.LoadDataTable(new StreamReader(stream), true, false);
+            DataTable dt = CSV.LoadString(source, true, false);
             Assert.AreEqual(dt.Columns.Count, 3);
             Assert.AreEqual(dt.Rows.Count, 4);
             Assert.AreEqual(dt.Rows[0].ItemArray[0], "JD");
