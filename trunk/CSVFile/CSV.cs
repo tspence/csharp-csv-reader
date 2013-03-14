@@ -134,6 +134,24 @@ namespace CSVFile
             array = list.ToArray();
             return success;
         }
+
+        /// <summary>
+        /// Convert a CSV file (in string form) into a data table
+        /// </summary>
+        /// <param name="source_string"></param>
+        /// <param name="first_row_are_headers"></param>
+        /// <param name="ignore_dimension_errors"></param>
+        /// <returns></returns>
+        public static DataTable LoadString(string source_string, bool first_row_are_headers, bool ignore_dimension_errors)
+        {
+            DataTable dt = null;
+            byte[] byteArray = Encoding.ASCII.GetBytes(source_string);
+            MemoryStream stream = new MemoryStream(byteArray);
+            using (CSVReader cr = new CSVReader(new StreamReader(stream))) {
+                dt = cr.ReadAsDataTable(first_row_are_headers, ignore_dimension_errors);
+            }
+            return dt;
+        }
         #endregion
 
         #region Output CSV formatted files from raw data
@@ -205,7 +223,7 @@ namespace CSVFile
         public static void WriteToStream<T>(this IEnumerable<T> list, StreamWriter sw, bool save_column_names, char delim = DEFAULT_DELIMITER, char qual = DEFAULT_QUALIFIER)
         {
             using (CSVWriter cw = new CSVWriter(sw, delim, qual)) {
-                cw.Write(list, save_column_names);
+                cw.WriteObjects(list, save_column_names);
             }
         }
 
@@ -261,7 +279,7 @@ namespace CSVFile
             using (var ms = new MemoryStream()) {
                 var sw = new StreamWriter(ms);
                 var cw = new CSVWriter(sw, delim, qual);
-                cw.Write(list, save_column_names);
+                cw.WriteObjects(list, save_column_names);
                 sw.Flush();
                 ms.Position = 0;
                 using (var sr = new StreamReader(ms)) {
@@ -392,7 +410,7 @@ namespace CSVFile
             using (var ms = new MemoryStream()) {
                 var sw = new StreamWriter(ms);
                 var cw = new CSVWriter(sw, delim, qual);
-                cw.Write<T>(list, save_column_names, force_qualifiers);
+                cw.WriteObjects<T>(list, save_column_names, force_qualifiers);
                 sw.Flush();
                 ms.Position = 0;
                 using (var sr = new StreamReader(ms)) {
@@ -416,6 +434,52 @@ namespace CSVFile
         {
             using (CSVReader cr = new CSVReader(stream, delim, qual)) {
                 return cr.Deserialize<T>(ignore_dimension_errors, ignore_bad_columns, ignore_type_conversion_errors);
+            }
+        }
+        #endregion
+
+        #region Chopping a CSV file into chunks
+        /// <summary>
+        /// Take a CSV file and chop it into multiple chunks of a specified maximum size.
+        /// </summary>
+        /// <param name="infile"></param>
+        /// <param name="out_folder"></param>
+        /// <param name="first_row_are_headers"></param>
+        /// <param name="max_lines_per_file"></param>
+        public static void ChopFile(string infile, string out_folder, bool first_row_are_headers, int max_lines_per_file, char delim = CSV.DEFAULT_DELIMITER, char qual = CSV.DEFAULT_QUALIFIER)
+        {
+            int file_id = 1;
+            int line_count = 0;
+            string file_prefix = Path.GetFileNameWithoutExtension(infile);
+            string ext = Path.GetExtension(infile);
+            CSVWriter cw = null;
+
+            // Read in lines from the file
+            using (CSVReader cr = new CSVReader(infile, delim, qual, first_row_are_headers)) {
+
+                // Okay, let's do the real work
+                foreach (string[] line in cr.Lines()) {
+
+                    // Do we need to create a file for writing?
+                    if (cw == null) {
+                        string fn = Path.Combine(out_folder, file_prefix + file_id.ToString() + ext);
+                        cw = new CSVWriter(fn, delim, qual);
+                        if (first_row_are_headers) {
+                            cw.WriteLine(cr.Headers);
+                        }
+                    }
+
+                    // Write one line
+                    cw.WriteLine(line);
+
+                    // Count lines - close the file if done
+                    line_count++;
+                    if (line_count >= max_lines_per_file) {
+                        cw.Dispose();
+                        cw = null;
+                        file_id++;
+                    }
+                }
             }
         }
         #endregion
