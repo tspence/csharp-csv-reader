@@ -446,7 +446,8 @@ namespace CSVFile
         /// <param name="out_folder"></param>
         /// <param name="first_row_are_headers"></param>
         /// <param name="max_lines_per_file"></param>
-        public static void ChopFile(string infile, string out_folder, bool first_row_are_headers, int max_lines_per_file, char delim = CSV.DEFAULT_DELIMITER, char qual = CSV.DEFAULT_QUALIFIER)
+        /// <returns>Number of files chopped</returns>
+        public static int ChopFile(string infile, string out_folder, bool first_row_are_headers, int max_lines_per_file, char delim = CSV.DEFAULT_DELIMITER, char qual = CSV.DEFAULT_QUALIFIER)
         {
             int file_id = 1;
             int line_count = 0;
@@ -478,9 +479,11 @@ namespace CSVFile
                         cw.Dispose();
                         cw = null;
                         file_id++;
+                        line_count = 0;
                     }
                 }
             }
+            return file_id;
         }
         #endregion
     }

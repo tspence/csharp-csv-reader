@@ -57,5 +57,61 @@ namespace CSVTestSuite
             Directory.Delete(dirname, true);
             File.Delete(sourcefile);
         }
+
+        [TestMethod]
+        public void LargeChopTest()
+        {
+            string[] array_first = new string[] { "first", "two", "three", "four, five" };
+            string[] array_second = new string[] { "second", "two", "three", "four, five" };
+            string[] array_third = new string[] { "third", "two", "three", "four, five" };
+            DataTable dt = new DataTable();
+            dt.Columns.Add("col1");
+            dt.Columns.Add("col2");
+            dt.Columns.Add("col3");
+            dt.Columns.Add("col4");
+            dt.Columns.Add("col5");
+            for (int i = 0; i < 5000; i++) {
+                dt.Rows.Add(array_first);
+            }
+            for (int i = 0; i < 5000; i++) {
+                dt.Rows.Add(array_second);
+            }
+            for (int i = 0; i < 5000; i++) {
+                dt.Rows.Add(array_third);
+            }
+
+            // Save this string to a test file
+            string test_rootfn = Path.GetFileNameWithoutExtension(Path.GetTempFileName());
+            string sourcefile = test_rootfn + ".csv";
+            CSV.SaveAsCSV(dt, sourcefile, true);
+
+            // Create an empty test folder
+            string dirname = Path.GetDirectoryName(test_rootfn) + Guid.NewGuid().ToString();
+            Directory.CreateDirectory(dirname);
+
+            // Chop this file into one-line chunks
+            CSV.ChopFile(sourcefile, dirname, true, 5000);
+
+            // Verify that we got three files
+            string[] files = Directory.GetFiles(dirname);
+            Assert.AreEqual(3, files.Length);
+
+            // Read in each file and verify that each one has one line
+            dt = CSV.LoadDataTable(files[0]);
+            Assert.AreEqual(5000, dt.Rows.Count);
+            Assert.AreEqual("first", dt.Rows[0].ItemArray[0]);
+
+            dt = CSV.LoadDataTable(files[1]);
+            Assert.AreEqual(5000, dt.Rows.Count);
+            Assert.AreEqual("second", dt.Rows[0].ItemArray[0]);
+
+            dt = CSV.LoadDataTable(files[2]);
+            Assert.AreEqual(5000, dt.Rows.Count);
+            Assert.AreEqual("third", dt.Rows[0].ItemArray[0]);
+
+            // Clean up
+            Directory.Delete(dirname, true);
+            File.Delete(sourcefile);
+        }
     }
 }
