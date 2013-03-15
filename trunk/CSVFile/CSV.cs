@@ -483,6 +483,10 @@ namespace CSVFile
                     }
                 }
             }
+
+            // Ensore the final CSVWriter is closed properly
+            cw.Dispose();
+            cw = null;
             return file_id;
         }
         #endregion
