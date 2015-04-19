@@ -1,0 +1,5 @@
+CSVTestSuite/bin/
+CSVTestSuite/obj/
+CSVFile/obj/
+CSVFile/bin/
+*.suo

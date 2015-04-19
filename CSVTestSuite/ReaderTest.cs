@@ -1,4 +1,9 @@
-﻿using System;
+﻿/*
+ * 2006 - 2015 Ted Spence, http://tedspence.com
+ * License: http://www.apache.org/licenses/LICENSE-2.0 
+ * Home page: https://github.com/tspence/csharp-csv-reader
+ */
+using System;
 using System.Text;
 using System.Collections.Generic;
 using System.Linq;

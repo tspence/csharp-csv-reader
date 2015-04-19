@@ -1,7 +1,7 @@
 ﻿/*
- * 2006 - 2012 Ted Spence, http://tedspence.com
+ * 2006 - 2015 Ted Spence, http://tedspence.com
  * License: http://www.apache.org/licenses/LICENSE-2.0 
- * Home page: https://code.google.com/p/csharp-csv-reader/
+ * Home page: https://github.com/tspence/csharp-csv-reader
  */
 using System;
 using System.Collections.Generic;
