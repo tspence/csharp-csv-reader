@@ -1,6 +1,9 @@
 # csharp-csv-reader
 This library is a series of unit tested, thoroughly commented CSV parsing functions which I have developed over the past eight or nine years. Extremely small and easy to implement; includes unit tests for the majority of odd CSV edge cases. Library supports different delimiters, qualifiers, and embedded newlines. Can read and write from data tables.
 
+Download latest binaries:
+* https://github.com/tspence/csharp-csv-reader/raw/master/Releases/csharp-csv-reader-1.2.zip
+
 # Tutorial
 Want to get started? Here are a few walkthroughs.
 
