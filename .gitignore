@@ -3,3 +3,4 @@ CSVTestSuite/obj/
 CSVFile/obj/
 CSVFile/bin/
 *.suo
+*.nupkg
