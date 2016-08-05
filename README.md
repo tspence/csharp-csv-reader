@@ -1,8 +1,19 @@
 # csharp-csv-reader
 This library is a series of unit tested, thoroughly commented CSV parsing functions which I have developed over the past eight or nine years. Extremely small and easy to implement; includes unit tests for the majority of odd CSV edge cases. Library supports different delimiters, qualifiers, and embedded newlines. Can read and write from data tables.
 
-Download latest binaries:
+Install via NUGET:
+* nuget install csvfile
+
+Download latest binaries directly:
 * https://github.com/tspence/csharp-csv-reader/raw/master/Releases/csharp-csv-reader-1.2.zip
+
+# Why use CSharp CSV Reader?
+A few reasons:
+* Full compatibility all the way back to C# 2.0 - easy to integrate into legacy projects.
+* Only 16 kilobytes in size
+* No dependencies
+* Handles all the horrible edge cases from poorly written CSV generating software: custom delimiters, embedded newlines, and doubled-up text qualifiers
+* Reads via streams; which means if you have a 16GB .csv.gz file it can be streamed into memory
 
 # Tutorial
 Want to get started? Here are a few walkthroughs.
