@@ -199,7 +199,7 @@ namespace CSVFile
             message.Attachments.Add(a);
 
             // Send the email
-#if DOTNET20
+#if (DOTNET20 || DOTNET35)
             var smtp = new System.Net.Mail.SmtpClient(smtp_host);
             smtp.Send(message);
 #else
@@ -336,7 +336,7 @@ namespace CSVFile
                     if (s.Length > 0) {
 
                         // Does this string contain any risky characters?  Risky is defined as delim, qual, or newline
-#if DOTNET20
+#if (DOTNET20 || DOTNET35)
                         if (force_qualifiers || (s.IndexOf(delimiter) >= 0) || (s.IndexOf(qualifier) >= 0) || s.Contains(Environment.NewLine)) {
 #else
                         if (force_qualifiers || s.Contains(delimiter) || s.Contains(qualifier) || s.Contains(Environment.NewLine)) {

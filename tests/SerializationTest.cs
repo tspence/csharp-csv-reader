@@ -82,7 +82,7 @@ namespace CSVTestSuite
             list.Add(new TestClassTwo() { FirstColumn = @"hi3 says, ""Hi Three!""", SecondColumn = 56, ThirdColumn = EnumTestType.Third });
 
             // Serialize to a CSV string
-#if DOTNET20
+#if (DOTNET20 || DOTNET35)
             string csv = CSV.WriteToString(list, true);
 #else
             string csv = list.WriteToString(true);
