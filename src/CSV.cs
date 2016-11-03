@@ -347,7 +347,6 @@ namespace CSVFile
         public static void WriteToStream<T>(this IEnumerable<T> list, string filename, bool save_column_names, char delim = DEFAULT_DELIMITER, char qual = DEFAULT_QUALIFIER)
 #endif
         {
-            using (var s = new Stream(
             using (StreamWriter sw = new StreamWriter(filename)) {
                 WriteToStream<T>(list, sw, save_column_names, delim, qual);
             }
@@ -520,33 +519,17 @@ namespace CSVFile
         /// <param name="out_folder"></param>
         /// <param name="first_row_are_headers"></param>
         /// <param name="max_lines_per_file"></param>
-        /// <param name="delim"></param>
-        /// <param name="qual"></param>
-        /// <returns></returns>
-        public static int ChopFile(string filename, string out_folder, bool first_row_are_headers, int max_lines_per_file, char delim = CSV.DEFAULT_DELIMITER, char qual = CSV.DEFAULT_QUALIFIER)
-        {
-            string file_prefix = Path.GetFileNameWithoutExtension(filename);
-            string ext = Path.GetExtension(filename);
-            return ChopFile(new StreamReader(filename), file_prefix, ext);
-        }
-
-        /// <summary>
-        /// Take a CSV file and chop it into multiple chunks of a specified maximum size.
-        /// </summary>
-        /// <param name="reader"></param>
-        /// <param name="out_folder"></param>
-        /// <param name="first_row_are_headers"></param>
-        /// <param name="max_lines_per_file"></param>
         /// <returns>Number of files chopped</returns>
-        public static int ChopFile(StreamReader reader, string file_prefix, string ext, string out_folder, bool first_row_are_headers, int max_lines_per_file, char delim = CSV.DEFAULT_DELIMITER, char qual = CSV.DEFAULT_QUALIFIER)
+        public static int ChopFile(string filename, string out_folder, bool first_row_are_headers, int max_lines_per_file, char delim = CSV.DEFAULT_DELIMITER, char qual = CSV.DEFAULT_QUALIFIER)
         {
             int file_id = 1;
             int line_count = 0;
-
+            string file_prefix = Path.GetFileNameWithoutExtension(filename);
+            string ext = Path.GetExtension(filename);
             CSVWriter cw = null;
 
             // Read in lines from the file
-            using (CSVReader cr = new CSVReader(reader, delim, qual, first_row_are_headers)) {
+            using (CSVReader cr = new CSVReader(filename, delim, qual, first_row_are_headers)) {
 
                 // Okay, let's do the real work
                 foreach (string[] line in cr.Lines()) {
@@ -554,7 +537,7 @@ namespace CSVFile
                     // Do we need to create a file for writing?
                     if (cw == null) {
                         string fn = Path.Combine(out_folder, file_prefix + file_id.ToString() + ext);
-                        cw = new CSVWriter(reader, delim, qual);
+                        cw = new CSVWriter(fn, delim, qual);
                         if (first_row_are_headers) {
                             cw.WriteLine(cr.Headers);
                         }

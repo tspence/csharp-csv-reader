@@ -256,12 +256,12 @@ namespace CSVFile
                 }
 
                 // Retrieve a converter
-                //if (column_types[i] != null) {
-                //    column_convert[i] = TypeDescriptor.GetConverter(column_types[i]);
-                //    if (column_convert[i] == null) {
-                //        throw new Exception(String.Format("The column {0} (type {1}) does not have a type converter.", first_line[i], column_types[i]));
-                //    }
-                //}
+                if (column_types[i] != null) {
+                    column_convert[i] = TypeDescriptor.GetConverter(column_types[i]);
+                    if (column_convert[i] == null) {
+                        throw new Exception(String.Format("The column {0} (type {1}) does not have a type converter.", first_line[i], column_types[i]));
+                    }
+                }
             }
 
             // Alright, let's retrieve CSV lines and parse each one!
@@ -281,7 +281,6 @@ namespace CSVFile
 
                     // Attempt to convert this to the specified type
                     object value = null;
-                    Convert.to
                     if (column_convert[i] != null && column_convert[i].IsValid(line[i])) {
                         value = column_convert[i].ConvertFromString(line[i]);
                     } else if (!ignore_type_conversion_errors) {
