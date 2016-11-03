@@ -7,7 +7,9 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
+#if !PORTABLE
 using System.Data;
+#endif
 using System.Reflection;
 
 namespace CSVFile
@@ -18,7 +20,7 @@ namespace CSVFile
 
         protected StreamWriter _outstream;
 
-        #region Constructors
+#region Constructors
         /// <summary>
         /// Construct a new CSV writer to produce output on the enclosed StreamWriter
         /// </summary>
@@ -38,7 +40,7 @@ namespace CSVFile
             _delimiter = delim;
             _text_qualifier = qual;
         }
-
+#if !PORTABLE
         /// <summary>
         /// Initialize a new CSV file structure to write data to disk
         /// </summary>
@@ -48,9 +50,10 @@ namespace CSVFile
             _delimiter = delim;
             _text_qualifier = qual;
         }
-        #endregion
+#endif
+#endregion
 
-        #region Writing values
+#region Writing values
         /// <summary>
         /// Write one line to the file
         /// </summary>
@@ -60,7 +63,10 @@ namespace CSVFile
         {
             _outstream.WriteLine(CSV.Output(line, _delimiter, _text_qualifier, force_qualifiers));
         }
+#endregion
 
+#region Data Table Functions (not available in dot-net-portable mode)
+#if !PORTABLE
         /// <summary>
         /// Write the data table to a stream in CSV format
         /// </summary>
@@ -88,7 +94,10 @@ namespace CSVFile
             // Flush the stream
             _outstream.Flush();
         }
+#endif
+#endregion
 
+#region Serialization
         /// <summary>
         /// Serialize a list of objects to CSV using this writer
         /// </summary>
@@ -143,18 +152,20 @@ namespace CSVFile
             // Flush the stream
             _outstream.Flush();
         }
-        #endregion
+#endregion
 
-        #region Disposables
+#region Disposables
         /// <summary>
         /// Close our resources - specifically, the stream reader
         /// </summary>
         public void Dispose()
         {
             _outstream.Flush();
+#if !PORTABLE
             _outstream.Close();
+#endif
             _outstream.Dispose();
         }
-        #endregion
+#endregion
     }
 }

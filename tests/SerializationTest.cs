@@ -16,6 +16,7 @@ namespace CSVTestSuite
     [TestClass]
     public class SerializationTest
     {
+#if !PORTABLE
         public class TestClassOne
         {
             public string TestString;
@@ -101,5 +102,6 @@ namespace CSVTestSuite
                 Assert.AreEqual(list[i].ThirdColumn, newlist[i].ThirdColumn);
             }
         }
+#endif
     }
 }

@@ -7,7 +7,9 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
+#if (!PORTABLE)
 using System.Data;
+#endif
 
 namespace CSVFile
 {
@@ -133,6 +135,61 @@ namespace CSVFile
             array = list.ToArray();
             return success;
         }
+        #endregion
+
+        #region DataTable related functions (not available on dot-net-portable)
+#if !PORTABLE
+        /// <summary>
+        /// Read in a single CSV file into a datatable in memory
+        /// </summary>
+        /// <param name="filename"></param>
+        /// <param name="delim">The CSV field delimiter character.</param>
+        /// <param name="qual">The CSV text qualifier character.</param>
+        /// <returns>An data table of strings that were retrieved from the CSV file.</returns>
+        public static DataTable LoadDataTable(string filename, bool first_row_are_headers = true, bool ignore_dimension_errors = true, char delim = CSV.DEFAULT_DELIMITER, char qual = CSV.DEFAULT_QUALIFIER)
+        {
+            return LoadDataTable(new StreamReader(filename), first_row_are_headers, ignore_dimension_errors, delim, qual);
+        }
+
+        /// <summary>
+        /// Read in a single CSV file into a datatable in memory
+        /// </summary>
+        /// <param name="filename"></param>
+        /// <param name="delim">The CSV field delimiter character.</param>
+        /// <param name="qual">The CSV text qualifier character.</param>
+        /// <returns>An data table of strings that were retrieved from the CSV file.</returns>
+        public static DataTable LoadDataTable(StreamReader stream, bool first_row_are_headers = true, bool ignore_dimension_errors = true, char delim = CSV.DEFAULT_DELIMITER, char qual = CSV.DEFAULT_QUALIFIER)
+        {
+            using (CSVReader cr = new CSVReader(stream, delim, qual)) {
+                return cr.ReadAsDataTable(first_row_are_headers, ignore_dimension_errors, null);
+            }
+        }
+
+        /// <summary>
+        /// Read in a single CSV file into a datatable in memory
+        /// </summary>
+        /// <param name="filename"></param>
+        /// <param name="delim">The CSV field delimiter character.</param>
+        /// <param name="qual">The CSV text qualifier character.</param>
+        /// <returns>An data table of strings that were retrieved from the CSV file.</returns>
+        public static DataTable LoadDataTable(string filename, string[] headers, bool ignore_dimension_errors = true, char delim = CSV.DEFAULT_DELIMITER, char qual = CSV.DEFAULT_QUALIFIER)
+        {
+            return LoadDataTable(new StreamReader(filename), headers, ignore_dimension_errors, delim, qual);
+        }
+
+        /// <summary>
+        /// Read in a single CSV file into a datatable in memory
+        /// </summary>
+        /// <param name="filename"></param>
+        /// <param name="delim">The CSV field delimiter character.</param>
+        /// <param name="qual">The CSV text qualifier character.</param>
+        /// <returns>An data table of strings that were retrieved from the CSV file.</returns>
+        public static DataTable LoadDataTable(StreamReader stream, string[] headers, bool ignore_dimension_errors = true, char delim = CSV.DEFAULT_DELIMITER, char qual = CSV.DEFAULT_QUALIFIER)
+        {
+            using (CSVReader cr = new CSVReader(stream, delim, qual)) {
+                return cr.ReadAsDataTable(false, ignore_dimension_errors, headers);
+            }
+        }
 
         /// <summary>
         /// Convert a CSV file (in string form) into a data table
@@ -151,9 +208,7 @@ namespace CSVFile
             }
             return dt;
         }
-        #endregion
 
-        #region Output CSV formatted files from raw data
         /// <summary>
         /// Write a data table to disk at the designated file name in CSV format
         /// </summary>
@@ -227,7 +282,38 @@ namespace CSVFile
                 cw.Write(dt, save_column_names);
             }
         }
+        
+        /// <summary>
+        /// Write a DataTable to a string in CSV format
+        /// </summary>
+        /// <param name="dt">The datatable to write</param>
+        /// <param name="sw">The stream where the CSV text will be written</param>
+        /// <param name="save_column_names">True if you wish the first line of the file to have column names</param>
+        /// <param name="delim">The delimiter (comma, tab, pipe, etc) to separate fields</param>
+        /// <param name="qual">The text qualifier (double-quote) that encapsulates fields that include delimiters</param>
+        /// <returns>The CSV string representing the object array.</returns>
+#if DOTNET20
+        public static string WriteToString(DataTable dt, bool save_column_names, char delim = DEFAULT_DELIMITER, char qual = DEFAULT_QUALIFIER)
+#else
+        public static string WriteToString(this DataTable dt, bool save_column_names, char delim = DEFAULT_DELIMITER, char qual = DEFAULT_QUALIFIER)
+#endif
+        {
+            using (var ms = new MemoryStream()) {
+                var sw = new StreamWriter(ms);
+                var cw = new CSVWriter(sw, delim, qual);
+                cw.Write(dt, save_column_names);
+                sw.Flush();
+                ms.Position = 0;
+                using (var sr = new StreamReader(ms)) {
+                    return sr.ReadToEnd();
+                }
+            }
+        }
+#endif
+        #endregion
 
+        #region FileStream related functions (not available on dot-net-portable)
+#if !PORTABLE
         /// <summary>
         /// Serialize an object array to a stream in CSV format
         /// </summary>
@@ -261,35 +347,9 @@ namespace CSVFile
         public static void WriteToStream<T>(this IEnumerable<T> list, string filename, bool save_column_names, char delim = DEFAULT_DELIMITER, char qual = DEFAULT_QUALIFIER)
 #endif
         {
+            using (var s = new Stream(
             using (StreamWriter sw = new StreamWriter(filename)) {
                 WriteToStream<T>(list, sw, save_column_names, delim, qual);
-            }
-        }
-
-        /// <summary>
-        /// Write a DataTable to a string in CSV format
-        /// </summary>
-        /// <param name="dt">The datatable to write</param>
-        /// <param name="sw">The stream where the CSV text will be written</param>
-        /// <param name="save_column_names">True if you wish the first line of the file to have column names</param>
-        /// <param name="delim">The delimiter (comma, tab, pipe, etc) to separate fields</param>
-        /// <param name="qual">The text qualifier (double-quote) that encapsulates fields that include delimiters</param>
-        /// <returns>The CSV string representing the object array.</returns>
-#if DOTNET20
-        public static string WriteToString(DataTable dt, bool save_column_names, char delim = DEFAULT_DELIMITER, char qual = DEFAULT_QUALIFIER)
-#else
-        public static string WriteToString(this DataTable dt, bool save_column_names, char delim = DEFAULT_DELIMITER, char qual = DEFAULT_QUALIFIER)
-#endif
-        {
-            using (var ms = new MemoryStream()) {
-                var sw = new StreamWriter(ms);
-                var cw = new CSVWriter(sw, delim, qual);
-                cw.Write(dt, save_column_names);
-                sw.Flush();
-                ms.Position = 0;
-                using (var sr = new StreamReader(ms)) {
-                    return sr.ReadToEnd();
-                }
             }
         }
 
@@ -321,6 +381,49 @@ namespace CSVFile
         }
 
         /// <summary>
+        /// Read in a single CSV file as an array of objects
+        /// </summary>
+        /// <typeparam name="T">The type of objects to deserialize from this CSV.</typeparam>
+        /// <param name="stream">The stream to read.</param>
+        /// <param name="ignore_dimension_errors">Set to true if you wish to ignore rows that have a different number of columns.</param>
+        /// <param name="ignore_bad_columns">Set to true if you wish to ignore column headers that don't match up to object attributes.</param>
+        /// <param name="ignore_type_conversion_errors">Set to true if you wish to overlook elements in the CSV array that can't be properly converted.</param>
+        /// <param name="delim">The CSV field delimiter character.</param>
+        /// <param name="qual">The CSV text qualifier character.</param>
+        /// <returns>An array of objects that were retrieved from the CSV file.</returns>
+        public static List<T> LoadArray<T>(string filename, bool ignore_dimension_errors = true, bool ignore_bad_columns = true, bool ignore_type_conversion_errors = true, char delim = CSV.DEFAULT_DELIMITER, char qual = CSV.DEFAULT_QUALIFIER) where T : class, new()
+        {
+            return LoadArray<T>(new StreamReader(filename), ignore_dimension_errors, ignore_bad_columns, ignore_type_conversion_errors, delim, qual);
+        }
+#endif
+        #endregion
+
+        #region Minimal portable functions
+#if PORTABLE
+        /// <summary>
+        /// Convert a CSV file (in string form) into a list of string arrays 
+        /// </summary>
+        /// <param name="source_string"></param>
+        /// <param name="first_row_are_headers"></param>
+        /// <param name="ignore_dimension_errors"></param>
+        /// <returns></returns>
+        public static List<string[]> LoadString(string source_string, bool first_row_are_headers, bool ignore_dimension_errors)
+        {
+            byte[] byteArray = Encoding.ASCII.GetBytes(source_string);
+            MemoryStream stream = new MemoryStream(byteArray);
+            var results = new List<string[]>();
+            using (CSVReader cr = new CSVReader(new StreamReader(stream))) {
+                foreach (var line in cr) {
+                    results.Add(line);
+                }
+            }
+            return results;
+        }
+#endif
+        #endregion
+
+        #region Output Functions
+        /// <summary>
         /// Output a single field value as appropriate
         /// </summary>
         /// <param name="value"></param>
@@ -336,7 +439,7 @@ namespace CSVFile
                     if (s.Length > 0) {
 
                         // Does this string contain any risky characters?  Risky is defined as delim, qual, or newline
-#if (DOTNET20 || DOTNET35 || DOTNET40)
+#if (DOTNET20 || DOTNET35 || DOTNET40 || DOTNET45 || PORTABLE)
                         if (force_qualifiers || (s.IndexOf(delimiter) >= 0) || (s.IndexOf(qualifier) >= 0) || s.Contains(Environment.NewLine)) {
 #else
                         if (force_qualifiers || s.Contains(delimiter) || s.Contains(qualifier) || s.Contains(Environment.NewLine)) {
@@ -362,75 +465,7 @@ namespace CSVFile
         }
 #endregion
 
-#region Shortcuts for static read calls
-        /// <summary>
-        /// Read in a single CSV file into a datatable in memory
-        /// </summary>
-        /// <param name="filename"></param>
-        /// <param name="delim">The CSV field delimiter character.</param>
-        /// <param name="qual">The CSV text qualifier character.</param>
-        /// <returns>An data table of strings that were retrieved from the CSV file.</returns>
-        public static DataTable LoadDataTable(string filename, bool first_row_are_headers = true, bool ignore_dimension_errors = true, char delim = CSV.DEFAULT_DELIMITER, char qual = CSV.DEFAULT_QUALIFIER)
-        {
-            return LoadDataTable(new StreamReader(filename), first_row_are_headers, ignore_dimension_errors, delim, qual);
-        }
-
-        /// <summary>
-        /// Read in a single CSV file into a datatable in memory
-        /// </summary>
-        /// <param name="filename"></param>
-        /// <param name="delim">The CSV field delimiter character.</param>
-        /// <param name="qual">The CSV text qualifier character.</param>
-        /// <returns>An data table of strings that were retrieved from the CSV file.</returns>
-        public static DataTable LoadDataTable(StreamReader stream, bool first_row_are_headers = true, bool ignore_dimension_errors = true, char delim = CSV.DEFAULT_DELIMITER, char qual = CSV.DEFAULT_QUALIFIER)
-        {
-            using (CSVReader cr = new CSVReader(stream, delim, qual)) {
-                return cr.ReadAsDataTable(first_row_are_headers, ignore_dimension_errors, null);
-            }
-        }
-
-        /// <summary>
-        /// Read in a single CSV file into a datatable in memory
-        /// </summary>
-        /// <param name="filename"></param>
-        /// <param name="delim">The CSV field delimiter character.</param>
-        /// <param name="qual">The CSV text qualifier character.</param>
-        /// <returns>An data table of strings that were retrieved from the CSV file.</returns>
-        public static DataTable LoadDataTable(string filename, string[] headers, bool ignore_dimension_errors = true, char delim = CSV.DEFAULT_DELIMITER, char qual = CSV.DEFAULT_QUALIFIER)
-        {
-            return LoadDataTable(new StreamReader(filename), headers, ignore_dimension_errors, delim, qual);
-        }
-
-        /// <summary>
-        /// Read in a single CSV file into a datatable in memory
-        /// </summary>
-        /// <param name="filename"></param>
-        /// <param name="delim">The CSV field delimiter character.</param>
-        /// <param name="qual">The CSV text qualifier character.</param>
-        /// <returns>An data table of strings that were retrieved from the CSV file.</returns>
-        public static DataTable LoadDataTable(StreamReader stream, string[] headers, bool ignore_dimension_errors = true, char delim = CSV.DEFAULT_DELIMITER, char qual = CSV.DEFAULT_QUALIFIER)
-        {
-            using (CSVReader cr = new CSVReader(stream, delim, qual)) {
-                return cr.ReadAsDataTable(false, ignore_dimension_errors, headers);
-            }
-        }
-
-        /// <summary>
-        /// Read in a single CSV file as an array of objects
-        /// </summary>
-        /// <typeparam name="T">The type of objects to deserialize from this CSV.</typeparam>
-        /// <param name="stream">The stream to read.</param>
-        /// <param name="ignore_dimension_errors">Set to true if you wish to ignore rows that have a different number of columns.</param>
-        /// <param name="ignore_bad_columns">Set to true if you wish to ignore column headers that don't match up to object attributes.</param>
-        /// <param name="ignore_type_conversion_errors">Set to true if you wish to overlook elements in the CSV array that can't be properly converted.</param>
-        /// <param name="delim">The CSV field delimiter character.</param>
-        /// <param name="qual">The CSV text qualifier character.</param>
-        /// <returns>An array of objects that were retrieved from the CSV file.</returns>
-        public static List<T> LoadArray<T>(string filename, bool ignore_dimension_errors = true, bool ignore_bad_columns = true, bool ignore_type_conversion_errors = true, char delim = CSV.DEFAULT_DELIMITER, char qual = CSV.DEFAULT_QUALIFIER) where T : class, new()
-        {
-            return LoadArray<T>(new StreamReader(filename), ignore_dimension_errors, ignore_bad_columns, ignore_type_conversion_errors, delim, qual);
-        }
-
+        #region Shortcuts for static read calls
         /// <summary>
         /// Saves an array of objects to a CSV string in memory.
         /// </summary>
@@ -455,6 +490,7 @@ namespace CSVFile
             }
         }
 
+#if !PORTABLE
         /// <summary>
         /// Read in a single CSV file as an array of objects
         /// </summary>
@@ -472,27 +508,45 @@ namespace CSVFile
                 return cr.Deserialize<T>(ignore_dimension_errors, ignore_bad_columns, ignore_type_conversion_errors);
             }
         }
-#endregion
+#endif
+        #endregion
 
-#region Chopping a CSV file into chunks
+        #region Chopping a CSV file into chunks
+#if !PORTABLE
         /// <summary>
         /// Take a CSV file and chop it into multiple chunks of a specified maximum size.
         /// </summary>
-        /// <param name="infile"></param>
+        /// <param name="filename"></param>
+        /// <param name="out_folder"></param>
+        /// <param name="first_row_are_headers"></param>
+        /// <param name="max_lines_per_file"></param>
+        /// <param name="delim"></param>
+        /// <param name="qual"></param>
+        /// <returns></returns>
+        public static int ChopFile(string filename, string out_folder, bool first_row_are_headers, int max_lines_per_file, char delim = CSV.DEFAULT_DELIMITER, char qual = CSV.DEFAULT_QUALIFIER)
+        {
+            string file_prefix = Path.GetFileNameWithoutExtension(filename);
+            string ext = Path.GetExtension(filename);
+            return ChopFile(new StreamReader(filename), file_prefix, ext);
+        }
+
+        /// <summary>
+        /// Take a CSV file and chop it into multiple chunks of a specified maximum size.
+        /// </summary>
+        /// <param name="reader"></param>
         /// <param name="out_folder"></param>
         /// <param name="first_row_are_headers"></param>
         /// <param name="max_lines_per_file"></param>
         /// <returns>Number of files chopped</returns>
-        public static int ChopFile(string infile, string out_folder, bool first_row_are_headers, int max_lines_per_file, char delim = CSV.DEFAULT_DELIMITER, char qual = CSV.DEFAULT_QUALIFIER)
+        public static int ChopFile(StreamReader reader, string file_prefix, string ext, string out_folder, bool first_row_are_headers, int max_lines_per_file, char delim = CSV.DEFAULT_DELIMITER, char qual = CSV.DEFAULT_QUALIFIER)
         {
             int file_id = 1;
             int line_count = 0;
-            string file_prefix = Path.GetFileNameWithoutExtension(infile);
-            string ext = Path.GetExtension(infile);
+
             CSVWriter cw = null;
 
             // Read in lines from the file
-            using (CSVReader cr = new CSVReader(infile, delim, qual, first_row_are_headers)) {
+            using (CSVReader cr = new CSVReader(reader, delim, qual, first_row_are_headers)) {
 
                 // Okay, let's do the real work
                 foreach (string[] line in cr.Lines()) {
@@ -500,7 +554,7 @@ namespace CSVFile
                     // Do we need to create a file for writing?
                     if (cw == null) {
                         string fn = Path.Combine(out_folder, file_prefix + file_id.ToString() + ext);
-                        cw = new CSVWriter(fn, delim, qual);
+                        cw = new CSVWriter(reader, delim, qual);
                         if (first_row_are_headers) {
                             cw.WriteLine(cr.Headers);
                         }
@@ -527,6 +581,7 @@ namespace CSVFile
             }
             return file_id;
         }
-#endregion
+#endif
+        #endregion
     }
 }

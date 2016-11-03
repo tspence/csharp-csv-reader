@@ -17,15 +17,22 @@ namespace CSVTestSuite
     [TestClass]
     public class DataTableReaderTest
     {
+        const string source = "Name,Title,Phone\n" +
+            "JD,Doctor,x234\n" +
+            "Janitor,Janitor,x235\n" +
+            "\"Dr. Reed, Eliot\",Private Practice,x236\n" +
+            "Dr. Kelso,Chief of Medicine,x100";
+
+        const string source_embedded_newlines = "Name,Title,Phone\n" +
+            "JD,Doctor,x234\n" +
+            "Janitor,Janitor,x235\n" +
+            "\"Dr. Reed, \nEliot\",\"Private \"\"Practice\"\"\",x236\n" +
+            "Dr. Kelso,Chief of Medicine,x100";
+
+#if !PORTABLE
         [TestMethod]
         public void TestBasicDataTable()
         {
-            string source = "Name,Title,Phone\n" +
-                "JD,Doctor,x234\n" +
-                "Janitor,Janitor,x235\n" +
-                "\"Dr. Reed, Eliot\",Private Practice,x236\n" +
-                "Dr. Kelso,Chief of Medicine,x100";
-
             DataTable dt = CSV.LoadString(source, true, false);
             Assert.AreEqual(dt.Columns.Count, 3);
             Assert.AreEqual(dt.Rows.Count, 4);
@@ -46,13 +53,7 @@ namespace CSVTestSuite
         [TestMethod]
         public void TestDataTableWithEmbeddedNewlines()
         {
-            string source = "Name,Title,Phone\n" +
-                "JD,Doctor,x234\n" +
-                "Janitor,Janitor,x235\n" +
-                "\"Dr. Reed, \nEliot\",\"Private \"\"Practice\"\"\",x236\n" +
-                "Dr. Kelso,Chief of Medicine,x100";
-
-            DataTable dt = CSV.LoadString(source, true, false);
+            DataTable dt = CSV.LoadString(source_embedded_newlines, true, false);
             Assert.AreEqual(dt.Columns.Count, 3);
             Assert.AreEqual(dt.Rows.Count, 4);
             Assert.AreEqual(dt.Rows[0].ItemArray[0], "JD");
@@ -68,5 +69,63 @@ namespace CSVTestSuite
             Assert.AreEqual(dt.Rows[2].ItemArray[2], "x236");
             Assert.AreEqual(dt.Rows[3].ItemArray[2], "x100");
         }
+#endif
+
+#if PORTABLE
+        [TestMethod]
+        public void TestBasicDataTable()
+        {
+            var list = CSV.LoadString(source, true, false);
+
+            // Equivalent of "columns"
+            Assert.AreEqual(list[0].Length, 3);
+
+            // Equivalent of "rows" - includes header row
+            Assert.AreEqual(list.Count, 5);
+
+            // Test values
+            Assert.AreEqual(list[1][0], "JD");
+            Assert.AreEqual(list[2][0], "Janitor");
+            Assert.AreEqual(list[3][0], "Dr. Reed, Eliot");
+            Assert.AreEqual(list[4][0], "Dr. Kelso");
+            Assert.AreEqual(list[1][1], "Doctor");
+            Assert.AreEqual(list[2][1], "Janitor");
+            Assert.AreEqual(list[3][1], "Private Practice");
+            Assert.AreEqual(list[4][1], "Chief of Medicine");
+            Assert.AreEqual(list[1][2], "x234");
+            Assert.AreEqual(list[2][2], "x235");
+            Assert.AreEqual(list[3][2], "x236");
+            Assert.AreEqual(list[4][2], "x100");
+        }
+
+        [TestMethod]
+        public void TestDataTableWithEmbeddedNewlines()
+        {
+
+
+            var list = CSV.LoadString(source_embedded_newlines, true, false);
+
+            // Equivalent of "columns"
+            Assert.AreEqual(list[0].Length, 3);
+
+            // Equivalent of "rows"
+            Assert.AreEqual(list.Count, 5);
+
+            Assert.AreEqual(list[1][0], "JD");
+            Assert.AreEqual(list[2][0], "Janitor");
+            Assert.AreEqual(list[3][0], "Dr. Reed, \nEliot");
+            Assert.AreEqual(list[4][0], "Dr. Kelso");
+            Assert.AreEqual(list[1][1], "Doctor");
+            Assert.AreEqual(list[2][1], "Janitor");
+            Assert.AreEqual(list[3][1], "Private \"Practice\"");
+            Assert.AreEqual(list[4][1], "Chief of Medicine");
+            Assert.AreEqual(list[1][2], "x234");
+            Assert.AreEqual(list[2][2], "x235");
+            Assert.AreEqual(list[3][2], "x236");
+            Assert.AreEqual(list[4][2], "x100");
+        }
+#endif
+
+
     }
 }
