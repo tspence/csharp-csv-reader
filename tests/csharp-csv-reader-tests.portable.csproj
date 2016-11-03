@@ -62,12 +62,6 @@
   <ItemGroup>
     <Folder Include="Properties\" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\src\csharp-csv-reader.portable.csproj">
-      <Project>{e6c0735e-a722-4efd-82fa-38147200081d}</Project>
-      <Name>csharp-csv-reader.portable</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

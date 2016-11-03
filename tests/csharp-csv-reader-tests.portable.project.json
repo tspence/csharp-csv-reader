@@ -1,18 +1,30 @@
 {
-  "version": "1.0.0-*",
-  "testRunner": "xunit",
+    "version": "1.0.0-*",
+    "testRunner": "nunit",
     "dependencies": {
-        "NETStandard.Library": "1.6.0",
+        "NETStandard.Library": "1.6.0"
     },
     "frameworks": {
         "netcoreapp1.0": {
             "imports": [
                 "dotnet54",
+                "net45",
                 "portable-net45+win8"
             ]
+        },
+        "net45": {
+            "frameworkAssemblies": {
+                "System": "*",
+                "System.Core": "*",
+                "System.Data": "*",
+                "System.XML": "*"
+            }
         }
     },
     "buildOptions": {
         "define": [ "DOTNETCORE" ]
+    },
+    "runtimes": {
+        "win": {}
     }
 }
