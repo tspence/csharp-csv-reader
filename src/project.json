@@ -1,4 +1,20 @@
 ﻿{
+	"version": "1.2.2-*",
+    
+	"title": "CSVFile",
+	"description": "A small 16KB library for reading CSV files, with few dependencies.",
+	"language": "en-US",
+	"authors": ["Ted Spence"],
+	"packOptions": {
+		"projectUrl": "http://github.com/tspence/csharp-csv-reader",
+		"tags": ["csv"],
+		"licenseUrl": "http://www.apache.org/licenses/LICENSE-2.0",
+		"repository": {
+			"type": "git",
+			"url": "git://github.com/tspence/csharp-csv-reader"
+		}
+	},
+    
 	"supports": {
 		"net46.app": {
 			

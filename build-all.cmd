@@ -10,6 +10,7 @@ C:\Windows\Microsoft.NET\Framework64\v4.0.30319\MSBuild.exe src\csharp-csv-reade
 ECHO ********** Building "dotnetcore" variants
 pushd .
 cd src
+dotnet restore
 dotnet.exe build -c debug
 dotnet.exe build -c release
 popd

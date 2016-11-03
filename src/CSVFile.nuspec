@@ -14,4 +14,14 @@
     <copyright>Copyright 2006 - 2016</copyright>
     <tags>csv parser</tags>
   </metadata>
+  <files>
+    <file src="bin\Release\net20\CSVFile.dll" target="lib\net20" />
+    <file src="bin\Release\net20\CSVFile.pdb" target="lib\net20" />
+    <file src="bin\Release\net35\CSVFile.dll" target="lib\net35" />
+    <file src="bin\Release\net35\CSVFile.pdb" target="lib\net35" />
+    <file src="bin\Release\net40\CSVFile.dll" target="lib\net40" />
+    <file src="bin\Release\net40\CSVFile.pdb" target="lib\net40" />
+    <file src="bin\Debug\dotnet\src.dll" target="lib\net40" />
+    <file src="bin\Debug\dotnet\src.pdb" target="lib\net40" />
+  </files>
 </package>
