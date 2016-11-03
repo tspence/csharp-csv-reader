@@ -106,8 +106,13 @@ namespace CSVFile
         {
             // Extract information about the type we're writing to disk
             Type list_type = typeof(T);
-            FieldInfo[] filist = list_type.GetFields();
-            PropertyInfo[] pilist = list_type.GetProperties();
+#if PORTABLE40
+            var filist = new List<FieldInfo>(list_type.GetTypeInfo().DeclaredFields);
+            var pilist = new List<PropertyInfo>(list_type.GetTypeInfo().DeclaredProperties);
+#else
+            var filist = list_type.GetFields();
+            var pilist = list_type.GetProperties();
+#endif
 
             // Produce headers
             if (save_column_names) {

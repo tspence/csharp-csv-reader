@@ -408,7 +408,7 @@ namespace CSVFile
         /// <returns></returns>
         public static List<string[]> LoadString(string source_string, bool first_row_are_headers, bool ignore_dimension_errors)
         {
-            byte[] byteArray = Encoding.ASCII.GetBytes(source_string);
+            byte[] byteArray = Encoding.UTF8.GetBytes(source_string);
             MemoryStream stream = new MemoryStream(byteArray);
             var results = new List<string[]>();
             using (CSVReader cr = new CSVReader(new StreamReader(stream))) {
