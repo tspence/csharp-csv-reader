@@ -17,6 +17,7 @@ namespace CSVTestSuite
     [TestClass]
     public class ChopTest
     {
+#if !PORTABLE
         [TestMethod]
         public void TestChoppingFiles()
         {
@@ -118,5 +119,6 @@ namespace CSVTestSuite
             Directory.Delete(dirname, true);
             File.Delete(sourcefile);
         }
+#endif
     }
 }

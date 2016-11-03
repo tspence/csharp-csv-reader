@@ -5,10 +5,11 @@
  */
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.IO;
+#if !PORTABLE
 using System.Data;
+#endif
 using System.Reflection;
 using System.ComponentModel;
 
@@ -54,6 +55,7 @@ namespace CSVFile
             }
         }
 
+#if !PORTABLE
         /// <summary>
         /// Initialize a new CSV file structure to write to disk
         /// </summary>
@@ -66,6 +68,7 @@ namespace CSVFile
                 Headers = NextLine();
             }
         }
+#endif
         #endregion
 
         #region Iterate through a CSV File
@@ -117,6 +120,7 @@ namespace CSVFile
         #endregion
 
         #region Read a file into a data table
+#if !PORTABLE
         /// <summary>
         /// Read this file into a data table in memory
         /// </summary>
@@ -181,6 +185,7 @@ namespace CSVFile
             // Here's your data table
             return dt;
         }
+#endif
         #endregion
 
         #region Disposables
@@ -189,12 +194,15 @@ namespace CSVFile
         /// </summary>
         public void Dispose()
         {
+#if !PORTABLE
             _instream.Close();
+#endif
             _instream.Dispose();
         }
         #endregion
 
-        #region Deserialization
+#region Deserialization
+#if !PORTABLE
         /// <summary>
         /// Deserialize a CSV file into a list of typed objects
         /// </summary>
@@ -301,6 +309,7 @@ namespace CSVFile
             // Here's your array!
             return result;
         }
+#endif
         #endregion
     }
 }

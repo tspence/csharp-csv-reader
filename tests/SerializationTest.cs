@@ -16,6 +16,7 @@ namespace CSVTestSuite
     [TestClass]
     public class SerializationTest
     {
+#if !PORTABLE
         public class TestClassOne
         {
             public string TestString;
@@ -82,7 +83,12 @@ namespace CSVTestSuite
             list.Add(new TestClassTwo() { FirstColumn = @"hi3 says, ""Hi Three!""", SecondColumn = 56, ThirdColumn = EnumTestType.Third });
 
             // Serialize to a CSV string
+#if (DOTNET20 || DOTNET35)
+            string csv = CSV.WriteToString(list, true);
+#else
             string csv = list.WriteToString(true);
+#endif
+
 
             // Deserialize back from a CSV string - should not throw any errors!
             byte[] byteArray = Encoding.ASCII.GetBytes(csv);
@@ -96,5 +102,6 @@ namespace CSVTestSuite
                 Assert.AreEqual(list[i].ThirdColumn, newlist[i].ThirdColumn);
             }
         }
+#endif
     }
 }

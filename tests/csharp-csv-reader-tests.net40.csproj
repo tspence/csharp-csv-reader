@@ -20,7 +20,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;DOTNET40</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -28,7 +28,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>TRACE;DOTNET40</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -58,7 +58,7 @@
     <Compile Include="WriterTest.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CSVFile\CSVFile.csproj">
+    <ProjectReference Include="..\src\csharp-csv-reader.net40.csproj">
       <Project>{642DB878-9E42-4F7D-A001-7640FC9E63A6}</Project>
       <Name>CSVFile</Name>
     </ProjectReference>
