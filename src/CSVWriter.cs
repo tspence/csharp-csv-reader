@@ -106,7 +106,7 @@ namespace CSVFile
         {
             // Extract information about the type we're writing to disk
             Type list_type = typeof(T);
-#if PORTABLE40
+#if PORTABLE || PORTABLE40 || DOTNETCORE
             var filist = new List<FieldInfo>(list_type.GetTypeInfo().DeclaredFields);
             var pilist = new List<PropertyInfo>(list_type.GetTypeInfo().DeclaredProperties);
 #else

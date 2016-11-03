@@ -3,9 +3,6 @@
   "testRunner": "xunit",
     "dependencies": {
         "NETStandard.Library": "1.6.0",
-        "src": "1.0.0-*",
-        "xunit": "2.1.0",
-        "xunit.runner.console": "2.1.0"
     },
     "frameworks": {
         "netcoreapp1.0": {
