@@ -5,7 +5,6 @@
  */
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.IO;
 using System.Data;
@@ -160,7 +159,11 @@ namespace CSVFile
         /// </summary>
         /// <param name="dt"></param>
         /// <param name="fn"></param>
+#if DOTNET20
+        public static void SaveAsCSV(DataTable dt, string filename, bool save_column_names, char delim = DEFAULT_DELIMITER, char qual = DEFAULT_QUALIFIER)
+#else
         public static void SaveAsCSV(this DataTable dt, string filename, bool save_column_names, char delim = DEFAULT_DELIMITER, char qual = DEFAULT_QUALIFIER)
+#endif
         {
             using (StreamWriter sw = new StreamWriter(filename)) {
                 WriteToStream(dt, sw, save_column_names, delim, qual);
@@ -176,7 +179,11 @@ namespace CSVFile
         /// <param name="subject"></param>
         /// <param name="body"></param>
         /// <param name="?"></param>
+#if DOTNET20
+        public static void SendCsvAttachment(DataTable dt, string from_address, string to_address, string subject, string body, string smtp_host, string attachment_filename)
+#else
         public static void SendCsvAttachment(this DataTable dt, string from_address, string to_address, string subject, string body, string smtp_host, string attachment_filename)
+#endif
         {
             // Save this CSV to a string
             string csv = WriteToString(dt, true);
@@ -192,9 +199,14 @@ namespace CSVFile
             message.Attachments.Add(a);
 
             // Send the email
+#if DOTNET20
+            var smtp = new System.Net.Mail.SmtpClient(smtp_host);
+            smtp.Send(message);
+#else
             using (System.Net.Mail.SmtpClient smtp = new System.Net.Mail.SmtpClient(smtp_host)) {
                 smtp.Send(message);
             }
+#endif
         }
 
         /// <summary>
@@ -205,7 +217,11 @@ namespace CSVFile
         /// <param name="save_column_names">True if you wish the first line of the file to have column names</param>
         /// <param name="delim">The delimiter (comma, tab, pipe, etc) to separate fields</param>
         /// <param name="qual">The text qualifier (double-quote) that encapsulates fields that include delimiters</param>
+#if DOTNET20
+        public static void WriteToStream(DataTable dt, StreamWriter sw, bool save_column_names, char delim = DEFAULT_DELIMITER, char qual = DEFAULT_QUALIFIER)
+#else
         public static void WriteToStream(this DataTable dt, StreamWriter sw, bool save_column_names, char delim = DEFAULT_DELIMITER, char qual = DEFAULT_QUALIFIER)
+#endif
         {
             using (CSVWriter cw = new CSVWriter(sw, delim, qual)) {
                 cw.Write(dt, save_column_names);
@@ -220,7 +236,11 @@ namespace CSVFile
         /// <param name="save_column_names">True if you wish the first line of the file to have column names</param>
         /// <param name="delim">The delimiter (comma, tab, pipe, etc) to separate fields</param>
         /// <param name="qual">The text qualifier (double-quote) that encapsulates fields that include delimiters</param>
+#if DOTNET20
+        public static void WriteToStream<T>(IEnumerable<T> list, StreamWriter sw, bool save_column_names, char delim = DEFAULT_DELIMITER, char qual = DEFAULT_QUALIFIER)
+#else
         public static void WriteToStream<T>(this IEnumerable<T> list, StreamWriter sw, bool save_column_names, char delim = DEFAULT_DELIMITER, char qual = DEFAULT_QUALIFIER)
+#endif
         {
             using (CSVWriter cw = new CSVWriter(sw, delim, qual)) {
                 cw.WriteObjects(list, save_column_names);
@@ -235,7 +255,11 @@ namespace CSVFile
         /// <param name="save_column_names">True if you wish the first line of the file to have column names</param>
         /// <param name="delim">The delimiter (comma, tab, pipe, etc) to separate fields</param>
         /// <param name="qual">The text qualifier (double-quote) that encapsulates fields that include delimiters</param>
+#if DOTNET20
+        public static void WriteToStream<T>(IEnumerable<T> list, string filename, bool save_column_names, char delim = DEFAULT_DELIMITER, char qual = DEFAULT_QUALIFIER)
+#else
         public static void WriteToStream<T>(this IEnumerable<T> list, string filename, bool save_column_names, char delim = DEFAULT_DELIMITER, char qual = DEFAULT_QUALIFIER)
+#endif
         {
             using (StreamWriter sw = new StreamWriter(filename)) {
                 WriteToStream<T>(list, sw, save_column_names, delim, qual);
@@ -251,7 +275,11 @@ namespace CSVFile
         /// <param name="delim">The delimiter (comma, tab, pipe, etc) to separate fields</param>
         /// <param name="qual">The text qualifier (double-quote) that encapsulates fields that include delimiters</param>
         /// <returns>The CSV string representing the object array.</returns>
+#if DOTNET20
+        public static string WriteToString(DataTable dt, bool save_column_names, char delim = DEFAULT_DELIMITER, char qual = DEFAULT_QUALIFIER)
+#else
         public static string WriteToString(this DataTable dt, bool save_column_names, char delim = DEFAULT_DELIMITER, char qual = DEFAULT_QUALIFIER)
+#endif
         {
             using (var ms = new MemoryStream()) {
                 var sw = new StreamWriter(ms);
@@ -274,7 +302,11 @@ namespace CSVFile
         /// <param name="delim">The delimiter (comma, tab, pipe, etc) to separate fields</param>
         /// <param name="qual">The text qualifier (double-quote) that encapsulates fields that include delimiters</param>
         /// <returns>The CSV string representing the object array.</returns>
+#if DOTNET20
+        public static string WriteToString<T>(IEnumerable<T> list, bool save_column_names, char delim = DEFAULT_DELIMITER, char qual = DEFAULT_QUALIFIER)
+#else
         public static string WriteToString<T>(this IEnumerable<T> list, bool save_column_names, char delim = DEFAULT_DELIMITER, char qual = DEFAULT_QUALIFIER)
+#endif
         {
             using (var ms = new MemoryStream()) {
                 var sw = new StreamWriter(ms);
@@ -304,7 +336,11 @@ namespace CSVFile
                     if (s.Length > 0) {
 
                         // Does this string contain any risky characters?  Risky is defined as delim, qual, or newline
+#if DOTNET20
+                        if (force_qualifiers || (s.IndexOf(delimiter) >= 0) || (s.IndexOf(qualifier) >= 0) || s.Contains(Environment.NewLine)) {
+#else
                         if (force_qualifiers || s.Contains(delimiter) || s.Contains(qualifier) || s.Contains(Environment.NewLine)) {
+#endif
                             sb.Append(qualifier);
 
                             // Double up any qualifiers that may occur
@@ -324,9 +360,9 @@ namespace CSVFile
             sb.Length -= 1;
             return sb.ToString();
         }
-        #endregion
+#endregion
 
-        #region Shortcuts for static read calls
+#region Shortcuts for static read calls
         /// <summary>
         /// Read in a single CSV file into a datatable in memory
         /// </summary>
@@ -436,9 +472,9 @@ namespace CSVFile
                 return cr.Deserialize<T>(ignore_dimension_errors, ignore_bad_columns, ignore_type_conversion_errors);
             }
         }
-        #endregion
+#endregion
 
-        #region Chopping a CSV file into chunks
+#region Chopping a CSV file into chunks
         /// <summary>
         /// Take a CSV file and chop it into multiple chunks of a specified maximum size.
         /// </summary>
@@ -491,6 +527,6 @@ namespace CSVFile
             }
             return file_id;
         }
-        #endregion
+#endregion
     }
 }

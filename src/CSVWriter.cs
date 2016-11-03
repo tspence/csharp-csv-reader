@@ -5,7 +5,6 @@
  */
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.IO;
 using System.Data;
@@ -74,7 +73,7 @@ namespace CSVFile
         {
             // Write headers, if the caller requested we do so
             if (save_column_names) {
-                List<string> headers = new List<string>();
+                var headers = new List<object>();
                 foreach (DataColumn col in dt.Columns) {
                     headers.Add(col.ColumnName);
                 }
@@ -103,7 +102,7 @@ namespace CSVFile
 
             // Produce headers
             if (save_column_names) {
-                List<string> headers = new List<string>();
+                var headers = new List<object>();
                 foreach (FieldInfo fi in filist) {
                     headers.Add(fi.Name);
                 }
@@ -114,7 +113,7 @@ namespace CSVFile
             }
 
             // Iterate through all the objects
-            List<string> values = new List<string>();
+            var values = new List<object>();
             object val = null;
             foreach (T obj in list) {
 
