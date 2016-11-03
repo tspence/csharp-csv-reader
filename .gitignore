@@ -1,6 +1,5 @@
-CSVTestSuite/bin/
-CSVTestSuite/obj/
-CSVFile/obj/
-CSVFile/bin/
+bin
+obj
 *.suo
 *.nupkg
+*.user

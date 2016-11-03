@@ -1,7 +1,0 @@
-C:\git\develop\csharp-csv-reader\tests\obj\Debug\CSVTestSuite.dll
-C:\git\develop\csharp-csv-reader\tests\obj\Debug\CSVTestSuite.pdb
-C:\git\develop\csharp-csv-reader\tests\bin\Debug\CSVTestSuite.dll
-C:\git\develop\csharp-csv-reader\tests\bin\Debug\CSVTestSuite.pdb
-C:\git\develop\csharp-csv-reader\tests\bin\Debug\CSVFile.dll
-C:\git\develop\csharp-csv-reader\tests\bin\Debug\CSVFile.pdb
-C:\git\develop\csharp-csv-reader\tests\obj\Debug\csharp-csv-reader-tests.net35.csprojResolveAssemblyReference.cache

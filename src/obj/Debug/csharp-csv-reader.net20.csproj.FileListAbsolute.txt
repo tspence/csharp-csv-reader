@@ -1,5 +1,0 @@
-C:\git\develop\csharp-csv-reader\src\obj\Debug\csharp-csv-reader.net20.csprojResolveAssemblyReference.cache
-C:\git\develop\csharp-csv-reader\src\bin\Debug\CSVFile.dll
-C:\git\develop\csharp-csv-reader\src\bin\Debug\CSVFile.pdb
-C:\git\develop\csharp-csv-reader\src\obj\Debug\CSVFile.dll
-C:\git\develop\csharp-csv-reader\src\obj\Debug\CSVFile.pdb
