@@ -33,7 +33,8 @@
 	"frameworks": {
 		"dotnet": {
 			"buildOptions": {
-				"define": ["PORTABLE"]
+				"define": ["PORTABLE"],
+                "outputName": "CSVFile"
 			},
 			"imports": "portable-net452+win81"
 		}
