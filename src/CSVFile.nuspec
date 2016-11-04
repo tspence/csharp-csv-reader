@@ -1,17 +1,23 @@
 <?xml version="1.0"?>
 <package >
   <metadata>
-    <id>$id$</id>
-    <version>$version$</version>
-    <title>$title$</title>
-    <authors>$author$</authors>
-    <owners>$author$</owners>
+    <id>CSVFile</id>
+    <version>1.2.2</version>
+    <title>CSVFile</title>
+    <authors>Ted Spence</authors>
+    <owners>Ted Spence</owners>
     <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
     <projectUrl>https://github.com/tspence/csharp-csv-reader</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>$description$</description>
-    <releaseNotes>First version released as a NUGET package.</releaseNotes>
+    <description>A small 16KB library for processing CSV files.  Compatible with most dot net versions.</description>
+    <releaseNotes>Support for DotNet2.0, DotNet3.5, DotNet4.0, and portable DotNetCore built into nuget package.</releaseNotes>
     <copyright>Copyright 2006 - 2016</copyright>
     <tags>csv parser</tags>
   </metadata>
+  <files>
+    <file src="bin\Release\net20\*" target="lib\net20" />
+    <file src="bin\Release\net35\*" target="lib\net35" />
+    <file src="bin\Release\net40\*" target="lib\net40" />
+    <file src="bin\Release\dotnet\*" target="lib\dotnet" />
+  </files>
 </package>

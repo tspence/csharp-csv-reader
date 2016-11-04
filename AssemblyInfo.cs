@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("CSVFile")]
-[assembly: AssemblyDescription("Simple library for processing CSV files.")]
+[assembly: AssemblyDescription("A small 16KB library for processing CSV files.  Compatible with most dot net versions.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Ted Spence")]
 [assembly: AssemblyProduct("CSVFile")]

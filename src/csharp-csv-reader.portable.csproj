@@ -8,8 +8,8 @@
     <ProjectGuid>{E6C0735E-A722-4EFD-82FA-38147200081D}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>csharp_csv_reader.portable2</RootNamespace>
-    <AssemblyName>csharp-csv-reader.portable2</AssemblyName>
+    <RootNamespace>CSVFile</RootNamespace>
+    <AssemblyName>CSVFile</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -34,10 +34,6 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <ItemGroup>
-    <None Include="csharp-csv-reader.portable.project.json" />
-    <!-- A reference to the entire .NET Framework is automatically included -->
-  </ItemGroup>
   <ItemGroup>
     <Compile Include="..\AssemblyInfo.cs">
       <Link>AssemblyInfo.cs</Link>
