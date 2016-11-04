@@ -1,1 +1,0 @@
-..\..\nuget pack CSVfile.csproj -prop Configuration=Release
