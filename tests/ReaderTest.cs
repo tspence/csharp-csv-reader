@@ -7,16 +7,16 @@ using System;
 using System.Text;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using CSVFile;
 using System.IO;
 
 namespace CSVTestSuite
 {
-    [TestClass]
+    [TestFixture]
     public class ReaderTest
     {
-        [TestMethod]
+        [Test]
         public void TestBasicReader()
         {
             string source = "Name,Title,Phone\n" +
@@ -59,7 +59,7 @@ namespace CSVTestSuite
             }
         }
 
-        [TestMethod]
+        [Test]
         public void TestAlternateDelimiterQualifiers()
         {
             string source = "Name\tTitle\tPhone\n" +
