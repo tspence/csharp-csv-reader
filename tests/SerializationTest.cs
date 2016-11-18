@@ -7,13 +7,13 @@ using System;
 using System.Text;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using CSVFile;
 using System.IO;
 
 namespace CSVTestSuite
 {
-    [TestClass]
+    [TestFixture]
     public class SerializationTest
     {
 #if !PORTABLE
@@ -37,7 +37,7 @@ namespace CSVTestSuite
             public EnumTestType ThirdColumn;
         }
 
-        [TestMethod]
+        [Test]
         public void TestObjectSerialization()
         {
             // Deserialize an array to a list of objects!
@@ -74,7 +74,7 @@ namespace CSVTestSuite
             Assert.AreEqual(list[2].timestamp, new DateTime(1975, 6, 3));
         }
 
-        [TestMethod]
+        [Test]
         public void TestStructSerialization()
         {
             List<TestClassTwo> list = new List<TestClassTwo>();

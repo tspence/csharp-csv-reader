@@ -7,15 +7,15 @@ using System;
 using System.Text;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using CSVFile;
 
 namespace CSVTestSuite
 {
-    [TestClass]
+    [TestFixture]
     public class WriterTest
     {
-        [TestMethod]
+        [Test]
         public void TestForceQualifiers()
         {
             string[] array = new string[] { "one", "two", "three", "four, five" };

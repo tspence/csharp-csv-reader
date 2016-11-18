@@ -7,18 +7,18 @@ using System;
 using System.Text;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using System.IO;
 using CSVFile;
 using System.Data;
 
 namespace CSVTestSuite
 {
-    [TestClass]
+    [TestFixture]
     public class ChopTest
     {
 #if !PORTABLE
-        [TestMethod]
+        [Test]
         public void TestChoppingFiles()
         {
             string source = @"timestamp,TestString,SetComment,PropertyString,IntField,IntProperty
@@ -28,7 +28,7 @@ namespace CSVTestSuite
             DataTable dt = CSV.LoadString(source, true, false);
 
             // Save this string to a test file
-            string test_rootfn = Path.GetFileNameWithoutExtension(Path.GetTempFileName());
+            string test_rootfn = Path.GetTempFileName();
             string sourcefile = test_rootfn + ".csv";
             CSV.SaveAsCSV(dt, sourcefile, true);
 
@@ -64,7 +64,7 @@ namespace CSVTestSuite
             File.Delete(sourcefile);
         }
 
-        [TestMethod]
+        [Test]
         public void LargeChopTest()
         {
             string[] array_first = new string[] { "first", "two", "three", "four, five" };
@@ -87,7 +87,7 @@ namespace CSVTestSuite
             }
 
             // Save this string to a test file
-            string test_rootfn = Path.GetFileNameWithoutExtension(Path.GetTempFileName());
+            string test_rootfn = Path.GetTempFileName();
             string sourcefile = test_rootfn + ".csv";
             CSV.SaveAsCSV(dt, sourcefile, true);
 

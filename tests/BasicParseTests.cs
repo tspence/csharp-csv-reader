@@ -7,15 +7,15 @@ using System;
 using System.Text;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using CSVFile;
 
 namespace CSVTestSuite
 {
-    [TestClass]
+    [TestFixture]
     public class BasicParseTests
     {
-        [TestMethod]
+        [Test]
         public void ParseBasicCSV()
         {
             // Simplest test
@@ -47,7 +47,7 @@ namespace CSVTestSuite
             Assert.AreEqual(line[2], @"2012-08-15");
         }
 
-        [TestMethod]
+        [Test]
         public void ParseTSV()
         {
             // Basic TSV test
@@ -63,7 +63,7 @@ namespace CSVTestSuite
             Assert.AreEqual(line[4], "5");
         }
 
-        [TestMethod]
+        [Test]
         public void ParseTextQualifiedCSV()
         {
             string[] line = null;
@@ -112,7 +112,7 @@ namespace CSVTestSuite
             Assert.AreEqual(line[4], "six");
         }
 
-        [TestMethod]
+        [Test]
         public void TestFailingCSVLine()
         {
             string[] line = null;
@@ -134,7 +134,7 @@ namespace CSVTestSuite
         /// "english grammar" and include a space after the comma.  This can trip up algorithms that expect the text qualifier
         /// to be the first character after a delimiter.
         /// </summary>
-        [TestMethod]
+        [Test]
         public void ParseTextQualifiedCSVWithSpacing()
         {
             string[] line = null;
