@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{642DB878-9E42-4F7D-A001-7640FC9E63A6}</ProjectGuid>
+    <ProjectGuid>{6E72622B-03F6-4C09-8B81-47C011C5FF8E}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>CSVFile</RootNamespace>
