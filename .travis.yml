@@ -8,4 +8,3 @@ script:
   - mono ./testrunner/NUnit.Runners.3.6.0/tools/nunit-console.exe ./tests/bin/Debug/CSVTestSuite.net20.dll
   - mono ./testrunner/NUnit.Runners.3.6.0/tools/nunit-console.exe ./tests/bin/Debug/CSVTestSuite.net35.dll
   - mono ./testrunner/NUnit.Runners.3.6.0/tools/nunit-console.exe ./tests/bin/Debug/CSVTestSuite.net40.dll
-	  
