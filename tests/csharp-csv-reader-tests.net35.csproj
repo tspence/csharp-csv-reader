@@ -61,7 +61,7 @@
     <Reference Include="System.Data" />
     <Reference Include="System.XML" />
     <Reference Include="NUnit">
-        <HintPath>.\nunit</HintPath>
+        <HintPath>..\nunit</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
