@@ -28,12 +28,12 @@ namespace CSVTestSuite
             DataTable dt = CSV.LoadString(source, true, false);
 
             // Save this string to a test file
-            string test_rootfn = Path.Combine(System.IO.Path.GetTempPath(), Guid.NewGuid().ToString());
+            string test_rootfn = Guid.NewGuid().ToString();
             string sourcefile = test_rootfn + ".csv";
             CSV.SaveAsCSV(dt, sourcefile, true);
 
             // Create an empty test folder
-            string dirname = Path.GetDirectoryName(test_rootfn) + Guid.NewGuid().ToString();
+            string dirname = Guid.NewGuid().ToString();
             Directory.CreateDirectory(dirname);
 
             // Chop this file into one-line chunks
@@ -87,12 +87,12 @@ namespace CSVTestSuite
             }
 
             // Save this string to a test file
-            string test_rootfn = Path.Combine(System.IO.Path.GetTempPath(), Guid.NewGuid().ToString());
+            string test_rootfn = Guid.NewGuid().ToString();
             string sourcefile = test_rootfn + ".csv";
             CSV.SaveAsCSV(dt, sourcefile, true);
 
             // Create an empty test folder
-            string dirname = Path.GetDirectoryName(test_rootfn) + Guid.NewGuid().ToString();
+            string dirname = Guid.NewGuid().ToString();
             Directory.CreateDirectory(dirname);
 
             // Chop this file into one-line chunks
