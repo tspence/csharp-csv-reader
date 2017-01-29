@@ -28,7 +28,7 @@ namespace CSVTestSuite
             DataTable dt = CSV.LoadString(source, true, false);
 
             // Save this string to a test file
-            string test_rootfn = Path.GetTempFileName();
+            string test_rootfn = Path.Combine(System.IO.Path.GetTempPath(), Guid.NewGuid().ToString());
             string sourcefile = test_rootfn + ".csv";
             CSV.SaveAsCSV(dt, sourcefile, true);
 
@@ -87,7 +87,7 @@ namespace CSVTestSuite
             }
 
             // Save this string to a test file
-            string test_rootfn = Path.GetTempFileName();
+            string test_rootfn = Path.Combine(System.IO.Path.GetTempPath(), Guid.NewGuid().ToString());
             string sourcefile = test_rootfn + ".csv";
             CSV.SaveAsCSV(dt, sourcefile, true);
 

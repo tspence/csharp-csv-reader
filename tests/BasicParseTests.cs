@@ -16,12 +16,6 @@ namespace CSVTestSuite
     public class BasicParseTests
     {
         [Test]
-        public void TestBasicFailure()
-        {
-            Assert.Fail("This is a test to see if I can get errors from Travis");
-        }
-
-        [Test]
         public void ParseBasicCSV()
         {
             // Simplest test
