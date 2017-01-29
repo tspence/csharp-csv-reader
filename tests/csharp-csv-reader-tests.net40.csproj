@@ -39,7 +39,10 @@
     </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.XML" />
-  </ItemGroup>
+    <Reference Include="NUnit">
+        <HintPath>.\nunit</HintPath>
+    </Reference>
+    </ItemGroup>
   <ItemGroup>
     <CodeAnalysisDependentAssemblyPaths Condition=" '$(VS100COMNTOOLS)' != '' " Include="$(VS100COMNTOOLS)..\IDE\PrivateAssemblies">
       <Visible>False</Visible>

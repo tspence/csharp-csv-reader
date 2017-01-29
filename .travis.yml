@@ -2,7 +2,7 @@ language: csharp
 solution: csharp-csv-reader.sln
 install:
   - nuget restore csharp-csv-reader.sln
-  - nuget install NUnit -Version 3.6.0
+  - nuget install NUnit -Version 3.6.0 -OutputDirectory nunit
   - nuget install NUnit.Console -Version 3.6.0 -OutputDirectory testrunner
 script:
   - xbuild /p:Configuration=Debug csharp-csv-reader.sln
