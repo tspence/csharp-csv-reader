@@ -201,7 +201,7 @@ namespace CSVFile
         }
         #endregion
 
-#region Deserialization
+        #region Deserialization
 #if !PORTABLE
         /// <summary>
         /// Deserialize a CSV file into a list of typed objects

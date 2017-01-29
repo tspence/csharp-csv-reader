@@ -6,11 +6,11 @@
     <ProductVersion>
     </ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{A9D3121A-33C8-4D13-ACE4-61915508E24B}</ProjectGuid>
+    <ProjectGuid>{E921EF27-2A93-4FA9-820E-741A420DA5A5}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>CSVTestSuite</RootNamespace>
-    <AssemblyName>CSVTestSuite</AssemblyName>
+    <AssemblyName>CSVTestSuite.net35</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
