@@ -6,6 +6,6 @@ install:
   - nuget install NUnit.Console -Version 3.6.0 -OutputDirectory testrunner
 script:
   - xbuild /p:Configuration=Debug csharp-csv-reader.sln
-  - mono ./testrunner/NUnit.Console.3.6.0/tools/nunit3-console.exe ./tests/bin/Debug/CSVTestSuite.net20.dll
-  - mono ./testrunner/NUnit.Console.3.6.0/tools/nunit3-console.exe ./tests/bin/Debug/CSVTestSuite.net35.dll
-  - mono ./testrunner/NUnit.Console.3.6.0/tools/nunit3-console.exe ./tests/bin/Debug/CSVTestSuite.net40.dll
+  - mono ./testrunner/NUnit.ConsoleRunner.3.6.0/tools/nunit3-console.exe ./tests/bin/Debug/CSVTestSuite.net20.dll
+  - mono ./testrunner/NUnit.ConsoleRunner.3.6.0/tools/nunit3-console.exe ./tests/bin/Debug/CSVTestSuite.net35.dll
+  - mono ./testrunner/NUnit.ConsoleRunner.3.6.0/tools/nunit3-console.exe ./tests/bin/Debug/CSVTestSuite.net40.dll
