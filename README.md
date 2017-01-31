@@ -7,6 +7,9 @@ Install via NUGET:
 Download latest binaries directly:
 * https://github.com/tspence/csharp-csv-reader/raw/master/Releases/csharp-csv-reader-1.2.zip
 
+Integration Tests:
+* ![](https://api.travis-ci.org/tspence/csharp-csv-reader.svg?branch=master)
+
 # Why use CSharp CSV Reader?
 A few reasons:
 * Full compatibility all the way back to C# 2.0 - easy to integrate into legacy projects.
