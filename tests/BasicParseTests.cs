@@ -16,6 +16,12 @@ namespace CSVTestSuite
     public class BasicParseTests
     {
         [Test]
+        public void IntentionalFailure()
+        {
+            Assert.Fail("Showing everyone how this works");
+        }
+
+        [Test]
         public void ParseBasicCSV()
         {
             // Simplest test
