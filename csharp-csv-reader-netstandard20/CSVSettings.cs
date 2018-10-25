@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace CSVFile
 {
@@ -42,16 +43,46 @@ namespace CSVFile
         /// <summary>
         /// The first line of the CSV file will include the names of each field.
         /// </summary>
-        public bool IncludeHeaderRow { get; set; }
+        public bool HeaderRowIncluded { get; set; }
+
+        /// <summary>
+        /// If HeaderRowIncluded is false, use these values for the headers
+        /// </summary>
+        public List<string> AssumedHeaders { get; set; }
+
+        /// <summary>
+        /// Set this value to true to allow parsing for files where each row has a different number of fields
+        /// </summary>
+        public bool IgnoreDimensionErrors { get; set; }
 
         /// <summary>
         /// Standard comma-separated value (CSV) file settings
         /// </summary>
-        public static readonly CSVSettings CSV = new CSVSettings() { FieldDelimiter = ',', TextQualifier = '"', ForceQualifiers = false, LineSeparator = Environment.NewLine, NullToken = null, AllowNull = false };
+        public static readonly CSVSettings CSV = new CSVSettings() { 
+            FieldDelimiter = ',', 
+            TextQualifier = '"', 
+            ForceQualifiers = false, 
+            LineSeparator = Environment.NewLine, 
+            NullToken = null, 
+            AllowNull = false,
+            IgnoreDimensionErrors = true,
+            AssumedHeaders = null,
+            HeaderRowIncluded = true
+        };
 
         /// <summary>
         /// Standard tab-separated value (TSV) file settings
         /// </summary>
-        public static readonly CSVSettings TSV = new CSVSettings() { FieldDelimiter = '\t', TextQualifier = '"', ForceQualifiers = false, LineSeparator = Environment.NewLine, NullToken = null, AllowNull = false };
+        public static readonly CSVSettings TSV = new CSVSettings() { 
+            FieldDelimiter = '\t', 
+            TextQualifier = '"', 
+            ForceQualifiers = false, 
+            LineSeparator = Environment.NewLine, 
+            NullToken = null, 
+            AllowNull = false,
+            IgnoreDimensionErrors = true,
+            AssumedHeaders = null,
+            HeaderRowIncluded = true
+        };
     }
 }

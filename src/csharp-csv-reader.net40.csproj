@@ -46,6 +46,18 @@
     <Compile Include="CSV.cs" />
     <Compile Include="CSVReader.cs" />
     <Compile Include="CSVWriter.cs" />
+    <Compile Include="..\csharp-csv-reader-netstandard20\CSVStream.cs">
+      <Link>CSVStream.cs</Link>
+    </Compile>
+    <Compile Include="..\csharp-csv-reader-netstandard20\CSVDataTable.cs">
+      <Link>CSVDataTable.cs</Link>
+    </Compile>
+    <Compile Include="..\csharp-csv-reader-netstandard20\CSVSettings.cs">
+      <Link>CSVSettings.cs</Link>
+    </Compile>
+    <Compile Include="..\csharp-csv-reader-netstandard20\CSVConstants.cs">
+      <Link>CSVConstants.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />

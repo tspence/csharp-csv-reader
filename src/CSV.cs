@@ -1,5 +1,5 @@
 ﻿/*
- * 2006 - 2016 Ted Spence, http://tedspence.com
+ * 2006 - 2018 Ted Spence, http://tedspence.com
  * License: http://www.apache.org/licenses/LICENSE-2.0 
  * Home page: https://github.com/tspence/csharp-csv-reader
  */
@@ -8,8 +8,19 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 
+#if DOTNET20
+// you need this once (only), and it must be in this namespace
+namespace System.Runtime.CompilerServices
+{
+    [AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Class
+         | AttributeTargets.Method)]
+    public sealed class ExtensionAttribute : Attribute { }
+}
+#endif
+
 namespace CSVFile
 {
+
     /// <summary>
     /// Root class that contains static functions for straightforward CSV parsing
     /// </summary>
@@ -197,8 +208,128 @@ namespace CSVFile
         public static string ToCSVString(this IEnumerable<object> row, CSVSettings settings = null)
         {
             StringBuilder sb = new StringBuilder();
-            SerializeCSVRow(sb, row, settings);
+            AppendCSVRow(sb, row, settings);
             return sb.ToString();
+        }
+
+        /// <summary>
+        /// Serialize an array of objects to CSV format
+        /// </summary>
+        /// <typeparam name="T">The type of objects to serialize from this CSV</typeparam>
+        /// <param name="list">The array of objects to serialize</param>
+        /// <param name="settings">The CSV settings to use when exporting this array (Default: CSV)</param>
+        /// <returns>The completed CSV string representing one line per element in list</returns>
+        public static string Serialize<T>(IEnumerable<T> list, CSVSettings settings = null) where T : class, new()
+        {
+            // Use CSV as default.
+            if (settings == null) settings = CSVSettings.CSV;
+
+            // What type are we using?
+            var list_type = typeof(T);
+            var filist = list_type.GetFields();
+            var pilist = list_type.GetProperties();
+
+            // Okay, let's begin
+            StringBuilder sb = new StringBuilder();
+
+            // Did the caller want the header row?
+            if (settings.HeaderRowIncluded)
+            {
+                sb.AppendCSVHeader(typeof(T), settings);
+            }
+
+            // Let's go through the array of objects
+            // Iterate through all the objects
+            var values = new List<object>();
+            foreach (T obj in list)
+            {
+                sb.AppendAsCSV<T>(obj, settings);
+            }
+
+            // Here's your data serialized in CSV format
+            return sb.ToString();
+        }
+        #endregion
+
+        #region StringBuilder append functions
+        /// <summary>
+        /// Add a CSV Header line to a StringBuilder
+        /// </summary>
+        /// <param name="sb">The stringbuilder to append data</param>
+        /// <param name="type">The type of data to emit a header</param>
+        /// <param name="settings">The CSV settings to use when exporting this array (Default: CSV)</param>
+        public static void AppendCSVHeader(this StringBuilder sb, Type type, CSVSettings settings = null)
+        {
+            // Use CSV as default.
+            if (settings == null) settings = CSVSettings.CSV;
+
+            // Retrieve reflection information
+            var filist = type.GetFields();
+            var pilist = type.GetProperties();
+
+            // Gather information about headers
+            var headers = new List<object>();
+            foreach (var fi in filist)
+            {
+                headers.Add(fi.Name);
+            }
+            foreach (var pi in pilist)
+            {
+                headers.Add(pi.Name);
+            }
+            AppendCSVRow(sb, headers, settings);
+        }
+
+        /// <summary>
+        /// Appends a single object to a StringBuilder in CSV format as a single line
+        /// </summary>
+        /// <param name="sb">The stringbuilder to append data</param>
+        /// <param name="obj">The single object to append in CSV-line format</param>
+        /// <param name="settings">The CSV settings to use when exporting this array (Default: CSV)</param>
+        /// <typeparam name="T">The 1st type parameter.</typeparam>
+        public static void AppendAsCSV<T>(this StringBuilder sb, T obj, CSVSettings settings = null) where T : class, new()
+        {
+            // Skip any null objects
+            if (obj == null) return;
+
+            // Use CSV as default.
+            if (settings == null) settings = CSVSettings.CSV;
+
+            // Retrieve reflection information
+            var type = typeof(T);
+            var filist = type.GetFields();
+            var pilist = type.GetProperties();
+
+            // Retrieve all the fields and properties
+            List<object> values = new List<object>();
+            object val;
+            foreach (var fi in filist)
+            {
+                val = fi.GetValue(obj);
+                if (val == null)
+                {
+                    values.Add("");
+                }
+                else
+                {
+                    values.Add(val.ToString());
+                }
+            }
+            foreach (var pi in pilist)
+            {
+                val = pi.GetValue(obj, null);
+                if (val == null)
+                {
+                    values.Add("");
+                }
+                else
+                {
+                    values.Add(val.ToString());
+                }
+            }
+
+            // Output one line of CSV
+            AppendCSVRow(sb, values, settings);
         }
 
         /// <summary>
@@ -207,7 +338,7 @@ namespace CSVFile
         /// <param name="sb">The StringBuilder to append</param>
         /// <param name="row">The list of objects to append</param>
         /// <param name="settings">The CSV settings to use when exporting this array (Default: CSV)</param>
-        private static void SerializeCSVRow(this StringBuilder sb, IEnumerable<object> row, CSVSettings settings = null)
+        private static void AppendCSVRow(this StringBuilder sb, IEnumerable<object> row, CSVSettings settings = null)
         {
             // Use CSV as default.
             if (settings == null) settings = CSVSettings.CSV;
@@ -253,85 +384,6 @@ namespace CSVFile
             // Subtract the trailing delimiter so we don't inadvertently add an empty column at the end
             sb.Length -= 1;
         }
-
-        /// <summary>
-        /// Serialize an array of objects to CSV format
-        /// </summary>
-        /// <typeparam name="T">The type of objects to serialize from this CSV</typeparam>
-        /// <param name="list">The array of objects to serialize</param>
-        /// <param name="settings">The CSV settings to use when exporting this array (Default: CSV)</param>
-        /// <returns>The completed CSV string representing one line per element in list</returns>
-        public static string Serialize<T>(IEnumerable<T> list, CSVSettings settings = null) where T : class, new()
-        {            
-            // Use CSV as default.
-            if (settings == null) settings = CSVSettings.CSV;
-
-            // What type are we using?
-            var list_type = typeof(T);
-            var filist = list_type.GetFields();
-            var pilist = list_type.GetProperties();
-
-            // Okay, let's begin
-            StringBuilder sb = new StringBuilder();
-
-            // Did the caller want the header row?
-            if (settings.IncludeHeaderRow)
-            {
-                var headers = new List<object>();
-                foreach (var fi in filist)
-                {
-                    headers.Add(fi.Name);
-                }
-                foreach (var pi in pilist)
-                {
-                    headers.Add(pi.Name);
-                }
-                SerializeCSVRow(sb, headers, settings);
-            }
-
-            // Let's go through the array of objects
-            // Iterate through all the objects
-            var values = new List<object>();
-            object val = null;
-            foreach (T obj in list)
-            {
-                // Skip any null objects
-                if (obj == null) continue;
-
-                // Retrieve all the fields and properties
-                values.Clear();
-                foreach (var fi in filist)
-                {
-                    val = fi.GetValue(obj);
-                    if (val == null)
-                    {
-                        values.Add("");
-                    }
-                    else
-                    {
-                        values.Add(val.ToString());
-                    }
-                }
-                foreach (var pi in pilist)
-                {
-                    val = pi.GetValue(obj, null);
-                    if (val == null)
-                    {
-                        values.Add("");
-                    }
-                    else
-                    {
-                        values.Add(val.ToString());
-                    }
-                }
-
-                // Output one line of CSV
-                SerializeCSVRow(sb, values, settings);
-            }
-
-            // Here's your data serialized in CSV format
-            return sb.ToString();
-        }
-        #endregion
+#endregion
     }
 }

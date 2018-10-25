@@ -17,7 +17,7 @@ namespace CSVFile
 {
     public class CSVReader : IEnumerable<string[]>, IDisposable
     {
-        protected char _delimiter, _text_qualifier;
+        protected CSVSettings _settings;
 
         protected StreamReader _instream;
 
@@ -32,43 +32,24 @@ namespace CSVFile
         /// <summary>
         /// Construct a new CSV reader off a streamed source
         /// </summary>
-        public CSVReader(StreamReader source, char delim = CSV.DEFAULT_DELIMITER, char qual = CSV.DEFAULT_QUALIFIER, bool first_row_are_headers = false)
+        /// <param name="source">The stream source</param>
+        /// <param name="settings">The CSV settings to use for this reader (Default: CSV)</param>
+        public CSVReader(StreamReader source, CSVSettings settings = null)
         {
             _instream = source;
-            _delimiter = delim;
-            _text_qualifier = qual;
-            if (first_row_are_headers) {
-                Headers = NextLine();
-            }
-        }
+            _settings = settings;
+            if (_settings == null) _settings = CSVSettings.CSV;
 
-        /// <summary>
-        /// Construct a new CSV reader off a streamed source
-        /// </summary>
-        public CSVReader(Stream source, char delim = CSV.DEFAULT_DELIMITER, char qual = CSV.DEFAULT_QUALIFIER, bool first_row_are_headers = false)
-        {
-            _instream = new StreamReader(source);
-            _delimiter = delim;
-            _text_qualifier = qual;
-            if (first_row_are_headers) {
+            // Do we need to parse headers?
+            if (_settings.HeaderRowIncluded)
+            {
                 Headers = NextLine();
             }
-        }
-
-#if !PORTABLE
-        /// <summary>
-        /// Initialize a new CSV file structure to write to disk
-        /// </summary>
-        public CSVReader(string filename, char delim = CSV.DEFAULT_DELIMITER, char qual = CSV.DEFAULT_QUALIFIER, bool first_row_are_headers = false)
-        {
-            _instream = new StreamReader(filename);
-            _delimiter = delim;
-            _text_qualifier = qual;
-            if (first_row_are_headers) {
-                Headers = NextLine();
+            else
+            {
+                Headers = _settings.AssumedHeaders.ToArray();
             }
         }
-#endif
         #endregion
 
         #region Iterate through a CSV File
@@ -115,7 +96,7 @@ namespace CSVFile
         /// <returns>One line from the file.</returns>
         public string[] NextLine()
         {
-            return CSV.ParseMultiLine(_instream, _delimiter, _text_qualifier);
+            return CSV.ParseMultiLine(_instream, _settings);
         }
         #endregion
 
@@ -124,31 +105,30 @@ namespace CSVFile
         /// <summary>
         /// Read this file into a data table in memory
         /// </summary>
-        /// <param name="first_row_are_headers"></param>
         /// <returns></returns>
-        public DataTable ReadAsDataTable(bool first_row_are_headers, bool ignore_dimension_errors, string[] headers = null)
+        public DataTable ReadAsDataTable()
         {
             DataTable dt = new DataTable();
 
             // Read in the first line
-            string[] first_line = CSV.ParseMultiLine(_instream, _delimiter, _text_qualifier);
+            string[] first_line = CSV.ParseMultiLine(_instream, _settings);
             int num_columns = first_line.Length;
 
             // File contains column names - so name each column properly
-            if (first_row_are_headers) {
+            if (_settings.HeaderRowIncluded) {
                 foreach (string header in first_line) {
                     dt.Columns.Add(new DataColumn(header, typeof(string)));
                 }
 
             // Okay, just create some untitled columns
             } else {
-                if (headers == null) {
+                if (Headers == null) {
                     for (int i = 0; i < num_columns; i++) {
                         dt.Columns.Add(new DataColumn(String.Format("Column{0}", i), typeof(string)));
                     }
                 } else {
-                    for (int i = 0; i < headers.Length; i++) {
-                        dt.Columns.Add(new DataColumn(headers[i], typeof(string)));
+                    for (int i = 0; i < Headers.Length; i++) {
+                        dt.Columns.Add(new DataColumn(Headers[i], typeof(string)));
                     }
                 }
 
@@ -162,7 +142,7 @@ namespace CSVFile
 
                 // Does this line match the length of the first line?
                 if (line.Length != num_columns) {
-                    if (!ignore_dimension_errors) {
+                    if (!_settings.IgnoreDimensionErrors) {
                         throw new Exception(String.Format("Line #{0} contains {1} columns; expected {2}", row_num, line.Length, num_columns));
                     } else {
 
@@ -214,7 +194,7 @@ namespace CSVFile
             Type return_type = typeof(T);
 
             // Read in the first line - we have to have headers!
-            string[] first_line = CSV.ParseMultiLine(_instream, _delimiter, _text_qualifier);
+            string[] first_line = CSV.ParseMultiLine(_instream, _settings);
             if (first_line == null) return result;
             int num_columns = first_line.Length;
 
@@ -318,49 +298,54 @@ namespace CSVFile
         /// <summary>
         /// Take a CSV file and chop it into multiple chunks of a specified maximum size.
         /// </summary>
-        /// <param name="filename"></param>
-        /// <param name="out_folder"></param>
-        /// <param name="first_row_are_headers"></param>
-        /// <param name="max_lines_per_file"></param>
+        /// <param name="filename">The input filename to chop</param>
+        /// <param name="out_folder">The folder where the chopped CSV will be saved</param>
+        /// <param name="maxLinesPerFile">The maximum number of lines to put into each file</param>
+        /// <param name="settings">The CSV settings to use when chopping this file into chunks (Default: CSV)</param>
         /// <returns>Number of files chopped</returns>
-        public static int ChopFile(string filename, string out_folder, bool first_row_are_headers, int max_lines_per_file, char delim = CSV.DEFAULT_DELIMITER, char qual = CSV.DEFAULT_QUALIFIER)
+        public static int ChopFile(string filename, string out_folder, int maxLinesPerFile, CSVSettings settings = null)
         {
             int file_id = 1;
             int line_count = 0;
             string file_prefix = Path.GetFileNameWithoutExtension(filename);
             string ext = Path.GetExtension(filename);
             CSVWriter cw = null;
+            StreamWriter sw = null;
 
             // Read in lines from the file
-            using (CSVReader cr = new CSVReader(filename, delim, qual, first_row_are_headers))
+            using (var sr = new StreamReader(filename))
             {
-
-                // Okay, let's do the real work
-                foreach (string[] line in cr.Lines())
+                using (CSVReader cr = new CSVReader(sr, settings))
                 {
 
-                    // Do we need to create a file for writing?
-                    if (cw == null)
+                    // Okay, let's do the real work
+                    foreach (string[] line in cr.Lines())
                     {
-                        string fn = Path.Combine(out_folder, file_prefix + file_id.ToString() + ext);
-                        cw = new CSVWriter(fn, delim, qual);
-                        if (first_row_are_headers)
+
+                        // Do we need to create a file for writing?
+                        if (cw == null)
                         {
-                            cw.WriteLine(cr.Headers);
+                            string fn = Path.Combine(out_folder, file_prefix + file_id.ToString() + ext);
+                            sw = new StreamWriter(fn);
+                            cw = new CSVWriter(sw, settings);
+                            if (settings.HeaderRowIncluded)
+                            {
+                                cw.WriteLine(cr.Headers);
+                            }
                         }
-                    }
 
-                    // Write one line
-                    cw.WriteLine(line);
+                        // Write one line
+                        cw.WriteLine(line);
 
-                    // Count lines - close the file if done
-                    line_count++;
-                    if (line_count >= max_lines_per_file)
-                    {
-                        cw.Dispose();
-                        cw = null;
-                        file_id++;
-                        line_count = 0;
+                        // Count lines - close the file if done
+                        line_count++;
+                        if (line_count >= maxLinesPerFile)
+                        {
+                            cw.Dispose();
+                            cw = null;
+                            file_id++;
+                            line_count = 0;
+                        }
                     }
                 }
             }
