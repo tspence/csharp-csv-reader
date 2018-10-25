@@ -46,21 +46,15 @@
     <Compile Include="CSV.cs" />
     <Compile Include="CSVReader.cs" />
     <Compile Include="CSVWriter.cs" />
-    <Compile Include="..\csharp-csv-reader-netstandard20\CSVStream.cs">
-      <Link>CSVStream.cs</Link>
-    </Compile>
-    <Compile Include="..\csharp-csv-reader-netstandard20\CSVDataTable.cs">
-      <Link>CSVDataTable.cs</Link>
-    </Compile>
-    <Compile Include="..\csharp-csv-reader-netstandard20\CSVSettings.cs">
-      <Link>CSVSettings.cs</Link>
-    </Compile>
+    <Compile Include="CSVStream.cs" />
+    <Compile Include="CSVDataTable.cs" />
+    <Compile Include="CSVSettings.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
   </Target>

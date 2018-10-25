@@ -196,6 +196,25 @@ namespace CSVFile
             list.Add(s);
             work.Length = 0;
         }
+
+        /// <summary>
+        /// Deserialize a CSV file into a list of typed objects
+        /// </summary>
+        /// <typeparam name="T">The type of objects to deserialize</typeparam>
+        /// <param name="settings">The CSV settings to use when parsing the source (Default: CSV)</param>
+        /// <param name="source">The source CSV to deserialize</param>
+        /// <returns></returns>
+        public static List<T> Deserialize<T>(string source, CSVSettings settings = null) where T : class, new()
+        {
+            byte[] byteArray = Encoding.UTF8.GetBytes(source);
+            using (var stream = new MemoryStream(byteArray))
+            {
+                using (CSVReader cr = new CSVReader(new StreamReader(stream), settings))
+                {
+                    return cr.Deserialize<T>();
+                }
+            }
+        }
         #endregion
 
         #region CSV Output Functions
@@ -223,11 +242,6 @@ namespace CSVFile
         {
             // Use CSV as default.
             if (settings == null) settings = CSVSettings.CSV;
-
-            // What type are we using?
-            var list_type = typeof(T);
-            var filist = list_type.GetFields();
-            var pilist = list_type.GetProperties();
 
             // Okay, let's begin
             StringBuilder sb = new StringBuilder();

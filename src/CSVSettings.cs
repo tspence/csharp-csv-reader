@@ -56,6 +56,11 @@ namespace CSVFile
         public bool IgnoreDimensionErrors { get; set; }
 
         /// <summary>
+        /// Set this value to true to ignore header errors when deserializing
+        /// </summary>
+        public bool IgnoreHeaderErrors { get; set; }
+
+        /// <summary>
         /// Standard comma-separated value (CSV) file settings
         /// </summary>
         public static readonly CSVSettings CSV = new CSVSettings() { 

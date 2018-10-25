@@ -19,9 +19,17 @@ namespace CSVTestSuite
         public void TestForceQualifiers()
         {
             string[] array = new string[] { "one", "two", "three", "four, five" };
-            string s = CSV.Output(array);
+            string s = array.ToCSVString();
             Assert.AreEqual(s, "one,two,three,\"four, five\"");
-            s = CSV.Output(array, '|', '\'', true);
+
+            // Now construct new settings
+            var settings = new CSVSettings()
+            {
+                FieldDelimiter = '|',
+                TextQualifier = '\'',
+                ForceQualifiers = true
+            };
+            s = array.ToCSVString(settings);
             Assert.AreEqual(s, "'one'|'two'|'three'|'four, five'");
         }
     }

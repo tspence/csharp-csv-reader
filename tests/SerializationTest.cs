@@ -83,12 +83,10 @@ namespace CSVTestSuite
             list.Add(new TestClassTwo() { FirstColumn = @"hi3 says, ""Hi Three!""", SecondColumn = 56, ThirdColumn = EnumTestType.Third });
 
             // Serialize to a CSV string
-            string csv = CSV.WriteToString(list, true);
+            string csv = CSV.Serialize<TestClassTwo>(list);
 
             // Deserialize back from a CSV string - should not throw any errors!
-            byte[] byteArray = Encoding.ASCII.GetBytes(csv);
-            MemoryStream stream = new MemoryStream(byteArray);
-            List<TestClassTwo> newlist = CSV.LoadArray<TestClassTwo>(new StreamReader(stream), false, false, false);
+            List<TestClassTwo> newlist = CSV.Deserialize<TestClassTwo>(csv);
 
             // Compare original objects to new ones
             for (int i = 0; i < list.Count; i++) {

@@ -14,9 +14,12 @@ namespace CSVFile
         /// <param name="filename"></param>
         /// <param name="settings">The CSV settings to use when exporting this array (Default: CSV)</param>
         /// <returns>An data table of strings that were retrieved from the CSV file.</returns>
-        public static DataTable LoadDataTable(string filename, CSVSettings settings = null)
+        public static DataTable FromFile(string filename, CSVSettings settings = null)
         {
-            return LoadDataTable(new StreamReader(filename), settings);
+            using (var sr = new StreamReader(filename))
+            {
+                return FromStream(sr, settings);
+            }
         }
 
         /// <summary>
@@ -25,7 +28,7 @@ namespace CSVFile
         /// <param name="stream">The stream source from which to load the datatable.</param>
         /// <param name="settings">The CSV settings to use when exporting this array (Default: CSV)</param>
         /// <returns>An data table of strings that were retrieved from the CSV file.</returns>
-        public static DataTable LoadDataTable(StreamReader stream, CSVSettings settings = null)
+        public static DataTable FromStream(StreamReader stream, CSVSettings settings = null)
         {
             using (CSVReader cr = new CSVReader(stream, settings))
             {
@@ -39,7 +42,7 @@ namespace CSVFile
         /// <param name="source"></param>
         /// <param name="settings">The CSV settings to use when exporting this array (Default: CSV)</param>
         /// <returns></returns>
-        public static DataTable LoadDataTableFromString(string source, CSVSettings settings = null)
+        public static DataTable FromString(string source, CSVSettings settings = null)
         {
             byte[] byteArray = Encoding.UTF8.GetBytes(source);
             using (MemoryStream stream = new MemoryStream(byteArray))
@@ -101,9 +104,9 @@ namespace CSVFile
         /// <param name="filename"></param>
         /// <param name="settings">The CSV settings to use when exporting this DataTable (Default: CSV)</param>
 #if DOTNET20
-        public static void SaveAsCSV(DataTable dt, string filename, CSVSettings settings = null)
+        public static void WriteToFile(DataTable dt, string filename, CSVSettings settings = null)
 #else
-        public static void SaveAsCSV(this DataTable dt, string filename, CSVSettings settings = null)
+        public static void WriteToFile(this DataTable dt, string filename, CSVSettings settings = null)
 #endif
         {
             using (StreamWriter sw = new StreamWriter(filename))

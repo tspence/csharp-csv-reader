@@ -17,7 +17,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "csharp-csv-reader-tests.net
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "netstandard20", "netstandard20", "{0CDFDACD-6043-48E8-8AA3-7122461F7C7A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "csharp-csv-reader-netstandard20", "csharp-csv-reader-netstandard20\csharp-csv-reader-netstandard20.csproj", "{995D6132-FA95-4F8E-ACB1-6684A49704F8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "csharp-csv-reader-netstandard20", "src\csharp-csv-reader-netstandard20.csproj", "{0F146717-1EC7-41E4-9D8D-81B41BA5E3DD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "csharp-csv-reader-tests.netstandard20", "tests\csharp-csv-reader-tests.netstandard20\csharp-csv-reader-tests.netstandard20.csproj", "{D2022106-9E43-4DDA-822F-815ADFDB0E01}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -41,10 +43,14 @@ Global
 		{511DBAB5-4359-4FEF-A5C4-5580FF809FE8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{511DBAB5-4359-4FEF-A5C4-5580FF809FE8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{511DBAB5-4359-4FEF-A5C4-5580FF809FE8}.Release|Any CPU.Build.0 = Release|Any CPU
-		{995D6132-FA95-4F8E-ACB1-6684A49704F8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{995D6132-FA95-4F8E-ACB1-6684A49704F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{995D6132-FA95-4F8E-ACB1-6684A49704F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{995D6132-FA95-4F8E-ACB1-6684A49704F8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0F146717-1EC7-41E4-9D8D-81B41BA5E3DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0F146717-1EC7-41E4-9D8D-81B41BA5E3DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0F146717-1EC7-41E4-9D8D-81B41BA5E3DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0F146717-1EC7-41E4-9D8D-81B41BA5E3DD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D2022106-9E43-4DDA-822F-815ADFDB0E01}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D2022106-9E43-4DDA-822F-815ADFDB0E01}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D2022106-9E43-4DDA-822F-815ADFDB0E01}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D2022106-9E43-4DDA-822F-815ADFDB0E01}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -54,7 +60,8 @@ Global
 		{A9D3121A-33C8-4D13-ACE4-61915508E24B} = {77574FC8-D316-4778-8640-909DC737CA5F}
 		{6E72622B-03F6-4C09-8B81-47C011C5FF8E} = {5F24F728-2ABA-416A-A436-583B1C0842CF}
 		{511DBAB5-4359-4FEF-A5C4-5580FF809FE8} = {5F24F728-2ABA-416A-A436-583B1C0842CF}
-		{995D6132-FA95-4F8E-ACB1-6684A49704F8} = {0CDFDACD-6043-48E8-8AA3-7122461F7C7A}
+		{0F146717-1EC7-41E4-9D8D-81B41BA5E3DD} = {0CDFDACD-6043-48E8-8AA3-7122461F7C7A}
+		{D2022106-9E43-4DDA-822F-815ADFDB0E01} = {0CDFDACD-6043-48E8-8AA3-7122461F7C7A}
 	EndGlobalSection
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = CSVFile.vsmdi

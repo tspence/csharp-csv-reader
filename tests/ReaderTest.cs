@@ -72,7 +72,7 @@ namespace CSVTestSuite
             byte[] byteArray = Encoding.ASCII.GetBytes(source);
             MemoryStream stream = new MemoryStream(byteArray);
             using (StreamReader sr = new StreamReader(stream)) {
-                using (CSVReader cr = new CSVReader(sr, '\t', '\'')) {
+                using (CSVReader cr = new CSVReader(sr, CSVSettings.TSV)) {
                     int i = 0;
                     foreach (string[] line in cr) {
                         if (i == 0) {
