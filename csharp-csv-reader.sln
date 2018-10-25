@@ -32,6 +32,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "csharp-csv-reader-tests.net
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "csharp-csv-reader.portable", "src\csharp-csv-reader.portable.csproj", "{E6C0735E-A722-4EFD-82FA-38147200081D}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "netstandard20", "netstandard20", "{0CDFDACD-6043-48E8-8AA3-7122461F7C7A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "csharp-csv-reader-netstandard20", "csharp-csv-reader-netstandard20\csharp-csv-reader-netstandard20.csproj", "{995D6132-FA95-4F8E-ACB1-6684A49704F8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -66,6 +70,10 @@ Global
 		{E6C0735E-A722-4EFD-82FA-38147200081D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E6C0735E-A722-4EFD-82FA-38147200081D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E6C0735E-A722-4EFD-82FA-38147200081D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{995D6132-FA95-4F8E-ACB1-6684A49704F8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{995D6132-FA95-4F8E-ACB1-6684A49704F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{995D6132-FA95-4F8E-ACB1-6684A49704F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{995D6132-FA95-4F8E-ACB1-6684A49704F8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -78,6 +86,7 @@ Global
 		{6E72622B-03F6-4C09-8B81-47C011C5FF8E} = {5F24F728-2ABA-416A-A436-583B1C0842CF}
 		{511DBAB5-4359-4FEF-A5C4-5580FF809FE8} = {5F24F728-2ABA-416A-A436-583B1C0842CF}
 		{E6C0735E-A722-4EFD-82FA-38147200081D} = {23BB745D-B7C6-4DF7-A2E1-C7C63033FB80}
+		{995D6132-FA95-4F8E-ACB1-6684A49704F8} = {0CDFDACD-6043-48E8-8AA3-7122461F7C7A}
 	EndGlobalSection
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = CSVFile.vsmdi

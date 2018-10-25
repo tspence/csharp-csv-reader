@@ -311,5 +311,69 @@ namespace CSVFile
         }
 #endif
         #endregion
+
+
+        #region Chopping a CSV file into chunks
+#if !PORTABLE
+        /// <summary>
+        /// Take a CSV file and chop it into multiple chunks of a specified maximum size.
+        /// </summary>
+        /// <param name="filename"></param>
+        /// <param name="out_folder"></param>
+        /// <param name="first_row_are_headers"></param>
+        /// <param name="max_lines_per_file"></param>
+        /// <returns>Number of files chopped</returns>
+        public static int ChopFile(string filename, string out_folder, bool first_row_are_headers, int max_lines_per_file, char delim = CSV.DEFAULT_DELIMITER, char qual = CSV.DEFAULT_QUALIFIER)
+        {
+            int file_id = 1;
+            int line_count = 0;
+            string file_prefix = Path.GetFileNameWithoutExtension(filename);
+            string ext = Path.GetExtension(filename);
+            CSVWriter cw = null;
+
+            // Read in lines from the file
+            using (CSVReader cr = new CSVReader(filename, delim, qual, first_row_are_headers))
+            {
+
+                // Okay, let's do the real work
+                foreach (string[] line in cr.Lines())
+                {
+
+                    // Do we need to create a file for writing?
+                    if (cw == null)
+                    {
+                        string fn = Path.Combine(out_folder, file_prefix + file_id.ToString() + ext);
+                        cw = new CSVWriter(fn, delim, qual);
+                        if (first_row_are_headers)
+                        {
+                            cw.WriteLine(cr.Headers);
+                        }
+                    }
+
+                    // Write one line
+                    cw.WriteLine(line);
+
+                    // Count lines - close the file if done
+                    line_count++;
+                    if (line_count >= max_lines_per_file)
+                    {
+                        cw.Dispose();
+                        cw = null;
+                        file_id++;
+                        line_count = 0;
+                    }
+                }
+            }
+
+            // Ensore the final CSVWriter is closed properly
+            if (cw != null)
+            {
+                cw.Dispose();
+                cw = null;
+            }
+            return file_id;
+        }
+#endif
+        #endregion
     }
 }
