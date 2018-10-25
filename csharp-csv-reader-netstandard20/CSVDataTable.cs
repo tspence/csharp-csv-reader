@@ -81,7 +81,7 @@ namespace CSVFile
             message.Attachments.Add(a);
 
             // Send the email
-#if (DOTNET20 || DOTNET35)
+#if (DOTNET20)
             var smtp = new System.Net.Mail.SmtpClient(smtp_host);
             smtp.Send(message);
 #else

@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <Compile Remove="Class1.cs" />
+    <Compile Remove="CSVConstants.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\src\CSV.cs">
