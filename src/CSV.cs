@@ -197,7 +197,7 @@ namespace CSVFile
         }
 
         /// <summary>
-        /// Deserialize a CSV file into a list of typed objects
+        /// Deserialize a CSV string into a list of typed objects
         /// </summary>
         /// <typeparam name="T">The type of objects to deserialize</typeparam>
         /// <param name="settings">The CSV settings to use when parsing the source (Default: CSV)</param>

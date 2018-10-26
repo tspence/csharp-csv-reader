@@ -318,6 +318,10 @@ namespace CSVFile
         /// <returns>Number of files chopped</returns>
         public static int ChopFile(string filename, string out_folder, int maxLinesPerFile, CSVSettings settings = null)
         {
+            // Default settings
+            if (settings == null) settings = CSVSettings.CSV;
+
+            // Let's begin parsing
             int file_id = 1;
             int line_count = 0;
             string file_prefix = Path.GetFileNameWithoutExtension(filename);
