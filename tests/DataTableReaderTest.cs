@@ -1,19 +1,19 @@
 ﻿/*
- * 2006 - 2016 Ted Spence, http://tedspence.com
+ * 2006 - 2018 Ted Spence, http://tedspence.com
  * License: http://www.apache.org/licenses/LICENSE-2.0 
  * Home page: https://github.com/tspence/csharp-csv-reader
  */
 using System;
 using System.Text;
 using System.Collections.Generic;
-using System.Linq;
 using NUnit.Framework;
-using System.Data;
 using CSVFile;
 using System.IO;
+using System.Data;
 
 namespace CSVTestSuite
 {
+#if !NETSTANDARD2_0
     [TestFixture]
     public class DataTableReaderTest
     {
@@ -29,11 +29,10 @@ namespace CSVTestSuite
             "\"Dr. Reed, \nEliot\",\"Private \"\"Practice\"\"\",x236\n" +
             "Dr. Kelso,Chief of Medicine,x100";
 
-#if !PORTABLE
         [Test]
         public void TestBasicDataTable()
         {
-            DataTable dt = CSV.LoadString(source, true, false);
+            DataTable dt = CSVDataTable.FromString(source);
             Assert.AreEqual(dt.Columns.Count, 3);
             Assert.AreEqual(dt.Rows.Count, 4);
             Assert.AreEqual(dt.Rows[0].ItemArray[0], "JD");
@@ -53,7 +52,7 @@ namespace CSVTestSuite
         [Test]
         public void TestDataTableWithEmbeddedNewlines()
         {
-            DataTable dt = CSV.LoadString(source_embedded_newlines, true, false);
+            DataTable dt = CSVDataTable.FromString(source_embedded_newlines);
             Assert.AreEqual(dt.Columns.Count, 3);
             Assert.AreEqual(dt.Rows.Count, 4);
             Assert.AreEqual(dt.Rows[0].ItemArray[0], "JD");
@@ -69,63 +68,106 @@ namespace CSVTestSuite
             Assert.AreEqual(dt.Rows[2].ItemArray[2], "x236");
             Assert.AreEqual(dt.Rows[3].ItemArray[2], "x100");
         }
-#endif
 
-#if PORTABLE
         [Test]
-        public void TestBasicDataTable()
+        public void DataTableChopTest()
         {
-            var list = CSV.LoadString(source, true, false);
+            string[] array_first = new string[] { "first", "two", "three", "four, five" };
+            string[] array_second = new string[] { "second", "two", "three", "four, five" };
+            string[] array_third = new string[] { "third", "two", "three", "four, five" };
+            DataTable dt = new DataTable();
+            dt.Columns.Add("col1");
+            dt.Columns.Add("col2");
+            dt.Columns.Add("col3");
+            dt.Columns.Add("col4");
+            dt.Columns.Add("col5");
+            for (int i = 0; i < 5000; i++) {
+                dt.Rows.Add(array_first);
+            }
+            for (int i = 0; i < 5000; i++) {
+                dt.Rows.Add(array_second);
+            }
+            for (int i = 0; i < 5000; i++) {
+                dt.Rows.Add(array_third);
+            }
 
-            // Equivalent of "columns"
-            Assert.AreEqual(list[0].Length, 3);
+            // Save this string to a test file
+            string sourcefile = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString() + ".csv");
+            CSVDataTable.WriteToFile(dt, sourcefile);
 
-            // Equivalent of "rows" - includes header row
-            Assert.AreEqual(list.Count, 5);
+            // Create an empty test folder
+            string dirname = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+            Directory.CreateDirectory(dirname);
 
-            // Test values
-            Assert.AreEqual(list[1][0], "JD");
-            Assert.AreEqual(list[2][0], "Janitor");
-            Assert.AreEqual(list[3][0], "Dr. Reed, Eliot");
-            Assert.AreEqual(list[4][0], "Dr. Kelso");
-            Assert.AreEqual(list[1][1], "Doctor");
-            Assert.AreEqual(list[2][1], "Janitor");
-            Assert.AreEqual(list[3][1], "Private Practice");
-            Assert.AreEqual(list[4][1], "Chief of Medicine");
-            Assert.AreEqual(list[1][2], "x234");
-            Assert.AreEqual(list[2][2], "x235");
-            Assert.AreEqual(list[3][2], "x236");
-            Assert.AreEqual(list[4][2], "x100");
+            // Chop this file into one-line chunks
+            CSVReader.ChopFile(sourcefile, dirname, 5000);
+
+            // Verify that we got three files
+            string[] files = Directory.GetFiles(dirname);
+            Assert.AreEqual(3, files.Length);
+
+            // Read in each file and verify that each one has one line
+            dt = CSVDataTable.FromFile(files[0]);
+            Assert.AreEqual(5000, dt.Rows.Count);
+            Assert.AreEqual("first", dt.Rows[0].ItemArray[0]);
+
+            dt = CSVDataTable.FromFile(files[1]);
+            Assert.AreEqual(5000, dt.Rows.Count);
+            Assert.AreEqual("second", dt.Rows[0].ItemArray[0]);
+
+            dt = CSVDataTable.FromFile(files[2]);
+            Assert.AreEqual(5000, dt.Rows.Count);
+            Assert.AreEqual("third", dt.Rows[0].ItemArray[0]);
+
+            // Clean up
+            Directory.Delete(dirname, true);
+            File.Delete(sourcefile);
         }
 
         [Test]
-        public void TestDataTableWithEmbeddedNewlines()
+        public void DataTableChoppingFiles()
         {
+            string source = @"timestamp,TestString,SetComment,PropertyString,IntField,IntProperty
+2012-05-01,test1,""Hi there, I said!"",Bob,57,0
+2011-04-01,test2,""What's up, buttercup?"",Ralph,1,-999
+1975-06-03,test3,""Bye and bye, dragonfly!"",Jimmy's The Bomb,12,13";
+            DataTable dt = CSVDataTable.FromString(source);
 
+            // Save this string to a test file
+            string outfile = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString() + ".csv");
+            CSVDataTable.WriteToFile(dt, outfile);
 
-            var list = CSV.LoadString(source_embedded_newlines, true, false);
+            // Create an empty test folder
+            string dirname = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+            Directory.CreateDirectory(dirname);
 
-            // Equivalent of "columns"
-            Assert.AreEqual(list[0].Length, 3);
+            // Chop this file into one-line chunks
+            CSVReader.ChopFile(outfile, dirname, 1);
 
-            // Equivalent of "rows"
-            Assert.AreEqual(list.Count, 5);
+            // Verify that we got three files
+            string[] files = Directory.GetFiles(dirname);
+            Assert.AreEqual(3, files.Length);
 
-            Assert.AreEqual(list[1][0], "JD");
-            Assert.AreEqual(list[2][0], "Janitor");
-            Assert.AreEqual(list[3][0], "Dr. Reed, \nEliot");
-            Assert.AreEqual(list[4][0], "Dr. Kelso");
-            Assert.AreEqual(list[1][1], "Doctor");
-            Assert.AreEqual(list[2][1], "Janitor");
-            Assert.AreEqual(list[3][1], "Private \"Practice\"");
-            Assert.AreEqual(list[4][1], "Chief of Medicine");
-            Assert.AreEqual(list[1][2], "x234");
-            Assert.AreEqual(list[2][2], "x235");
-            Assert.AreEqual(list[3][2], "x236");
-            Assert.AreEqual(list[4][2], "x100");
+            // Read in each file and verify that each one has one line
+            dt = CSVDataTable.FromFile(files[0]);
+            Assert.AreEqual(1, dt.Rows.Count);
+            Assert.AreEqual("2012-05-01", dt.Rows[0].ItemArray[0]);
+            Assert.AreEqual("test1", dt.Rows[0].ItemArray[1]);
+
+            dt = CSVDataTable.FromFile(files[1]);
+            Assert.AreEqual(1, dt.Rows.Count);
+            Assert.AreEqual("2011-04-01", dt.Rows[0].ItemArray[0]);
+            Assert.AreEqual("test2", dt.Rows[0].ItemArray[1]);
+
+            dt = CSVDataTable.FromFile(files[2]);
+            Assert.AreEqual(1, dt.Rows.Count);
+            Assert.AreEqual("1975-06-03", dt.Rows[0].ItemArray[0]);
+            Assert.AreEqual("test3", dt.Rows[0].ItemArray[1]);
+
+            // Clean up
+            Directory.Delete(dirname, true);
+            File.Delete(outfile);
         }
-#endif
-
-
     }
+#endif
 }

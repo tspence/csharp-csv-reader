@@ -1,12 +1,11 @@
 ﻿/*
- * 2006 - 2016 Ted Spence, http://tedspence.com
+ * 2006 - 2018 Ted Spence, http://tedspence.com
  * License: http://www.apache.org/licenses/LICENSE-2.0 
  * Home page: https://github.com/tspence/csharp-csv-reader
  */
 using System;
 using System.Text;
 using System.Collections.Generic;
-using System.Linq;
 using NUnit.Framework;
 using CSVFile;
 using System.IO;
@@ -28,7 +27,7 @@ namespace CSVTestSuite
             public DateTime timestamp;
         }
 
-        public enum EnumTestType { First = 1, Second = 2, Third = 3 };
+        public enum EnumTestType { First = 1, Second = 2, Third = 3, Fourth = 4 };
 
         public class TestClassTwo
         {
@@ -46,7 +45,7 @@ namespace CSVTestSuite
 2012-05-01,test1,""Hi there, I said!"",Bob,57,0
 2011-04-01,test2,""What's up, buttercup?"",Ralph,1,-999
 1975-06-03,test3,""Bye and bye, dragonfly!"",Jimmy's The Bomb,12,13";
-            byte[] byteArray = Encoding.ASCII.GetBytes(source);
+            byte[] byteArray = Encoding.UTF8.GetBytes(source);
             MemoryStream stream = new MemoryStream(byteArray);
             using (CSVReader cr = new CSVReader(new StreamReader(stream))) {
                 list = cr.Deserialize<TestClassOne>();
@@ -83,15 +82,37 @@ namespace CSVTestSuite
             list.Add(new TestClassTwo() { FirstColumn = @"hi3 says, ""Hi Three!""", SecondColumn = 56, ThirdColumn = EnumTestType.Third });
 
             // Serialize to a CSV string
-            string csv = CSV.WriteToString(list, true);
+            string csv = CSV.Serialize<TestClassTwo>(list);
 
             // Deserialize back from a CSV string - should not throw any errors!
-            byte[] byteArray = Encoding.ASCII.GetBytes(csv);
-            MemoryStream stream = new MemoryStream(byteArray);
-            List<TestClassTwo> newlist = CSV.LoadArray<TestClassTwo>(new StreamReader(stream), false, false, false);
+            List<TestClassTwo> newlist = CSV.Deserialize<TestClassTwo>(csv);
 
             // Compare original objects to new ones
             for (int i = 0; i < list.Count; i++) {
+                Assert.AreEqual(list[i].FirstColumn, newlist[i].FirstColumn);
+                Assert.AreEqual(list[i].SecondColumn, newlist[i].SecondColumn);
+                Assert.AreEqual(list[i].ThirdColumn, newlist[i].ThirdColumn);
+            }
+        }
+
+        [Test]
+        public void TestNullSerialization()
+        {
+            List<TestClassTwo> list = new List<TestClassTwo>();
+            list.Add(new TestClassTwo() { FirstColumn = "hi1!", SecondColumn = 12, ThirdColumn = EnumTestType.First });
+            list.Add(new TestClassTwo() { FirstColumn = "hi2, hi2, hi2!", SecondColumn = 34, ThirdColumn = EnumTestType.Second });
+            list.Add(new TestClassTwo() { FirstColumn = @"hi3 says, ""Hi Three!""", SecondColumn = 56, ThirdColumn = EnumTestType.Third });
+            list.Add(new TestClassTwo() { FirstColumn = null, SecondColumn = 7, ThirdColumn = EnumTestType.Fourth });
+
+            // Serialize to a CSV string
+            string csv = CSV.Serialize<TestClassTwo>(list, CSVSettings.CSV_PERMIT_NULL);
+
+            // Deserialize back from a CSV string - should not throw any errors!
+            List<TestClassTwo> newlist = CSV.Deserialize<TestClassTwo>(csv, CSVSettings.CSV_PERMIT_NULL);
+
+            // Compare original objects to new ones
+            for (int i = 0; i < list.Count; i++)
+            {
                 Assert.AreEqual(list[i].FirstColumn, newlist[i].FirstColumn);
                 Assert.AreEqual(list[i].SecondColumn, newlist[i].SecondColumn);
                 Assert.AreEqual(list[i].ThirdColumn, newlist[i].ThirdColumn);

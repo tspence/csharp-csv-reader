@@ -3,34 +3,23 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "csharp-csv-reader.net20", "src\csharp-csv-reader.net20.csproj", "{642DB878-9E42-4F7D-A001-7640FC9E63A6}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "csharp-csv-reader-tests.net20", "tests\csharp-csv-reader-tests.net20.csproj", "{A9D3121A-33C8-4D13-ACE4-61915508E24B}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{64F252D2-9F0C-4211-AE67-374A493CE48B}"
-	ProjectSection(SolutionItems) = preProject
-		CSVFile.vsmdi = CSVFile.vsmdi
-		Local.testsettings = Local.testsettings
-		TraceAndTestImpact.testsettings = TraceAndTestImpact.testsettings
-	EndProjectSection
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "net20", "net20", "{77574FC8-D316-4778-8640-909DC737CA5F}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "net35", "net35", "{C195E91F-5800-4D94-AE8F-42958367F508}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "net40", "net40", "{5F24F728-2ABA-416A-A436-583B1C0842CF}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "portable", "portable", "{23BB745D-B7C6-4DF7-A2E1-C7C63033FB80}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "netstandard20", "netstandard20", "{0CDFDACD-6043-48E8-8AA3-7122461F7C7A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "csharp-csv-reader.net35", "src\csharp-csv-reader.net35.csproj", "{CD5601EE-2D7F-45D4-AAD3-71E1728412B7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "src.net20", "src\net20\src.net20.csproj", "{642DB878-9E42-4F7D-A001-7640FC9E63A6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "csharp-csv-reader-tests.net35", "tests\csharp-csv-reader-tests.net35.csproj", "{E921EF27-2A93-4FA9-820E-741A420DA5A5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "tests.net20", "tests\net20\tests.net20.csproj", "{95A5FBAE-79DC-478E-86BE-693A855DBB8A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "csharp-csv-reader.net40", "src\csharp-csv-reader.net40.csproj", "{6E72622B-03F6-4C09-8B81-47C011C5FF8E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "src.net40", "src\net40\src.net40.csproj", "{6E72622B-03F6-4C09-8B81-47C011C5FF8E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "csharp-csv-reader-tests.net40", "tests\csharp-csv-reader-tests.net40.csproj", "{511DBAB5-4359-4FEF-A5C4-5580FF809FE8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "tests.net40", "tests\net40\tests.net40.csproj", "{D22902D2-6D93-4349-A5FB-E272DBD64970}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "csharp-csv-reader.portable", "src\csharp-csv-reader.portable.csproj", "{E6C0735E-A722-4EFD-82FA-38147200081D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "src.netstandard20", "src\netstandard20\src.netstandard20.csproj", "{29D87C9E-D9D0-4EF7-895C-48B36C4CFCC0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "tests.netstandard20", "tests\netstandard20\tests.netstandard20.csproj", "{AF99D09C-0174-4B38-B4B8-5717F182F3A1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -42,42 +31,37 @@ Global
 		{642DB878-9E42-4F7D-A001-7640FC9E63A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{642DB878-9E42-4F7D-A001-7640FC9E63A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{642DB878-9E42-4F7D-A001-7640FC9E63A6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A9D3121A-33C8-4D13-ACE4-61915508E24B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A9D3121A-33C8-4D13-ACE4-61915508E24B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A9D3121A-33C8-4D13-ACE4-61915508E24B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A9D3121A-33C8-4D13-ACE4-61915508E24B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{CD5601EE-2D7F-45D4-AAD3-71E1728412B7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CD5601EE-2D7F-45D4-AAD3-71E1728412B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CD5601EE-2D7F-45D4-AAD3-71E1728412B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CD5601EE-2D7F-45D4-AAD3-71E1728412B7}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E921EF27-2A93-4FA9-820E-741A420DA5A5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E921EF27-2A93-4FA9-820E-741A420DA5A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E921EF27-2A93-4FA9-820E-741A420DA5A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E921EF27-2A93-4FA9-820E-741A420DA5A5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{95A5FBAE-79DC-478E-86BE-693A855DBB8A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{95A5FBAE-79DC-478E-86BE-693A855DBB8A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{95A5FBAE-79DC-478E-86BE-693A855DBB8A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{95A5FBAE-79DC-478E-86BE-693A855DBB8A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{6E72622B-03F6-4C09-8B81-47C011C5FF8E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{6E72622B-03F6-4C09-8B81-47C011C5FF8E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6E72622B-03F6-4C09-8B81-47C011C5FF8E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6E72622B-03F6-4C09-8B81-47C011C5FF8E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{511DBAB5-4359-4FEF-A5C4-5580FF809FE8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{511DBAB5-4359-4FEF-A5C4-5580FF809FE8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{511DBAB5-4359-4FEF-A5C4-5580FF809FE8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{511DBAB5-4359-4FEF-A5C4-5580FF809FE8}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E6C0735E-A722-4EFD-82FA-38147200081D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E6C0735E-A722-4EFD-82FA-38147200081D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E6C0735E-A722-4EFD-82FA-38147200081D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E6C0735E-A722-4EFD-82FA-38147200081D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D22902D2-6D93-4349-A5FB-E272DBD64970}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D22902D2-6D93-4349-A5FB-E272DBD64970}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D22902D2-6D93-4349-A5FB-E272DBD64970}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D22902D2-6D93-4349-A5FB-E272DBD64970}.Release|Any CPU.Build.0 = Release|Any CPU
+		{29D87C9E-D9D0-4EF7-895C-48B36C4CFCC0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{29D87C9E-D9D0-4EF7-895C-48B36C4CFCC0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{29D87C9E-D9D0-4EF7-895C-48B36C4CFCC0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{29D87C9E-D9D0-4EF7-895C-48B36C4CFCC0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AF99D09C-0174-4B38-B4B8-5717F182F3A1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AF99D09C-0174-4B38-B4B8-5717F182F3A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AF99D09C-0174-4B38-B4B8-5717F182F3A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AF99D09C-0174-4B38-B4B8-5717F182F3A1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{642DB878-9E42-4F7D-A001-7640FC9E63A6} = {77574FC8-D316-4778-8640-909DC737CA5F}
-		{A9D3121A-33C8-4D13-ACE4-61915508E24B} = {77574FC8-D316-4778-8640-909DC737CA5F}
-		{CD5601EE-2D7F-45D4-AAD3-71E1728412B7} = {C195E91F-5800-4D94-AE8F-42958367F508}
-		{E921EF27-2A93-4FA9-820E-741A420DA5A5} = {C195E91F-5800-4D94-AE8F-42958367F508}
+		{95A5FBAE-79DC-478E-86BE-693A855DBB8A} = {77574FC8-D316-4778-8640-909DC737CA5F}
 		{6E72622B-03F6-4C09-8B81-47C011C5FF8E} = {5F24F728-2ABA-416A-A436-583B1C0842CF}
-		{511DBAB5-4359-4FEF-A5C4-5580FF809FE8} = {5F24F728-2ABA-416A-A436-583B1C0842CF}
-		{E6C0735E-A722-4EFD-82FA-38147200081D} = {23BB745D-B7C6-4DF7-A2E1-C7C63033FB80}
+		{D22902D2-6D93-4349-A5FB-E272DBD64970} = {5F24F728-2ABA-416A-A436-583B1C0842CF}
+		{29D87C9E-D9D0-4EF7-895C-48B36C4CFCC0} = {0CDFDACD-6043-48E8-8AA3-7122461F7C7A}
+		{AF99D09C-0174-4B38-B4B8-5717F182F3A1} = {0CDFDACD-6043-48E8-8AA3-7122461F7C7A}
 	EndGlobalSection
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = CSVFile.vsmdi

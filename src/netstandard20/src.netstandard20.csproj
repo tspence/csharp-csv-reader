@@ -1,0 +1,38 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' " />
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' " />
+  <ItemGroup>
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="csharp-csv-reader.net20.csproj.nuget.cache" />
+    <None Remove="csharp-csv-reader.net20.project.json" />
+    <None Remove="csharp-csv-reader.net20.project.lock.json" />
+    <None Remove="csharp-csv-reader.net40.project.json" />
+    <None Remove="csharp-csv-reader.net40.project.lock.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\CSV.cs">
+      <Link>CSV.cs</Link>
+    </Compile>
+    <Compile Include="..\CSVReader.cs">
+      <Link>CSVReader.cs</Link>
+    </Compile>
+    <Compile Include="..\CSVDataTable.cs">
+      <Link>CSVDataTable.cs</Link>
+    </Compile>
+    <Compile Include="..\CSVWriter.cs">
+      <Link>CSVWriter.cs</Link>
+    </Compile>
+    <Compile Include="..\CSVSettings.cs">
+      <Link>CSVSettings.cs</Link>
+    </Compile>
+    <Compile Include="..\CSVStream.cs">
+      <Link>CSVStream.cs</Link>
+    </Compile>
+  </ItemGroup>
+</Project>

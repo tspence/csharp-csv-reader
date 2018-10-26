@@ -1,12 +1,11 @@
 ﻿/*
- * 2006 - 2016 Ted Spence, http://tedspence.com
+ * 2006 - 2018 Ted Spence, http://tedspence.com
  * License: http://www.apache.org/licenses/LICENSE-2.0 
  * Home page: https://github.com/tspence/csharp-csv-reader
  */
 using System;
 using System.Text;
 using System.Collections.Generic;
-using System.Linq;
 using NUnit.Framework;
 using CSVFile;
 
@@ -19,9 +18,17 @@ namespace CSVTestSuite
         public void TestForceQualifiers()
         {
             string[] array = new string[] { "one", "two", "three", "four, five" };
-            string s = CSV.Output(array);
+            string s = array.ToCSVString();
             Assert.AreEqual(s, "one,two,three,\"four, five\"");
-            s = CSV.Output(array, '|', '\'', true);
+
+            // Now construct new settings
+            var settings = new CSVSettings()
+            {
+                FieldDelimiter = '|',
+                TextQualifier = '\'',
+                ForceQualifiers = true
+            };
+            s = array.ToCSVString(settings);
             Assert.AreEqual(s, "'one'|'two'|'three'|'four, five'");
         }
     }

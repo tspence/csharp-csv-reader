@@ -1,12 +1,11 @@
 ﻿/*
- * 2006 - 2016 Ted Spence, http://tedspence.com
+ * 2006 - 2018 Ted Spence, http://tedspence.com
  * License: http://www.apache.org/licenses/LICENSE-2.0 
  * Home page: https://github.com/tspence/csharp-csv-reader
  */
 using System;
 using System.Text;
 using System.Collections.Generic;
-using System.Linq;
 using NUnit.Framework;
 using CSVFile;
 
@@ -51,13 +50,13 @@ namespace CSVTestSuite
         public void ParseTSV()
         {
             // Basic TSV test
-            string[] line = CSV.ParseLine("1\t2\t3\t4\t5", '\t', '\"');
+            string[] line = CSV.ParseLine("1\t2\t3\t4\t5", CSVSettings.TSV);
             Assert.AreEqual(line.Length, 5);
             Assert.AreEqual(line[3], "4");
             Assert.AreEqual(line[1], "2");
 
             // Test trailing blank item
-            line = CSV.ParseLine("1\t2\t3\t4\t5\t", '\t', '\"');
+            line = CSV.ParseLine("1\t2\t3\t4\t5\t", CSVSettings.TSV);
             Assert.AreEqual(line.Length, 6);
             Assert.AreEqual(line[5], "");
             Assert.AreEqual(line[4], "5");
@@ -126,7 +125,7 @@ namespace CSVTestSuite
             Assert.AreEqual(line[3], "four, \"five");
 
             // Confirm that the more advanced parse will fail
-            Assert.IsFalse(CSV.TryParseLine("1,\"two\",3,\"four, \"\"five", CSV.DEFAULT_DELIMITER, CSV.DEFAULT_QUALIFIER, out line));
+            Assert.IsFalse(CSV.TryParseLine("1,\"two\",3,\"four, \"\"five", out line));
         }
 
         /// <summary>

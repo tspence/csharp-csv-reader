@@ -5,12 +5,12 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{CD5601EE-2D7F-45D4-AAD3-71E1728412B7}</ProjectGuid>
+    <ProjectGuid>{642DB878-9E42-4F7D-A001-7640FC9E63A6}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>CSVFile</RootNamespace>
     <AssemblyName>CSVFile</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -18,39 +18,52 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\net35\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;DOTNET35</DefineConstants>
+    <OutputPath>bin\Debug\net20\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;DOTNET20</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\net35\</OutputPath>
-    <DefineConstants>TRACE;DOTNET35</DefineConstants>
+    <OutputPath>bin\Release\net20\</OutputPath>
+    <DefineConstants>TRACE;DOTNET20</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\CSV.cs">
+      <Link>CSV.cs</Link>
+    </Compile>
+    <Compile Include="..\CSVReader.cs">
+      <Link>CSVReader.cs</Link>
+    </Compile>
+    <Compile Include="..\CSVDataTable.cs">
+      <Link>CSVDataTable.cs</Link>
+    </Compile>
+    <Compile Include="..\CSVWriter.cs">
+      <Link>CSVWriter.cs</Link>
+    </Compile>
+    <Compile Include="..\CSVSettings.cs">
+      <Link>CSVSettings.cs</Link>
+    </Compile>
+    <Compile Include="..\CSVStream.cs">
+      <Link>CSVStream.cs</Link>
+    </Compile>
     <Compile Include="..\AssemblyInfo.cs">
       <Link>AssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="CSV.cs" />
-    <Compile Include="CSVReader.cs" />
-    <Compile Include="CSVWriter.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Properties\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
   </Target>
