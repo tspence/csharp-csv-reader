@@ -1,12 +1,12 @@
 language: csharp
 solution: csharp-csv-reader.sln
 install:
-  - dotnet restore csharp-csv-reader.sln
+  - nuget restore csharp-csv-reader.sln
   - nuget install NUnit.Console -Version 3.4.0 -OutputDirectory testrunner
 script:
   - xbuild src/net20/src.net20.csproj
   - xbuild src/net40/src.net40.csproj
-  - dotnet build src/netstandard20/src.netstandard20.csproj
+  - xbuild src/netstandard20/src.netstandard20.csproj
   - mono ./testrunner/NUnit.ConsoleRunner.3.4.0/tools/nunit3-console.exe ./tests/net20/bin/Debug/tests.net20.dll
   - mono ./testrunner/NUnit.ConsoleRunner.3.4.0/tools/nunit3-console.exe ./tests/net40/bin/Debug/tests.net40.dll
   - mono ./testrunner/NUnit.ConsoleRunner.3.4.0/tools/nunit3-console.exe ./tests/netstandard20/bin/Debug/netstandard2.0/tests.netstandard20.dll
