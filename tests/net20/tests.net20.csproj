@@ -5,8 +5,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{95A5FBAE-79DC-478E-86BE-693A855DBB8A}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>csharpcsvreadertests.net20</RootNamespace>
-    <AssemblyName>csharp-csv-reader-tests.net20</AssemblyName>
+    <RootNamespace>CSVFile.Tests</RootNamespace>
+    <AssemblyName>tests.net20</AssemblyName>
     <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
