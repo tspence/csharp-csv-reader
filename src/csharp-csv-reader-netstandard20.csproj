@@ -8,4 +8,11 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' " />
   <ItemGroup>
   </ItemGroup>
+  <ItemGroup>
+    <None Remove="csharp-csv-reader.net20.csproj.nuget.cache" />
+    <None Remove="csharp-csv-reader.net20.project.json" />
+    <None Remove="csharp-csv-reader.net20.project.lock.json" />
+    <None Remove="csharp-csv-reader.net40.project.json" />
+    <None Remove="csharp-csv-reader.net40.project.lock.json" />
+  </ItemGroup>
 </Project>

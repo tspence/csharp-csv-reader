@@ -6,11 +6,10 @@
 using System;
 using System.Text;
 using System.Collections.Generic;
-using System.Linq;
 using NUnit.Framework;
-using System.Data;
 using CSVFile;
 using System.IO;
+using System.Data;
 
 namespace CSVTestSuite
 {
