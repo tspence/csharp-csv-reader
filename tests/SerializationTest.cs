@@ -28,7 +28,7 @@ namespace CSVTestSuite
             public DateTime timestamp;
         }
 
-        public enum EnumTestType { First = 1, Second = 2, Third = 3 };
+        public enum EnumTestType { First = 1, Second = 2, Third = 3, Fourth = 4 };
 
         public class TestClassTwo
         {
@@ -46,7 +46,7 @@ namespace CSVTestSuite
 2012-05-01,test1,""Hi there, I said!"",Bob,57,0
 2011-04-01,test2,""What's up, buttercup?"",Ralph,1,-999
 1975-06-03,test3,""Bye and bye, dragonfly!"",Jimmy's The Bomb,12,13";
-            byte[] byteArray = Encoding.ASCII.GetBytes(source);
+            byte[] byteArray = Encoding.UTF8.GetBytes(source);
             MemoryStream stream = new MemoryStream(byteArray);
             using (CSVReader cr = new CSVReader(new StreamReader(stream))) {
                 list = cr.Deserialize<TestClassOne>();
@@ -90,6 +90,30 @@ namespace CSVTestSuite
 
             // Compare original objects to new ones
             for (int i = 0; i < list.Count; i++) {
+                Assert.AreEqual(list[i].FirstColumn, newlist[i].FirstColumn);
+                Assert.AreEqual(list[i].SecondColumn, newlist[i].SecondColumn);
+                Assert.AreEqual(list[i].ThirdColumn, newlist[i].ThirdColumn);
+            }
+        }
+
+        [Test]
+        public void TestNullSerialization()
+        {
+            List<TestClassTwo> list = new List<TestClassTwo>();
+            list.Add(new TestClassTwo() { FirstColumn = "hi1!", SecondColumn = 12, ThirdColumn = EnumTestType.First });
+            list.Add(new TestClassTwo() { FirstColumn = "hi2, hi2, hi2!", SecondColumn = 34, ThirdColumn = EnumTestType.Second });
+            list.Add(new TestClassTwo() { FirstColumn = @"hi3 says, ""Hi Three!""", SecondColumn = 56, ThirdColumn = EnumTestType.Third });
+            list.Add(new TestClassTwo() { FirstColumn = null, SecondColumn = 7, ThirdColumn = EnumTestType.Fourth });
+
+            // Serialize to a CSV string
+            string csv = CSV.Serialize<TestClassTwo>(list, CSVSettings.CSV_PERMIT_NULL);
+
+            // Deserialize back from a CSV string - should not throw any errors!
+            List<TestClassTwo> newlist = CSV.Deserialize<TestClassTwo>(csv, CSVSettings.CSV_PERMIT_NULL);
+
+            // Compare original objects to new ones
+            for (int i = 0; i < list.Count; i++)
+            {
                 Assert.AreEqual(list[i].FirstColumn, newlist[i].FirstColumn);
                 Assert.AreEqual(list[i].SecondColumn, newlist[i].SecondColumn);
                 Assert.AreEqual(list[i].ThirdColumn, newlist[i].ThirdColumn);

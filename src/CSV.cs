@@ -106,7 +106,7 @@ namespace CSVFile
 
             // Okay, let's begin parsing
             List<string> list = new List<string>();
-            StringBuilder work = new StringBuilder();
+            var work = new StringBuilder();
             for (int i = 0; i < line.Length; i++)
             {
                 char c = line[i];
@@ -122,9 +122,9 @@ namespace CSVFile
                         // If no closing qualifier is found, this string is broken; return failure.
                         if (p2 < 0)
                         {
-                            //work.Append(line.Substring(i + 1));
-                            //i = line.Length;
-                            row = null;
+                            work.Append(line.Substring(i + 1));
+                            list.Add(work.ToString());
+                            row = list.ToArray();
                             return false;
                         }
 
@@ -158,7 +158,7 @@ namespace CSVFile
                     // e.g. "bob", "mary", "bill"
                     if (i + 2 <= line.Length - 1)
                     {
-                        if (line[i + 1].Equals(' ') && line[i + 2].Equals(settings.FieldDelimiter))
+                        if (line[i + 1].Equals(' ') && line[i + 2].Equals(settings.TextQualifier))
                         {
                             i++;
                         }
@@ -193,7 +193,6 @@ namespace CSVFile
             {
                 list.Add(s);
             }
-            list.Add(s);
             work.Length = 0;
         }
 
@@ -250,6 +249,7 @@ namespace CSVFile
             if (settings.HeaderRowIncluded)
             {
                 sb.AppendCSVHeader(typeof(T), settings);
+                sb.Append(settings.LineSeparator);
             }
 
             // Let's go through the array of objects
@@ -258,6 +258,7 @@ namespace CSVFile
             foreach (T obj in list)
             {
                 sb.AppendAsCSV<T>(obj, settings);
+                sb.Append(settings.LineSeparator);
             }
 
             // Here's your data serialized in CSV format
@@ -316,30 +317,13 @@ namespace CSVFile
 
             // Retrieve all the fields and properties
             List<object> values = new List<object>();
-            object val;
             foreach (var fi in filist)
             {
-                val = fi.GetValue(obj);
-                if (val == null)
-                {
-                    values.Add("");
-                }
-                else
-                {
-                    values.Add(val.ToString());
-                }
+                values.Add(fi.GetValue(obj));
             }
             foreach (var pi in pilist)
             {
-                val = pi.GetValue(obj, null);
-                if (val == null)
-                {
-                    values.Add("");
-                }
-                else
-                {
-                    values.Add(val.ToString());
-                }
+                values.Add(pi.GetValue(obj, null));
             }
 
             // Output one line of CSV
@@ -367,6 +351,7 @@ namespace CSVFile
                     if (settings.AllowNull)
                     {
                         sb.Append(settings.NullToken);
+                        sb.Append(settings.FieldDelimiter);
                     }
                     continue;
                 }

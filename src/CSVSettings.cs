@@ -9,6 +9,22 @@ namespace CSVFile
     public class CSVSettings
     {
         /// <summary>
+        /// Default constructor picks CSV as the default
+        /// </summary>
+        public CSVSettings()
+        {
+            FieldDelimiter = ',';
+            TextQualifier = '"';
+            ForceQualifiers = false;
+            LineSeparator = Environment.NewLine;
+            NullToken = null;
+            AllowNull = false;
+            IgnoreDimensionErrors = true;
+            AssumedHeaders = null;
+            HeaderRowIncluded = true;
+        }
+
+        /// <summary>
         /// The character used to delimit individual fields in the CSV.
         /// </summary>
         public char FieldDelimiter { get; set; }
@@ -63,31 +79,22 @@ namespace CSVFile
         /// <summary>
         /// Standard comma-separated value (CSV) file settings
         /// </summary>
-        public static readonly CSVSettings CSV = new CSVSettings() { 
-            FieldDelimiter = ',', 
-            TextQualifier = '"', 
-            ForceQualifiers = false, 
-            LineSeparator = Environment.NewLine, 
-            NullToken = null, 
-            AllowNull = false,
-            IgnoreDimensionErrors = true,
-            AssumedHeaders = null,
-            HeaderRowIncluded = true
+        public static readonly CSVSettings CSV = new CSVSettings();
+
+        /// <summary>
+        /// Standard comma-separated value (CSV) file settings that permit rendering of NULL values
+        /// </summary>
+        public static readonly CSVSettings CSV_PERMIT_NULL = new CSVSettings()
+        {
+            AllowNull = true,
+            NullToken = "NULL"
         };
 
         /// <summary>
         /// Standard tab-separated value (TSV) file settings
         /// </summary>
         public static readonly CSVSettings TSV = new CSVSettings() { 
-            FieldDelimiter = '\t', 
-            TextQualifier = '"', 
-            ForceQualifiers = false, 
-            LineSeparator = Environment.NewLine, 
-            NullToken = null, 
-            AllowNull = false,
-            IgnoreDimensionErrors = true,
-            AssumedHeaders = null,
-            HeaderRowIncluded = true
+            FieldDelimiter = '\t'
         };
     }
 }

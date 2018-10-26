@@ -5,9 +5,10 @@ using System.Text;
 
 namespace CSVFile
 {
+#if !NETSTANDARD2_0
     public static class CSVDataTable
     {
-        #region Reading CSV into a DataTable
+#region Reading CSV into a DataTable
         /// <summary>
         /// Read in a single CSV file into a datatable in memory
         /// </summary>
@@ -53,9 +54,9 @@ namespace CSVFile
                 }
             }
         }
-        #endregion
+#endregion
 
-        #region CSV Attachment Email Shortcut
+#region CSV Attachment Email Shortcut
         /// <summary>
         /// Quick shortcut to send a datatable as an attachment via SMTP
         /// </summary>
@@ -94,9 +95,9 @@ namespace CSVFile
             }
 #endif
         }
-        #endregion
+#endregion
 
-        #region Writing a DataTable to CSV
+#region Writing a DataTable to CSV
         /// <summary>
         /// Write a data table to disk at the designated file name in CSV format
         /// </summary>
@@ -158,6 +159,7 @@ namespace CSVFile
                 }
             }
         }
-        #endregion
+#endregion
     }
+#endif
 }

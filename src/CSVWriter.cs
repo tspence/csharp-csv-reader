@@ -49,7 +49,7 @@ namespace CSVFile
 #endregion
 
 #region Data Table Functions (not available in dot-net-portable mode)
-#if !PORTABLE
+#if !NETSTANDARD2_0
         /// <summary>
         /// Write the data table to a stream in CSV format
         /// </summary>

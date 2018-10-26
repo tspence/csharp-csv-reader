@@ -75,7 +75,8 @@ namespace CSVFile
         /// <returns>An array of all data columns in the line</returns>
         public IEnumerable<string[]> Lines()
         {
-            while (true) {
+            while (true)
+            {
 
                 // Attempt to parse the line successfully
                 string[] line = NextLine();
@@ -98,7 +99,8 @@ namespace CSVFile
         }
         #endregion
 
-        #region Read a file into a data table
+#region Read a file into a data table
+#if !NETSTANDARD2_0
         /// <summary>
         /// Read this file into a data table in memory
         /// </summary>
@@ -161,6 +163,7 @@ namespace CSVFile
             // Here's your data table
             return dt;
         }
+#endif
 
         /// <summary>
         /// Deserialize the CSV reader into a generic list
@@ -252,7 +255,11 @@ namespace CSVFile
 
                     // Attempt to convert this to the specified type
                     object value = null;
-                    if (column_convert[i] != null && column_convert[i].IsValid(line[i]))
+                    if (_settings.AllowNull && (line[i] == null))
+                    {
+                        value = null;
+                    } 
+                    else if (column_convert[i] != null && column_convert[i].IsValid(line[i]))
                     {
                         value = column_convert[i].ConvertFromString(line[i]);
                     }
@@ -288,9 +295,9 @@ namespace CSVFile
             // Here's your array!
             return result;
         }
-        #endregion
+#endregion
 
-        #region Disposal
+#region Disposal
         /// <summary>
         /// Close our resources - specifically, the stream reader
         /// </summary>
@@ -298,9 +305,9 @@ namespace CSVFile
         {
             _instream.Dispose();
         }
-        #endregion
+#endregion
 
-        #region Chopping a CSV file into chunks
+#region Chopping a CSV file into chunks
         /// <summary>
         /// Take a CSV file and chop it into multiple chunks of a specified maximum size.
         /// </summary>
@@ -364,6 +371,6 @@ namespace CSVFile
             }
             return file_id;
         }
-        #endregion
+#endregion
     }
 }
