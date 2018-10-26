@@ -92,12 +92,11 @@ namespace CSVTestSuite
             }
 
             // Save this string to a test file
-            string test_rootfn = Guid.NewGuid().ToString();
-            string sourcefile = test_rootfn + ".csv";
+            string sourcefile = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString() + ".csv");
             CSVDataTable.WriteToFile(dt, sourcefile);
 
             // Create an empty test folder
-            string dirname = Guid.NewGuid().ToString();
+            string dirname = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
             Directory.CreateDirectory(dirname);
 
             // Chop this file into one-line chunks
@@ -135,12 +134,11 @@ namespace CSVTestSuite
             DataTable dt = CSVDataTable.FromString(source);
 
             // Save this string to a test file
-            string test_rootfn = Guid.NewGuid().ToString();
-            string outfile = test_rootfn + ".csv";
+            string outfile = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString() + ".csv");
             CSVDataTable.WriteToFile(dt, outfile);
 
             // Create an empty test folder
-            string dirname = Guid.NewGuid().ToString();
+            string dirname = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
             Directory.CreateDirectory(dirname);
 
             // Chop this file into one-line chunks
