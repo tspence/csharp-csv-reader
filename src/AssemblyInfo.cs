@@ -6,11 +6,11 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("CSVFile")]
-[assembly: AssemblyDescription("A small 16KB library with minimal dependencies for processing CSV files.  Compatible with most dot net versions.")]
+[assembly: AssemblyDescription("A minimal CSV and TSV parsing library with minimal dependencies.  Compatible with most dot net versions.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Ted Spence")]
 [assembly: AssemblyProduct("CSVFile")]
-[assembly: AssemblyCopyright("Copyright (C) 2006 - 2017 Ted Spence")]
+[assembly: AssemblyCopyright("Copyright (C) 2006 - 2018 Ted Spence")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -32,5 +32,5 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.2.2.3")]
-[assembly: AssemblyFileVersion("1.2.2.3")]
+[assembly: AssemblyVersion("2.0.0.0")]
+[assembly: AssemblyFileVersion("2.0.0.0")]

@@ -30,9 +30,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\src\csharp-csv-reader-netstandard20.csproj" />
+    <ProjectReference Include="..\..\src\netstandard20\src.netstandard20.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="NUnit" Version="3.0.1" />
+    <PackageReference Include="NUnit" Version="3.6.0" />
   </ItemGroup>
 </Project>
