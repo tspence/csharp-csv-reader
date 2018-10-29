@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.28010.2048
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "net20", "net20", "{77574FC8-D316-4778-8640-909DC737CA5F}"
 EndProject
@@ -17,9 +17,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "src.net40", "src\net40\src.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "tests.net40", "tests\net40\tests.net40.csproj", "{D22902D2-6D93-4349-A5FB-E272DBD64970}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "src.netstandard20", "src\netstandard20\src.netstandard20.csproj", "{29D87C9E-D9D0-4EF7-895C-48B36C4CFCC0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "src.netstandard20", "src\netstandard20\src.netstandard20.csproj", "{29D87C9E-D9D0-4EF7-895C-48B36C4CFCC0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "tests.netstandard20", "tests\netstandard20\tests.netstandard20.csproj", "{AF99D09C-0174-4B38-B4B8-5717F182F3A1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "tests.netstandard20", "tests\netstandard20\tests.netstandard20\tests.netstandard20.csproj", "{311B0E56-71A3-42F6-A3B8-FE61908873F8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -47,10 +47,10 @@ Global
 		{29D87C9E-D9D0-4EF7-895C-48B36C4CFCC0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{29D87C9E-D9D0-4EF7-895C-48B36C4CFCC0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{29D87C9E-D9D0-4EF7-895C-48B36C4CFCC0}.Release|Any CPU.Build.0 = Release|Any CPU
-		{AF99D09C-0174-4B38-B4B8-5717F182F3A1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{AF99D09C-0174-4B38-B4B8-5717F182F3A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{AF99D09C-0174-4B38-B4B8-5717F182F3A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{AF99D09C-0174-4B38-B4B8-5717F182F3A1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{311B0E56-71A3-42F6-A3B8-FE61908873F8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{311B0E56-71A3-42F6-A3B8-FE61908873F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{311B0E56-71A3-42F6-A3B8-FE61908873F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{311B0E56-71A3-42F6-A3B8-FE61908873F8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -61,7 +61,10 @@ Global
 		{6E72622B-03F6-4C09-8B81-47C011C5FF8E} = {5F24F728-2ABA-416A-A436-583B1C0842CF}
 		{D22902D2-6D93-4349-A5FB-E272DBD64970} = {5F24F728-2ABA-416A-A436-583B1C0842CF}
 		{29D87C9E-D9D0-4EF7-895C-48B36C4CFCC0} = {0CDFDACD-6043-48E8-8AA3-7122461F7C7A}
-		{AF99D09C-0174-4B38-B4B8-5717F182F3A1} = {0CDFDACD-6043-48E8-8AA3-7122461F7C7A}
+		{311B0E56-71A3-42F6-A3B8-FE61908873F8} = {0CDFDACD-6043-48E8-8AA3-7122461F7C7A}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {0A368276-2291-4A3B-B4EE-1C2D8042E97D}
 	EndGlobalSection
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = CSVFile.vsmdi
