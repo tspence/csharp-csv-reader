@@ -21,7 +21,7 @@ namespace CSVTestSuite
             string source = "Name,Title,Phone\n" +
                 "JD,Doctor,x234\n" +
                 "Janitor,Janitor,x235\n" +
-                "\"Dr. Reed, \nEliot\",\"Private \"\"Practice\"\"\",x236\n" +
+                "\"Dr. Reed, " + Environment.NewLine + "Eliot\",\"Private \"\"Practice\"\"\",x236\n" +
                 "Dr. Kelso,Chief of Medicine,x100";
 
             // Skip header row
@@ -50,7 +50,7 @@ namespace CSVTestSuite
                             Assert.AreEqual(line[1], "Janitor");
                             Assert.AreEqual(line[2], "x235");
                         } else if (i == 3) {
-                            Assert.AreEqual(line[0], "Dr. Reed, \nEliot");
+                            Assert.AreEqual(line[0], "Dr. Reed, " + Environment.NewLine + "Eliot");
                             Assert.AreEqual(line[1], "Private \"Practice\"");
                             Assert.AreEqual(line[2], "x236");
                         } else if (i == 4) {
@@ -70,7 +70,7 @@ namespace CSVTestSuite
             string source = "Name\tTitle\tPhone\n" +
                 "JD\tDoctor\tx234\n" +
                 "Janitor\tJanitor\tx235\n" +
-                "\"Dr. Reed, \nEliot\"\t\"Private \"\"Practice\"\"\"\tx236\n" +
+                "\"Dr. Reed, " + Environment.NewLine + "Eliot\"\t\"Private \"\"Practice\"\"\"\tx236\n" +
                 "Dr. Kelso\tChief of Medicine\tx100";
 
             // Convert into stream
@@ -92,7 +92,7 @@ namespace CSVTestSuite
                             Assert.AreEqual(line[1], "Janitor");
                             Assert.AreEqual(line[2], "x235");
                         } else if (i == 3) {
-                            Assert.AreEqual(line[0], "Dr. Reed, \nEliot");
+                            Assert.AreEqual(line[0], "Dr. Reed, " + Environment.NewLine + "Eliot");
                             Assert.AreEqual(line[1], "Private \"Practice\"");
                             Assert.AreEqual(line[2], "x236");
                         } else if (i == 4) {

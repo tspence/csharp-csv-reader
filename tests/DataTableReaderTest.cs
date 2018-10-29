@@ -57,7 +57,7 @@ namespace CSVTestSuite
             Assert.AreEqual(dt.Rows.Count, 4);
             Assert.AreEqual(dt.Rows[0].ItemArray[0], "JD");
             Assert.AreEqual(dt.Rows[1].ItemArray[0], "Janitor");
-            Assert.AreEqual(dt.Rows[2].ItemArray[0], "Dr. Reed, \nEliot");
+            Assert.AreEqual(dt.Rows[2].ItemArray[0], "Dr. Reed, " + Environment.NewLine + "Eliot");
             Assert.AreEqual(dt.Rows[3].ItemArray[0], "Dr. Kelso");
             Assert.AreEqual(dt.Rows[0].ItemArray[1], "Doctor");
             Assert.AreEqual(dt.Rows[1].ItemArray[1], "Janitor");
