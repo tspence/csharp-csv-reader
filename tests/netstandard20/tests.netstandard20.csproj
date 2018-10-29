@@ -30,9 +30,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\src\netstandard20\src.netstandard20.csproj" />
+    <PackageReference Include="NUnit" Version="3.4.0" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="NUnit" Version="3.4.0" />
+    <ProjectReference Include="..\..\src\netstandard20\src.netstandard20.csproj" />
   </ItemGroup>
 </Project>

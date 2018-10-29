@@ -4,3 +4,5 @@ obj
 *.nupkg
 *.user
 *project.lock.json
+.vs/
+packages/
