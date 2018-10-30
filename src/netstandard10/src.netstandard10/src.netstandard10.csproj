@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard1.0</TargetFramework>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DefineConstants>TRACE;NETSTANDARD10</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DefineConstants>TRACE;NETSTANDARD10</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\..\CSV.cs" Link="CSV.cs" />
+    <Compile Include="..\..\CSVDataTable.cs" Link="CSVDataTable.cs" />
+    <Compile Include="..\..\CSVReader.cs" Link="CSVReader.cs" />
+    <Compile Include="..\..\CSVSettings.cs" Link="CSVSettings.cs" />
+    <Compile Include="..\..\CSVStream.cs" Link="CSVStream.cs" />
+    <Compile Include="..\..\CSVWriter.cs" Link="CSVWriter.cs" />
+  </ItemGroup>
+
+</Project>

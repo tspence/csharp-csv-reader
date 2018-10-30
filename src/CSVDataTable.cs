@@ -1,11 +1,13 @@
 ﻿using System;
+#if !NETSTANDARD10 && !NETSTANDARD10
 using System.Data;
+#endif
 using System.IO;
 using System.Text;
 
 namespace CSVFile
 {
-#if !NETSTANDARD2_0
+#if !NETSTANDARD20 && !NETSTANDARD10
     public static class CSVDataTable
     {
 #region Reading CSV into a DataTable

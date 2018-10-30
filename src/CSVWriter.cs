@@ -7,7 +7,9 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
+#if !NETSTANDARD10 && !NETSTANDARD10
 using System.Data;
+#endif
 using System.Reflection;
 
 namespace CSVFile
@@ -47,7 +49,7 @@ namespace CSVFile
 #endregion
 
 #region Data Table Functions (not available in dot-net-portable mode)
-#if !NETSTANDARD20
+#if !NETSTANDARD20 && !NETSTANDARD10
         /// <summary>
         /// Write the data table to a stream in CSV format
         /// </summary>
