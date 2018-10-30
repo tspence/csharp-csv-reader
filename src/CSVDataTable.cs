@@ -65,7 +65,7 @@ namespace CSVFile
         /// <param name="to_address"></param>
         /// <param name="subject"></param>
         /// <param name="body"></param>
-#if DOTNET20
+#if NET20
         public static void SendCsvAttachment(DataTable dt, string from_address, string to_address, string subject, string body, string smtp_host, string attachment_filename)
 #else
         public static void SendCsvAttachment(this DataTable dt, string from_address, string to_address, string subject, string body, string smtp_host, string attachment_filename)
@@ -85,7 +85,7 @@ namespace CSVFile
             message.Attachments.Add(a);
 
             // Send the email
-#if (DOTNET20)
+#if NET20
             var smtp = new System.Net.Mail.SmtpClient(smtp_host);
             smtp.Send(message);
 #else
@@ -104,7 +104,7 @@ namespace CSVFile
         /// <param name="dt"></param>
         /// <param name="filename"></param>
         /// <param name="settings">The CSV settings to use when exporting this DataTable (Default: CSV)</param>
-#if DOTNET20
+#if NET20
         public static void WriteToFile(DataTable dt, string filename, CSVSettings settings = null)
 #else
         public static void WriteToFile(this DataTable dt, string filename, CSVSettings settings = null)
@@ -122,7 +122,7 @@ namespace CSVFile
         /// <param name="dt">The data table to write</param>
         /// <param name="sw">The stream where the CSV text will be written</param>
         /// <param name="settings">The CSV settings to use when exporting this DataTable (Default: CSV)</param>
-#if DOTNET20
+#if NET20
         public static void WriteToStream(DataTable dt, StreamWriter sw, CSVSettings settings = null)
 #else
         public static void WriteToStream(this DataTable dt, StreamWriter sw, CSVSettings settings = null)
@@ -140,7 +140,7 @@ namespace CSVFile
         /// <param name="dt">The datatable to write</param>
         /// <param name="settings">The CSV settings to use when exporting this DataTable (Default: CSV)</param>
         /// <returns>The CSV string representing the object array.</returns>
-#if DOTNET20
+#if NET20
         public static string WriteToString(DataTable dt, CSVSettings settings = null)
 #else
         public static string WriteToString(this DataTable dt, CSVSettings settings = null)

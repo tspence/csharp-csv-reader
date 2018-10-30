@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>CSVFile</id>
-    <version>2.0</version>
+    <version>2.0.3</version>
     <title>CSVFile</title>
     <authors>Ted Spence</authors>
     <owners>Ted Spence</owners>
@@ -22,6 +22,6 @@
   <files>
     <file src="src\net20\bin\release\net20\csvfile.*" target="lib\net20" />
     <file src="src\net40\bin\release\net40\csvfile.*" target="lib\net40" />
-    <file src="src\netstandard20\bin\release\netstandard20\csvfile.*" target="lib\netstandard20" />
+    <file src="src\netstandard20\bin\release\netstandard2.0\csvfile.*" target="lib\netstandard20" />
   </files>
 </package>

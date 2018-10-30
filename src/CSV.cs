@@ -8,8 +8,8 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 
-#if DOTNET20
-// you need this once (only), and it must be in this namespace
+#if NET20
+// Use this namespace to be able to declare extension methods
 namespace System.Runtime.CompilerServices
 {
     [AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Class
@@ -26,6 +26,18 @@ namespace CSVFile
     /// </summary>
     public static class CSV
     {
+#if NET20
+        public const string VERSION = "NET20";
+#elif NET40
+        public const string VERSION = "NET40";
+#elif NETSTANDARD10
+        public const string VERSION = "NETSTANDARD10";
+#elif NETSTANDARD20
+        public const string VERSION = "NETSTANDARD20";
+#else
+        public const string VERSION = "UNKNOWN";
+#endif
+
         /// <summary>
         /// The default CSV field delimiter.
         /// </summary>
@@ -47,7 +59,7 @@ namespace CSVFile
         public const char DEFAULT_TSV_QUALIFIER = '"';
 
 
-        #region Methods to read CSV data
+#region Methods to read CSV data
         /// <summary>
         /// Parse a single row of data from a CSV line into an array of objects, while permitting embedded newlines
         /// </summary>
@@ -214,9 +226,9 @@ namespace CSVFile
                 }
             }
         }
-        #endregion
+#endregion
 
-        #region CSV Output Functions
+#region CSV Output Functions
         /// <summary>
         /// Serialize a sequence of objects into a CSV string
         /// </summary>
@@ -264,9 +276,9 @@ namespace CSVFile
             // Here's your data serialized in CSV format
             return sb.ToString();
         }
-        #endregion
+#endregion
 
-        #region StringBuilder append functions
+#region StringBuilder append functions
         /// <summary>
         /// Add a CSV Header line to a StringBuilder
         /// </summary>

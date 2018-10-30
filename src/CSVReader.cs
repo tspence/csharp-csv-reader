@@ -100,7 +100,7 @@ namespace CSVFile
         #endregion
 
 #region Read a file into a data table
-#if !NETSTANDARD2_0
+#if !NETSTANDARD20
         /// <summary>
         /// Read this file into a data table in memory
         /// </summary>

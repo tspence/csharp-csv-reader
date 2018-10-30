@@ -14,7 +14,7 @@ namespace CSVFile
         /// <param name="list">The object array to write</param>
         /// <param name="sw">The stream where the CSV text will be written</param>
         /// <param name="settings">The CSV settings to use (Default: CSV)</param>
-#if DOTNET20
+#if NET20
         public static void WriteToStream<T>(IEnumerable<T> list, StreamWriter sw, CSVSettings settings = null) where T: class, new()
 #else
         public static void WriteToStream<T>(this IEnumerable<T> list, StreamWriter sw, CSVSettings settings = null) where T: class, new()
@@ -32,7 +32,7 @@ namespace CSVFile
         /// <param name="list">The object array to write</param>
         /// <param name="filename">The stream where the CSV text will be written</param>
         /// <param name="settings">The CSV settings to use when writing the output (Default: CSV)</param>
-#if DOTNET20
+#if NET20
         public static void WriteToStream<T>(IEnumerable<T> list, string filename, CSVSettings settings = null) where T: class, new()
 #else
         public static void WriteToStream<T>(this IEnumerable<T> list, string filename, CSVSettings settings = null) where T: class, new()
