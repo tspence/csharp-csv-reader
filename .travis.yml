@@ -1,6 +1,6 @@
 language: csharp
 dotnet: latest
-mono: latest
+mono: none
 solution: csharp-csv-reader.sln
 install:
   - nuget restore csharp-csv-reader.sln

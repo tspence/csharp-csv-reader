@@ -1,5 +1,4 @@
 @echo off
-pushd .
-cd src
-..\..\nuget pack csvfile.nuspec
-popd
+msbuild csharp-csv-reader.sln /p:configuration=release
+..\nuget pack csvfile.nuspec
+move *.nupkg ..\nuget-temp-folder

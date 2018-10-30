@@ -7,9 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
-#if !PORTABLE
 using System.Data;
-#endif
 using System.Reflection;
 
 namespace CSVFile
@@ -49,7 +47,7 @@ namespace CSVFile
 #endregion
 
 #region Data Table Functions (not available in dot-net-portable mode)
-#if !NETSTANDARD2_0
+#if !NETSTANDARD20
         /// <summary>
         /// Write the data table to a stream in CSV format
         /// </summary>
@@ -97,9 +95,7 @@ namespace CSVFile
         public void Dispose()
         {
             _outstream.Flush();
-#if !PORTABLE
             _outstream.Close();
-#endif
             _outstream.Dispose();
         }
 #endregion
