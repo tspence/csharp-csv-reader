@@ -1,14 +1,11 @@
+* NuGet: [![NuGet](https://img.shields.io/nuget/v/CSVFile.svg?style=plastic)](https://www.nuget.org/packages/CSVFile/)
+* Tests: [![Travis-CI](https://api.travis-ci.org/tspence/csharp-csv-reader.svg?style=plastic&branch=master)](https://travis-ci.org/tspence/csharp-csv-reader/branches)
+
 # csharp-csv-reader
 This library is a series of unit tested, thoroughly commented CSV parsing functions which I have developed over the past eight or nine years. Extremely small and easy to implement; includes unit tests for the majority of odd CSV edge cases. Library supports different delimiters, qualifiers, and embedded newlines. Can read and write from data tables.
 
 Install via NUGET:
 * nuget install csvfile
-
-Download latest binaries directly:
-* https://github.com/tspence/csharp-csv-reader/raw/master/Releases/csharp-csv-reader-1.2.zip
-
-Integration Tests:
-* ![](https://api.travis-ci.org/tspence/csharp-csv-reader.svg?branch=master)
 
 # Why use CSharp CSV Reader?
 A few reasons:
