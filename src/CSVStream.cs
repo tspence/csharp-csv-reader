@@ -1,4 +1,9 @@
-﻿using System;
+﻿/*
+ * 2006 - 2018 Ted Spence, http://tedspence.com
+ * License: http://www.apache.org/licenses/LICENSE-2.0 
+ * Home page: https://github.com/tspence/csharp-csv-reader
+ */
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -14,11 +19,7 @@ namespace CSVFile
         /// <param name="list">The object array to write</param>
         /// <param name="sw">The stream where the CSV text will be written</param>
         /// <param name="settings">The CSV settings to use (Default: CSV)</param>
-#if NET20
-        public static void WriteToStream<T>(IEnumerable<T> list, StreamWriter sw, CSVSettings settings = null) where T: class, new()
-#else
         public static void WriteToStream<T>(this IEnumerable<T> list, StreamWriter sw, CSVSettings settings = null) where T: class, new()
-#endif
         {
             using (CSVWriter cw = new CSVWriter(sw, settings))
             {
@@ -32,11 +33,7 @@ namespace CSVFile
         /// <param name="list">The object array to write</param>
         /// <param name="filename">The stream where the CSV text will be written</param>
         /// <param name="settings">The CSV settings to use when writing the output (Default: CSV)</param>
-#if NET20
-        public static void WriteToStream<T>(IEnumerable<T> list, string filename, CSVSettings settings = null) where T: class, new()
-#else
         public static void WriteToStream<T>(this IEnumerable<T> list, string filename, CSVSettings settings = null) where T: class, new()
-#endif
         {
             using (StreamWriter sw = new StreamWriter(filename))
             {

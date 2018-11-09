@@ -5,8 +5,8 @@
  */
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.IO;
+using System.Text;
 
 #if NET20
 // Use this namespace to be able to declare extension methods
