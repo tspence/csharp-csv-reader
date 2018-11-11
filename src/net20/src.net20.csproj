@@ -24,10 +24,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\net20\</OutputPath>
-    <DefineConstants>TRACE;NET20</DefineConstants>
+    <DefineConstants>TRACE;HAS_DATATABLE;HAS_SMTPCLIENT;NEEDS_EXTENSION_ATTRIBUTE;NET20</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>

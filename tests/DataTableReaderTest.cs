@@ -13,7 +13,7 @@ using System.Data;
 
 namespace CSVTestSuite
 {
-#if !NETSTANDARD20
+#if HAS_DATATABLE
     [TestFixture]
     public class DataTableReaderTest
     {
