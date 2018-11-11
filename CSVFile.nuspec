@@ -22,6 +22,7 @@
   <files>
     <file src="src\net20\bin\release\net20\csvfile.*" target="lib\net20" />
     <file src="src\net40\bin\release\net40\csvfile.*" target="lib\net40" />
+    <file src="src\net45\bin\release\net45\csvfile.*" target="lib\net45" />
     <file src="src\netstandard20\bin\release\netstandard2.0\csvfile.*" target="lib\netstandard20" />
   </files>
 </package>
