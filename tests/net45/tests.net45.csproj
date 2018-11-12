@@ -6,7 +6,7 @@
     <ProjectGuid>{D22902D2-6D93-4349-A5FB-E272DBD64970}</ProjectGuid>
     <OutputType>Library</OutputType>
     <RootNamespace>csharpcsvreadertests.net40</RootNamespace>
-    <AssemblyName>tests.net40</AssemblyName>
+    <AssemblyName>tests.net45</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
