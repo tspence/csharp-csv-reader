@@ -59,7 +59,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\net45\src.net45.csproj">
       <Project>{6E72622B-03F6-4C09-8B81-47C011C5FF8E}</Project>
-      <Name>src.net40</Name>
+      <Name>src.net45</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

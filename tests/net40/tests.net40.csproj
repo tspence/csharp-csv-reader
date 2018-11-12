@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{D22902D2-6D93-4349-A5FB-E272DBD64970}</ProjectGuid>
+    <ProjectGuid>{D22902D2-6D93-4349-A5FB-E272DBD64971}</ProjectGuid>
     <OutputType>Library</OutputType>
     <RootNamespace>csharpcsvreadertests.net40</RootNamespace>
     <AssemblyName>tests.net40</AssemblyName>
@@ -55,7 +55,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\net40\src.net40.csproj">
       <Project>{6E72622B-03F6-4C09-8B81-47C011C5FF8E}</Project>
-      <Name>src.net40</Name>
+      <Name>src.net45</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
