@@ -17,6 +17,7 @@ script:
   - mono ./testrunner/NUnit.ConsoleRunner.3.4.0/tools/nunit3-console.exe ./tests/net20/bin/Release/tests.net20.dll
   - mono ./testrunner/NUnit.ConsoleRunner.3.4.0/tools/nunit3-console.exe ./tests/net40/bin/Release/tests.net40.dll
   - mono ./testrunner/NUnit.ConsoleRunner.3.4.0/tools/nunit3-console.exe ./tests/net45/bin/Release/tests.net45.dll
+  - mono ./testrunner/NUnit.ConsoleRunner.3.4.0/tools/nunit3-console.exe ./tests/netstandard20/bin/Release/netstandard2.0/tests.netstandard20.dll
   - dotnet test ./tests/netstandard20/tests.netstandard20.csproj
 after_success:
   - echo "Branch is $TRAVIS_BRANCH"
