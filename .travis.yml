@@ -1,15 +1,23 @@
 language: csharp
-dotnet: latest
-mono: none
+mono: latest
+dotnet: 2.0.0
 solution: csharp-csv-reader.sln
 install:
   - nuget restore csharp-csv-reader.sln
-  - nuget install NUnit.Console -Version 3.4.0 -OutputDirectory testrunner
+  - nuget install NUnit.ConsoleRunner -Version 3.4.0 -OutputDirectory testrunner
 script:
-  - xbuild csharp-csv-reader.sln
-  - mono ./testrunner/NUnit.ConsoleRunner.3.4.0/tools/nunit3-console.exe ./tests/net20/bin/Debug/tests.net20.dll
-  - mono ./testrunner/NUnit.ConsoleRunner.3.4.0/tools/nunit3-console.exe ./tests/net40/bin/Debug/tests.net40.dll
-  - dotnet test /tests/netstandard20/tests.netstandard20.csproj
+  - msbuild /p:Configuration=Release ./src/net20/src.net20.csproj
+  - msbuild /p:Configuration=Release ./src/net40/src.net40.csproj
+  - msbuild /p:Configuration=Release ./src/net45/src.net45.csproj
+  - msbuild /p:Configuration=Release ./src/netstandard20/src.netstandard20.csproj
+  - msbuild /p:Configuration=Release ./tests/net20/tests.net20.csproj
+  - msbuild /p:Configuration=Release ./tests/net40/tests.net40.csproj
+  - msbuild /p:Configuration=Release ./tests/net45/tests.net45.csproj
+  - msbuild /p:Configuration=Release ./tests/netstandard20/tests.netstandard20.csproj
+  - mono ./testrunner/NUnit.ConsoleRunner.3.4.0/tools/nunit3-console.exe ./tests/net20/bin/Release/tests.net20.dll
+  - mono ./testrunner/NUnit.ConsoleRunner.3.4.0/tools/nunit3-console.exe ./tests/net40/bin/Release/tests.net40.dll
+  - mono ./testrunner/NUnit.ConsoleRunner.3.4.0/tools/nunit3-console.exe ./tests/net45/bin/Release/tests.net45.dll
+  - mono ./testrunner/NUnit.ConsoleRunner.3.4.0/tools/nunit3-console.exe ./tests/netstandard20/bin/Release/tests.netstandard20.dll
 after_success:
   - echo "Branch is $TRAVIS_BRANCH"
   - echo "Pull Request is $TRAVIS_PULL_REQUEST_BRANCH"

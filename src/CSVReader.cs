@@ -7,7 +7,9 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
+#if HAS_DATATABLE
 using System.Data;
+#endif
 using System.Reflection;
 using System.ComponentModel;
 
@@ -100,7 +102,7 @@ namespace CSVFile
         #endregion
 
 #region Read a file into a data table
-#if !NETSTANDARD20
+#if HAS_DATATABLE
         /// <summary>
         /// Read this file into a data table in memory
         /// </summary>

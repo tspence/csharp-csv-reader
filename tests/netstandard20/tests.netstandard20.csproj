@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -32,7 +32,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="nunit.framework, Version=3.4.0.0, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\NUnit.3.4.0\lib\net45\nunit.framework.dll</HintPath>
+      <HintPath>..\..\packages\NUnit.3.4.0\lib\net45\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -44,34 +44,34 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\BasicParseTests.cs">
-      <Link>BasicParseTests.cs</Link>
-    </Compile>
-    <Compile Include="..\..\ChopTest.cs">
-      <Link>ChopTest.cs</Link>
-    </Compile>
-    <Compile Include="..\..\DataTableReaderTest.cs">
-      <Link>DataTableReaderTest.cs</Link>
-    </Compile>
-    <Compile Include="..\..\ReaderTest.cs">
-      <Link>ReaderTest.cs</Link>
-    </Compile>
-    <Compile Include="..\..\SerializationTest.cs">
-      <Link>SerializationTest.cs</Link>
-    </Compile>
-    <Compile Include="..\..\WriterTest.cs">
-      <Link>WriterTest.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\src\netstandard20\src.netstandard20.csproj">
-      <Project>{29d87c9e-d9d0-4ef7-895c-48b36c4cfcc0}</Project>
+    <Compile Include="..\SerializationTest.cs">
+      <Link>SerializationTest.cs</Link>
+    </Compile>
+    <Compile Include="..\ReaderTest.cs">
+      <Link>ReaderTest.cs</Link>
+    </Compile>
+    <Compile Include="..\BasicParseTests.cs">
+      <Link>BasicParseTests.cs</Link>
+    </Compile>
+    <Compile Include="..\ChopTest.cs">
+      <Link>ChopTest.cs</Link>
+    </Compile>
+    <Compile Include="..\WriterTest.cs">
+      <Link>WriterTest.cs</Link>
+    </Compile>
+    <Compile Include="..\DataTableReaderTest.cs">
+      <Link>DataTableReaderTest.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\netstandard20\src.netstandard20.csproj">
+      <Project>{29D87C9E-D9D0-4EF7-895C-48B36C4CFCC0}</Project>
       <Name>src.netstandard20</Name>
     </ProjectReference>
   </ItemGroup>

@@ -5,10 +5,10 @@
  */
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.IO;
+using System.Text;
 
-#if NET20
+#if NEEDS_EXTENSION_ATTRIBUTE
 // Use this namespace to be able to declare extension methods
 namespace System.Runtime.CompilerServices
 {
@@ -30,6 +30,8 @@ namespace CSVFile
         public const string VERSION = "NET20";
 #elif NET40
         public const string VERSION = "NET40";
+#elif NET45
+        public const string VERSION = "NET45";
 #elif NETSTANDARD10
         public const string VERSION = "NETSTANDARD10";
 #elif NETSTANDARD20

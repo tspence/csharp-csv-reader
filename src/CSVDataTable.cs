@@ -1,11 +1,19 @@
-﻿using System;
+﻿/*
+ * 2006 - 2018 Ted Spence, http://tedspence.com
+ * License: http://www.apache.org/licenses/LICENSE-2.0 
+ * Home page: https://github.com/tspence/csharp-csv-reader
+ */
+using System;
+using System.Collections.Generic;
+#if HAS_DATATABLE
 using System.Data;
+#endif
 using System.IO;
 using System.Text;
 
 namespace CSVFile
 {
-#if !NETSTANDARD2_0
+#if HAS_DATATABLE
     public static class CSVDataTable
     {
 #region Reading CSV into a DataTable
@@ -56,6 +64,7 @@ namespace CSVFile
         }
 #endregion
 
+#if HAS_SMTPCLIENT
 #region CSV Attachment Email Shortcut
         /// <summary>
         /// Quick shortcut to send a datatable as an attachment via SMTP
@@ -65,11 +74,7 @@ namespace CSVFile
         /// <param name="to_address"></param>
         /// <param name="subject"></param>
         /// <param name="body"></param>
-#if NET20
-        public static void SendCsvAttachment(DataTable dt, string from_address, string to_address, string subject, string body, string smtp_host, string attachment_filename)
-#else
         public static void SendCsvAttachment(this DataTable dt, string from_address, string to_address, string subject, string body, string smtp_host, string attachment_filename)
-#endif
         {
             // Save this CSV to a string
             string csv = WriteToString(dt);
@@ -96,6 +101,7 @@ namespace CSVFile
 #endif
         }
 #endregion
+#endif
 
 #region Writing a DataTable to CSV
         /// <summary>
@@ -104,11 +110,7 @@ namespace CSVFile
         /// <param name="dt"></param>
         /// <param name="filename"></param>
         /// <param name="settings">The CSV settings to use when exporting this DataTable (Default: CSV)</param>
-#if NET20
-        public static void WriteToFile(DataTable dt, string filename, CSVSettings settings = null)
-#else
         public static void WriteToFile(this DataTable dt, string filename, CSVSettings settings = null)
-#endif
         {
             using (StreamWriter sw = new StreamWriter(filename))
             {
@@ -122,11 +124,7 @@ namespace CSVFile
         /// <param name="dt">The data table to write</param>
         /// <param name="sw">The stream where the CSV text will be written</param>
         /// <param name="settings">The CSV settings to use when exporting this DataTable (Default: CSV)</param>
-#if NET20
-        public static void WriteToStream(DataTable dt, StreamWriter sw, CSVSettings settings = null)
-#else
         public static void WriteToStream(this DataTable dt, StreamWriter sw, CSVSettings settings = null)
-#endif
         {
             using (CSVWriter cw = new CSVWriter(sw, settings))
             {
@@ -140,11 +138,7 @@ namespace CSVFile
         /// <param name="dt">The datatable to write</param>
         /// <param name="settings">The CSV settings to use when exporting this DataTable (Default: CSV)</param>
         /// <returns>The CSV string representing the object array.</returns>
-#if NET20
-        public static string WriteToString(DataTable dt, CSVSettings settings = null)
-#else
         public static string WriteToString(this DataTable dt, CSVSettings settings = null)
-#endif
         {
             using (var ms = new MemoryStream())
             {

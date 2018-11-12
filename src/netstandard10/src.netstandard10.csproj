@@ -1,17 +1,16 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>netstandard1.0</TargetFramework>
     <AssemblyName>CSVFile</AssemblyName>
     <RootNamespace>CSVFile</RootNamespace>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DefineConstants>TRACE;NETSTANDARD20;HAS_ASYNC;DEBUG</DefineConstants>
+    <DefineConstants>TRACE;NETSTANDARD10;HAS_ASYNC;DEBUG;</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType></DebugType>
-    <DefineConstants>TRACE;NETSTANDARD20;RELEASE;HAS_ASYNC;</DefineConstants>
+    <DefineConstants>TRACE;NETSTANDARD20</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
   </ItemGroup>

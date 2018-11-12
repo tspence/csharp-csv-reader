@@ -5,33 +5,36 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{642DB878-9E42-4F7D-A001-7640FC9E63A6}</ProjectGuid>
+    <ProjectGuid>{6E72622B-03F6-4C09-8B81-47C011C5FF8E}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>CSVFile</RootNamespace>
     <AssemblyName>CSVFile</AssemblyName>
-    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\net20\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;HAS_DATATABLE;HAS_SMTPCLIENT;NEEDS_EXTENSION_ATTRIBUTE;NET20</DefineConstants>
+    <OutputPath>bin\Debug\net45\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;NET45;HAS_DATATABLE;HAS_ASYNC;</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\net20\</OutputPath>
-    <DefineConstants>TRACE;HAS_DATATABLE;HAS_SMTPCLIENT;NEEDS_EXTENSION_ATTRIBUTE;NET20</DefineConstants>
+    <OutputPath>bin\Release\net45\</OutputPath>
+    <DefineConstants>TRACE;NET45;HAS_DATATABLE;HAS_ASYNC;</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
@@ -39,6 +42,9 @@
     <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\AssemblyInfo.cs">
+      <Link>AssemblyInfo.cs</Link>
+    </Compile>
     <Compile Include="..\CSV.cs">
       <Link>CSV.cs</Link>
     </Compile>
@@ -56,9 +62,6 @@
     </Compile>
     <Compile Include="..\CSVStream.cs">
       <Link>CSVStream.cs</Link>
-    </Compile>
-    <Compile Include="..\AssemblyInfo.cs">
-      <Link>AssemblyInfo.cs</Link>
     </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
