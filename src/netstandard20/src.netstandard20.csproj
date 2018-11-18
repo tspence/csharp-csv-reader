@@ -7,11 +7,12 @@
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DefineConstants>TRACE;NETSTANDARD20;HAS_ASYNC;DEBUG</DefineConstants>
+    <DebugSymbols></DebugSymbols>
+    <DefineConstants>TRACE;NETSTANDARD20;HAS_ASYNC;DEBUG;HAS_DATATABLE;</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType></DebugType>
-    <DefineConstants>TRACE;NETSTANDARD20;HAS_ASYNC;RELEASE;</DefineConstants>
+    <DefineConstants>TRACE;NETSTANDARD20;HAS_ASYNC;RELEASE;HAS_DATATABLE;</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
   </ItemGroup>
@@ -41,5 +42,8 @@
     <Compile Include="..\CSVAsyncExtensions.cs">
       <Link>CSVAsyncExtensions.cs</Link>
     </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="System.Data.Common" Version="4.3.0" />
   </ItemGroup>
 </Project>
