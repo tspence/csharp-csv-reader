@@ -10,9 +10,12 @@ using System.Text;
 
 namespace CSVFile
 {
+    /// <summary>
+    /// Extension methods for simplifying streams
+    /// </summary>
     public static class CSVStream
     {
-        #region FileStream related functions (not available on dot-net-portable)
+        #region FileStream related functions
         /// <summary>
         /// Serialize an object array to a stream in CSV format
         /// </summary>

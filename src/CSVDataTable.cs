@@ -14,6 +14,9 @@ using System.Text;
 namespace CSVFile
 {
 #if HAS_DATATABLE
+    /// <summary>
+    /// Extension class for simplifying data table operations
+    /// </summary>
     public static class CSVDataTable
     {
 #region Reading CSV into a DataTable
@@ -62,10 +65,82 @@ namespace CSVFile
                 }
             }
         }
-#endregion
+
+
+        /// <summary>
+        /// Read the entire stream into a data table in memory
+        /// </summary>
+        public static DataTable ReadAsDataTable(this CSVReader reader)
+        {
+            DataTable dt = new DataTable();
+            string[] firstLine = null;
+
+            // File contains column names - so name each column properly
+            if (reader.Headers == null)
+            {
+                firstLine = reader.NextLine();
+                var list = new List<string>();
+                for (int i = 0; i < firstLine.Length; i++)
+                {
+                    list.Add($"Column{i}");
+                }
+            }
+
+            // Add headers
+            int numColumns = reader.Headers.Length;
+            for (int i = 0; i < reader.Headers.Length; i++)
+            {
+                dt.Columns.Add(new DataColumn(reader.Headers[i], typeof(string)));
+            }
+
+            // If we had to read the first line to get dimensions, add it
+            int row_num = 1;
+            if (firstLine != null)
+            {
+                dt.Rows.Add(firstLine);
+                row_num++;
+            }
+
+            // Start reading through the file
+            foreach (var line in reader.Lines())
+            {
+
+                // Does this line match the length of the first line?
+                if (line.Length != numColumns)
+                {
+                    if (!reader.Settings.IgnoreDimensionErrors)
+                    {
+                        throw new Exception($"Line #{row_num} contains {line.Length} columns; expected {numColumns}");
+                    }
+                    else
+                    {
+
+                        // Add as best we can - construct a new line and make it fit
+                        List<string> list = new List<string>();
+                        list.AddRange(line);
+                        while (list.Count < numColumns)
+                        {
+                            list.Add("");
+                        }
+                        dt.Rows.Add(list.GetRange(0, numColumns).ToArray());
+                    }
+                }
+                else
+                {
+                    dt.Rows.Add(line);
+                }
+
+                // Keep track of where we are in the file
+                row_num++;
+            }
+
+            // Here's your data table
+            return dt;
+        }
+        #endregion
 
 #if HAS_SMTPCLIENT
-#region CSV Attachment Email Shortcut
+        #region CSV Attachment Email Shortcut
         /// <summary>
         /// Quick shortcut to send a datatable as an attachment via SMTP
         /// </summary>
@@ -100,10 +175,10 @@ namespace CSVFile
             }
 #endif
         }
-#endregion
+        #endregion
 #endif
 
-#region Writing a DataTable to CSV
+        #region Writing a DataTable to CSV
         /// <summary>
         /// Write a data table to disk at the designated file name in CSV format
         /// </summary>
@@ -153,7 +228,34 @@ namespace CSVFile
                 }
             }
         }
-#endregion
+
+        /// <summary>
+        /// Write the data table to a stream in CSV format
+        /// </summary>
+        /// <param name="dt">The data table to write</param>
+        public static void Write(this CSVWriter writer, DataTable dt)
+        {
+            // Write headers, if the caller requested we do so
+            if (writer.Settings.HeaderRowIncluded)
+            {
+                var headers = new List<object>();
+                foreach (DataColumn col in dt.Columns)
+                {
+                    headers.Add(col.ColumnName);
+                }
+                writer.WriteLine(headers);
+            }
+
+            // Now produce the rows
+            foreach (DataRow dr in dt.Rows)
+            {
+                writer.WriteLine(dr.ItemArray);
+            }
+
+            // Flush the stream
+            writer.Stream.Flush();
+        }
+        #endregion
     }
 #endif
 }

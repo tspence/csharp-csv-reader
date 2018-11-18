@@ -5,28 +5,32 @@
  */
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.IO;
-#if HAS_DATATABLE
-using System.Data;
-#endif
 using System.Reflection;
 using System.ComponentModel;
 
 namespace CSVFile
 {
+    /// <summary>
+    /// Read a stream in as CSV, parsing it to an enumerable
+    /// </summary>
     public class CSVReader : IEnumerable<string[]>, IDisposable
     {
-        protected CSVSettings _settings;
+        /// <summary>
+        /// The settings to use for this reader session
+        /// </summary>
+        public CSVSettings Settings { get; private set; }
 
-        protected StreamReader _instream;
+        /// <summary>
+        /// The stream from which this reader gets its data
+        /// </summary>
+        /// <value>The stream.</value>
+        public StreamReader Stream { get; private set; }
 
-        #region Public Variables
         /// <summary>
         /// If the first row in the file is a header row, this will be populated
         /// </summary>
         public string[] Headers = null;
-        #endregion
 
         #region Constructors
         /// <summary>
@@ -36,18 +40,18 @@ namespace CSVFile
         /// <param name="settings">The CSV settings to use for this reader (Default: CSV)</param>
         public CSVReader(StreamReader source, CSVSettings settings = null)
         {
-            _instream = source;
-            _settings = settings;
-            if (_settings == null) _settings = CSVSettings.CSV;
+            Stream = source;
+            Settings = settings;
+            if (Settings == null) Settings = CSVSettings.CSV;
 
             // Do we need to parse headers?
-            if (_settings.HeaderRowIncluded)
+            if (Settings.HeaderRowIncluded)
             {
                 Headers = NextLine();
             }
             else
             {
-                Headers = _settings.AssumedHeaders?.ToArray();
+                Headers = Settings.AssumedHeaders?.ToArray();
             }
         }
         #endregion
@@ -97,75 +101,8 @@ namespace CSVFile
         /// <returns>One line from the file.</returns>
         public string[] NextLine()
         {
-            return CSV.ParseMultiLine(_instream, _settings);
+            return CSV.ParseMultiLine(Stream, Settings);
         }
-        #endregion
-
-#region Read a file into a data table
-#if HAS_DATATABLE
-        /// <summary>
-        /// Read this file into a data table in memory
-        /// </summary>
-        /// <returns></returns>
-        public DataTable ReadAsDataTable()
-        {
-            DataTable dt = new DataTable();
-            string[] firstLine = null;
-
-            // File contains column names - so name each column properly
-            if (Headers == null)
-            {
-                firstLine = NextLine();
-                var list = new List<string>();
-                for (int i = 0; i < firstLine.Length; i++) {
-                    list.Add($"Column{i}");
-                }
-            }
-
-            // Add headers
-            int numColumns = Headers.Length;
-            for (int i = 0; i < Headers.Length; i++)
-            {
-                dt.Columns.Add(new DataColumn(Headers[i], typeof(string)));
-            }
-
-            // If we had to read the first line to get dimensions, add it
-            int row_num = 1;
-            if (firstLine != null)
-            {
-                dt.Rows.Add(firstLine);
-                row_num++;
-            }
-
-            // Start reading through the file
-            foreach (var line in Lines()) {
-
-                // Does this line match the length of the first line?
-                if (line.Length != numColumns) {
-                    if (!_settings.IgnoreDimensionErrors) {
-                        throw new Exception($"Line #{row_num} contains {line.Length} columns; expected {numColumns}");
-                    } else {
-
-                        // Add as best we can - construct a new line and make it fit
-                        List<string> list = new List<string>();
-                        list.AddRange(line);
-                        while (list.Count < numColumns) {
-                            list.Add("");
-                        }
-                        dt.Rows.Add(list.GetRange(0, numColumns).ToArray());
-                    }
-                } else {
-                    dt.Rows.Add(line);
-                }
-
-                // Keep track of where we are in the file
-                row_num++;
-            }
-
-            // Here's your data table
-            return dt;
-        }
-#endif
 
         /// <summary>
         /// Deserialize the CSV reader into a generic list
@@ -207,14 +144,14 @@ namespace CSVFile
                                 method_handlers[i] = mi;
                                 column_types[i] = mi.GetParameters()[0].ParameterType;
                             }
-                            else if (!_settings.IgnoreHeaderErrors)
+                            else if (!Settings.IgnoreHeaderErrors)
                             {
                                 throw new Exception($"The column header '{Headers[i]}' matched a method with more than one parameter.");
                             }
 
                             // Does the caller want us to throw an error on bad columns?
                         }
-                        else if (!_settings.IgnoreHeaderErrors)
+                        else if (!Settings.IgnoreHeaderErrors)
                         {
                             throw new Exception($"The column header '{Headers[i]}' was not found in the class '{return_type.FullName}'.");
                         }
@@ -233,7 +170,7 @@ namespace CSVFile
                 if (column_types[i] != null)
                 {
                     column_convert[i] = TypeDescriptor.GetConverter(column_types[i]);
-                    if ((column_convert[i] == null) && !_settings.IgnoreHeaderErrors)
+                    if ((column_convert[i] == null) && !Settings.IgnoreHeaderErrors)
                     {
                         throw new Exception($"The column {Headers[i]} (type {column_types[i]}) does not have a type converter.");
                     }
@@ -246,7 +183,7 @@ namespace CSVFile
             {
 
                 // Does this line match the length of the first line?  Does the caller want us to complain?
-                if ((line.Length != num_columns) && !_settings.IgnoreHeaderErrors) {
+                if ((line.Length != num_columns) && !Settings.IgnoreHeaderErrors) {
                     throw new Exception($"Line #{row_num} contains {line.Length} columns; expected {num_columns}");
                 }
 
@@ -257,7 +194,7 @@ namespace CSVFile
 
                     // Attempt to convert this to the specified type
                     object value = null;
-                    if (_settings.AllowNull && (line[i] == null))
+                    if (Settings.AllowNull && (line[i] == null))
                     {
                         value = null;
                     } 
@@ -265,7 +202,7 @@ namespace CSVFile
                     {
                         value = column_convert[i].ConvertFromString(line[i]);
                     }
-                    else if (!_settings.IgnoreHeaderErrors)
+                    else if (!Settings.IgnoreHeaderErrors)
                     {
                         throw new Exception(String.Format("The value '{0}' cannot be converted to the type {1}.", line[i], column_types[i]));
                     }
@@ -305,7 +242,7 @@ namespace CSVFile
         /// </summary>
         public void Dispose()
         {
-            _instream.Dispose();
+            Stream.Dispose();
         }
 #endregion
 

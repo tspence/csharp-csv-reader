@@ -5,20 +5,24 @@
  */
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.IO;
-#if HAS_DATATABLE
-using System.Data;
-#endif
-using System.Reflection;
 
 namespace CSVFile
 {
+    /// <summary>
+    /// Writes arrays of objects or data tables in CSV format out to a stream
+    /// </summary>
     public class CSVWriter : IDisposable
     {
-        protected CSVSettings _settings;
+        /// <summary>
+        /// CSV settings for this writer
+        /// </summary>
+        public CSVSettings Settings { get; private set; }
 
-        protected StreamWriter _outstream;
+        /// <summary>
+        /// Stream to which this writer is attached
+        /// </summary>
+        public StreamWriter Stream { get; private set; }
 
 #region Constructors
         /// <summary>
@@ -28,11 +32,11 @@ namespace CSVFile
         /// <param name="settings">The CSV settings to use when writing to the stream (Default: CSV)</param>
         public CSVWriter(StreamWriter dest, CSVSettings settings = null)
         {
-            _outstream = dest;
-            _settings = settings;
-            if (_settings == null)
+            Stream = dest;
+            Settings = settings;
+            if (Settings == null)
             {
-                _settings = CSVSettings.CSV;
+                Settings = CSVSettings.CSV;
             }
         }
 #endregion
@@ -44,36 +48,8 @@ namespace CSVFile
         /// <param name="line">The array of values for this line</param>
         public void WriteLine(IEnumerable<object> line)
         {
-            _outstream.WriteLine(line.ToCSVString(_settings));
+            Stream.WriteLine(line.ToCSVString(Settings));
         }
-#endregion
-
-#region Data Table Functions (not available in dot-net-portable mode)
-#if HAS_DATATABLE
-        /// <summary>
-        /// Write the data table to a stream in CSV format
-        /// </summary>
-        /// <param name="dt">The data table to write</param>
-        public void Write(DataTable dt)
-        {
-            // Write headers, if the caller requested we do so
-            if (_settings.HeaderRowIncluded) {
-                var headers = new List<object>();
-                foreach (DataColumn col in dt.Columns) {
-                    headers.Add(col.ColumnName);
-                }
-                WriteLine(headers);
-            }
-
-            // Now produce the rows
-            foreach (DataRow dr in dt.Rows) {
-                WriteLine(dr.ItemArray);
-            }
-
-            // Flush the stream
-            _outstream.Flush();
-        }
-#endif
 #endregion
 
 #region Serialization
@@ -83,10 +59,10 @@ namespace CSVFile
         /// <typeparam name="IEnumerable">An IEnumerable that produces the list of objects to serialize.</typeparam>
         public void WriteArray<T>(IEnumerable<T> list) where T: class, new()
         {
-            _outstream.Write(CSV.Serialize<T>(list, _settings));
+            Stream.Write(CSV.Serialize<T>(list, Settings));
 
             // Flush the stream
-            _outstream.Flush();
+            Stream.Flush();
         }
 #endregion
 
@@ -96,9 +72,9 @@ namespace CSVFile
         /// </summary>
         public void Dispose()
         {
-            _outstream.Flush();
-            _outstream.Close();
-            _outstream.Dispose();
+            Stream.Flush();
+            Stream.Close();
+            Stream.Dispose();
         }
 #endregion
     }
