@@ -57,7 +57,7 @@ namespace CSVFile
         public async Task<string[]> NextLine()
         {
             // If this is the firest line, retrieve headers before gathering data
-            await Headers();
+            await Headers().ConfigureAwait(false);
 
             // Get the next line
             return await CSV.ParseMultiLine(Stream, Settings).ConfigureAwait(false);

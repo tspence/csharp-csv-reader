@@ -94,7 +94,7 @@ namespace CSVTestSuite
 
             // Save this string to a test file
             string sourcefile = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString() + ".csv");
-            await CSVDataTable.WriteToFile(dt, sourcefile);
+            await dt.WriteToFile(sourcefile);
 
             // Create an empty test folder
             string dirname = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());

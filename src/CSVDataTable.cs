@@ -80,7 +80,7 @@ namespace CSVFile
             var h = await reader.Headers().ConfigureAwait(false);
             if (h == null)
             {
-                firstLine = await reader.NextLine();
+                firstLine = await reader.NextLine().ConfigureAwait(false);
                 var list = new List<string>();
                 for (int i = 0; i < firstLine.Length; i++)
                 {

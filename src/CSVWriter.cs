@@ -60,10 +60,10 @@ namespace CSVFile
         /// <typeparam name="IEnumerable">An IEnumerable that produces the list of objects to serialize.</typeparam>
         public async Task WriteArray<T>(IEnumerable<T> list) where T: class, new()
         {
-            await Stream.WriteAsync(CSV.Serialize<T>(list, Settings));
+            await Stream.WriteAsync(CSV.Serialize<T>(list, Settings)).ConfigureAwait(false);
 
             // Since many people use this shortcut function and expect to see data right away, we flush here
-            await Stream.FlushAsync();
+            await Stream.FlushAsync().ConfigureAwait(false);
         }
 #endregion
 

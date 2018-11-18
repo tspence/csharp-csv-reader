@@ -227,7 +227,7 @@ namespace CSVFile
             {
                 using (CSVReader cr = new CSVReader(new StreamReader(stream), settings))
                 {
-                    return await cr.Deserialize<T>();
+                    return await cr.Deserialize<T>().ConfigureAwait(false);
                 }
             }
         }
