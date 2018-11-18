@@ -9,7 +9,9 @@ using System.Collections.Generic;
 using NUnit.Framework;
 using System.IO;
 using CSVFile;
+#if HAS_ASYNC
 using System.Threading.Tasks;
+#endif
 
 namespace CSVTestSuite
 {
@@ -24,7 +26,11 @@ namespace CSVTestSuite
         }
 
         [Test]
+#if HAS_ASYNC
         public async Task DataTableChopTest()
+#else
+        public void DataTableChopTest()
+#endif
         {
             List<SimpleChopClass> list = new List<SimpleChopClass>();
             for (int i = 0; i < 5000; i++)
@@ -64,21 +70,27 @@ namespace CSVTestSuite
             Directory.CreateDirectory(dirname);
 
             // Chop this file into one-line chunks
+#if HAS_ASYNC
             var num = await CSV.ChopFile(singlefile, dirname, 5000);
-
-            // Verify that we got three files
             string[] files = Directory.GetFiles(dirname);
             Assert.AreEqual(3, files.Length);
             Assert.AreEqual(3, num);
-
-            // Read in each file and verify that each one has one line
             var f1 = await CSV.Deserialize<SimpleChopClass>(File.ReadAllText(files[0]));
-            Assert.AreEqual(5000, f1.Count);
-
             var f2 = await CSV.Deserialize<SimpleChopClass>(File.ReadAllText(files[1]));
-            Assert.AreEqual(5000, f2.Count);
-
             var f3 = await CSV.Deserialize<SimpleChopClass>(File.ReadAllText(files[2]));
+#else
+            var num = CSV.ChopFile(singlefile, dirname, 5000);
+            string[] files = Directory.GetFiles(dirname);
+            Assert.AreEqual(3, files.Length);
+            Assert.AreEqual(3, num);
+            var f1 = CSV.Deserialize<SimpleChopClass>(File.ReadAllText(files[0]));
+            var f2 = CSV.Deserialize<SimpleChopClass>(File.ReadAllText(files[1]));
+            var f3 = CSV.Deserialize<SimpleChopClass>(File.ReadAllText(files[2]));
+#endif
+
+            // Verify that we got three files
+            Assert.AreEqual(5000, f1.Count);
+            Assert.AreEqual(5000, f2.Count);
             Assert.AreEqual(5000, f3.Count);
 
             // Merge and verify

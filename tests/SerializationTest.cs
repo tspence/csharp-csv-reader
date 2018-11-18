@@ -9,7 +9,9 @@ using System.Collections.Generic;
 using NUnit.Framework;
 using CSVFile;
 using System.IO;
+#if HAS_ASYNC
 using System.Threading.Tasks;
+#endif
 
 namespace CSVTestSuite
 {
@@ -21,7 +23,7 @@ namespace CSVTestSuite
             public string TestString;
             public string PropertyString { get; set; }
             public string Comment;
-            public void SetComment(string s) { Comment = s;  }
+            public void SetComment(string s) { Comment = s; }
             public int IntField;
             public int IntProperty { get; set; }
             public DateTime timestamp;
@@ -37,7 +39,11 @@ namespace CSVTestSuite
         }
 
         [Test]
+#if HAS_ASYNC
         public async Task TestObjectSerialization()
+#else
+        public void TestObjectSerialization()
+#endif
         {
             // Deserialize an array to a list of objects!
             List<TestClassOne> list = null;
@@ -47,8 +53,13 @@ namespace CSVTestSuite
 1975-06-03,test3,""Bye and bye, dragonfly!"",Jimmy's The Bomb,12,13";
             byte[] byteArray = Encoding.UTF8.GetBytes(source);
             MemoryStream stream = new MemoryStream(byteArray);
-            using (CSVReader cr = new CSVReader(new StreamReader(stream))) {
+            using (CSVReader cr = new CSVReader(new StreamReader(stream)))
+            {
+#if HAS_ASYNC
                 list = await cr.Deserialize<TestClassOne>();
+#else
+                list = cr.Deserialize<TestClassOne>();
+#endif
             }
 
             // Test the array
@@ -58,7 +69,7 @@ namespace CSVTestSuite
             Assert.AreEqual(list[0].PropertyString, "Bob");
             Assert.AreEqual(list[0].IntField, 57);
             Assert.AreEqual(list[0].IntProperty, 0);
-            Assert.AreEqual(list[0].timestamp, new DateTime(2012,5,1));
+            Assert.AreEqual(list[0].timestamp, new DateTime(2012, 5, 1));
             Assert.AreEqual(list[1].TestString, "test2");
             Assert.AreEqual(list[1].Comment, "What's up, buttercup?");
             Assert.AreEqual(list[1].PropertyString, "Ralph");
@@ -74,7 +85,11 @@ namespace CSVTestSuite
         }
 
         [Test]
+#if HAS_ASYNC
         public async Task TestStructSerialization()
+#else
+        public void TestStructSerialization()
+#endif
         {
             List<TestClassTwo> list = new List<TestClassTwo>();
             list.Add(new TestClassTwo() { FirstColumn = "hi1!", SecondColumn = 12, ThirdColumn = EnumTestType.First });
@@ -85,10 +100,15 @@ namespace CSVTestSuite
             string csv = CSV.Serialize<TestClassTwo>(list);
 
             // Deserialize back from a CSV string - should not throw any errors!
+#if HAS_ASYNC
             List<TestClassTwo> newlist = await CSV.Deserialize<TestClassTwo>(csv);
+#else
+            List<TestClassTwo> newlist = CSV.Deserialize<TestClassTwo>(csv);
+#endif
 
             // Compare original objects to new ones
-            for (int i = 0; i < list.Count; i++) {
+            for (int i = 0; i < list.Count; i++)
+            {
                 Assert.AreEqual(list[i].FirstColumn, newlist[i].FirstColumn);
                 Assert.AreEqual(list[i].SecondColumn, newlist[i].SecondColumn);
                 Assert.AreEqual(list[i].ThirdColumn, newlist[i].ThirdColumn);
@@ -96,7 +116,11 @@ namespace CSVTestSuite
         }
 
         [Test]
+#if HAS_ASYNC
         public async Task TestNullSerialization()
+#else
+        public void TestNullSerialization()
+#endif
         {
             List<TestClassTwo> list = new List<TestClassTwo>();
             list.Add(new TestClassTwo() { FirstColumn = "hi1!", SecondColumn = 12, ThirdColumn = EnumTestType.First });
@@ -108,7 +132,11 @@ namespace CSVTestSuite
             string csv = CSV.Serialize<TestClassTwo>(list, CSVSettings.CSV_PERMIT_NULL);
 
             // Deserialize back from a CSV string - should not throw any errors!
+#if HAS_ASYNC
             List<TestClassTwo> newlist = await CSV.Deserialize<TestClassTwo>(csv, CSVSettings.CSV_PERMIT_NULL);
+#else
+            List<TestClassTwo> newlist = CSV.Deserialize<TestClassTwo>(csv, CSVSettings.CSV_PERMIT_NULL);
+#endif
 
             // Compare original objects to new ones
             for (int i = 0; i < list.Count; i++)

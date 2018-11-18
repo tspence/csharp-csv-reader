@@ -10,7 +10,9 @@ using NUnit.Framework;
 using CSVFile;
 using System.IO;
 using System.Data;
+#if HAS_ASYNC
 using System.Threading.Tasks;
+#endif
 
 namespace CSVTestSuite
 {
