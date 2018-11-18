@@ -35,7 +35,6 @@ namespace CSVFile
         /// </summary>
         private string[] _headers;
 
-        #region Constructors
         /// <summary>
         /// Construct a new CSV reader off a streamed source
         /// </summary>
@@ -48,9 +47,7 @@ namespace CSVFile
             if (Settings == null) Settings = CSVSettings.CSV;
 
         }
-        #endregion
 
-        #region Iterate through a CSV File
 #if HAS_ASYNC
         /// <summary>
         /// Retrieve the next line from the file.
@@ -269,9 +266,7 @@ namespace CSVFile
             // Here's your array!
             return result;
         }
-#endregion
 
-#region Disposal
         /// <summary>
         /// Close our resources - specifically, the stream reader
         /// </summary>
@@ -279,6 +274,5 @@ namespace CSVFile
         {
             Stream.Dispose();
         }
-#endregion
     }
 }

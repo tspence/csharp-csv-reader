@@ -16,12 +16,12 @@ using System.Threading.Tasks;
 
 namespace CSVFile
 {
-#if HAS_DATATABLE
     /// <summary>
     /// Extension class for simplifying data table operations
     /// </summary>
     public static partial class CSV
     {
+#if HAS_DATATABLE
         /// <summary>
         /// Read the entire stream into a data table in memory
         /// </summary>
@@ -112,7 +112,6 @@ namespace CSVFile
             // Here's your data table
             return dt;
         }
-#endif
 
         /// <summary>
         /// Write a DataTable to a string in CSV format
@@ -195,6 +194,7 @@ namespace CSVFile
             // Flush the stream
             writer.Stream.Flush();
         }
+#endif
 #endif
 
 #if HAS_SMTPCLIENT

@@ -8,6 +8,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
+#if HAS_DATATABLE
+using System.Data;
+#endif
 
 namespace CSVFile
 {
@@ -16,7 +19,6 @@ namespace CSVFile
     /// </summary>
     public static partial class CSV
     {
-        #region Extension methods for common tasks
 #if HAS_DATATABLE
         /// <summary>
         /// Write a data table to disk at the designated file name in CSV format
@@ -172,6 +174,5 @@ namespace CSVFile
             }
             return results;
         }
-        #endregion
     }
 }

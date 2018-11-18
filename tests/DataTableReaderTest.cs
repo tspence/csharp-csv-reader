@@ -35,7 +35,7 @@ namespace CSVTestSuite
         [Test]
         public async Task TestBasicDataTable()
         {
-            DataTable dt = await CSVDataTable.FromString(source);
+            DataTable dt = await CSV.FromString(source);
             Assert.AreEqual(dt.Columns.Count, 3);
             Assert.AreEqual(dt.Rows.Count, 4);
             Assert.AreEqual(dt.Rows[0].ItemArray[0], "JD");
@@ -55,7 +55,7 @@ namespace CSVTestSuite
         [Test]
         public async Task TestDataTableWithEmbeddedNewlines()
         {
-            DataTable dt = await CSVDataTable.FromString(source_embedded_newlines);
+            DataTable dt = await CSV.FromString(source_embedded_newlines);
             Assert.AreEqual(dt.Columns.Count, 3);
             Assert.AreEqual(dt.Rows.Count, 4);
             Assert.AreEqual(dt.Rows[0].ItemArray[0], "JD");
@@ -110,15 +110,15 @@ namespace CSVTestSuite
             Assert.AreEqual(3, files.Length);
 
             // Read in each file and verify that each one has one line
-            dt = await CSVDataTable.FromFile(files[0]);
+            dt = await CSV.FromFile(files[0]);
             Assert.AreEqual(5000, dt.Rows.Count);
             Assert.AreEqual("first", dt.Rows[0].ItemArray[0]);
 
-            dt = await CSVDataTable.FromFile(files[1]);
+            dt = await CSV.FromFile(files[1]);
             Assert.AreEqual(5000, dt.Rows.Count);
             Assert.AreEqual("second", dt.Rows[0].ItemArray[0]);
 
-            dt = await CSVDataTable.FromFile(files[2]);
+            dt = await CSV.FromFile(files[2]);
             Assert.AreEqual(5000, dt.Rows.Count);
             Assert.AreEqual("third", dt.Rows[0].ItemArray[0]);
 
@@ -134,11 +134,11 @@ namespace CSVTestSuite
 2012-05-01,test1,""Hi there, I said!"",Bob,57,0
 2011-04-01,test2,""What's up, buttercup?"",Ralph,1,-999
 1975-06-03,test3,""Bye and bye, dragonfly!"",Jimmy's The Bomb,12,13";
-            DataTable dt = await CSVDataTable.FromString(source);
+            DataTable dt = await CSV.FromString(source);
 
             // Save this string to a test file
             string outfile = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString() + ".csv");
-            await CSVDataTable.WriteToFile(dt, outfile);
+            await CSV.WriteToFile(dt, outfile);
 
             // Create an empty test folder
             string dirname = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
@@ -153,17 +153,17 @@ namespace CSVTestSuite
             Assert.AreEqual(3, num);
 
             // Read in each file and verify that each one has one line
-            dt = await CSVDataTable.FromFile(files[0]);
+            dt = await CSV.FromFile(files[0]);
             Assert.AreEqual(1, dt.Rows.Count);
             Assert.AreEqual("2012-05-01", dt.Rows[0].ItemArray[0]);
             Assert.AreEqual("test1", dt.Rows[0].ItemArray[1]);
 
-            dt = await CSVDataTable.FromFile(files[1]);
+            dt = await CSV.FromFile(files[1]);
             Assert.AreEqual(1, dt.Rows.Count);
             Assert.AreEqual("2011-04-01", dt.Rows[0].ItemArray[0]);
             Assert.AreEqual("test2", dt.Rows[0].ItemArray[1]);
 
-            dt = await CSVDataTable.FromFile(files[2]);
+            dt = await CSV.FromFile(files[2]);
             Assert.AreEqual(1, dt.Rows.Count);
             Assert.AreEqual("1975-06-03", dt.Rows[0].ItemArray[0]);
             Assert.AreEqual("test3", dt.Rows[0].ItemArray[1]);
