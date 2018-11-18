@@ -19,14 +19,14 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;NETSTANDARD20;HAS_ASYNC;</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;NETSTANDARD20;HAS_ASYNC;HAS_DATATABLE;</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE;NETSTANDARD20;HAS_ASYNC;</DefineConstants>
+    <DefineConstants>TRACE;NETSTANDARD20;HAS_ASYNC;HAS_DATATABLE;</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
