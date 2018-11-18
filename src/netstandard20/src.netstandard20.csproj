@@ -11,7 +11,7 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType></DebugType>
-    <DefineConstants>TRACE;NETSTANDARD20;RELEASE;HAS_ASYNC;</DefineConstants>
+    <DefineConstants>TRACE;NETSTANDARD20;HAS_ASYNC;RELEASE;</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
   </ItemGroup>

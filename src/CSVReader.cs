@@ -8,7 +8,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.ComponentModel;
+#if HAS_ASYNC
 using System.Threading.Tasks;
+#endif
 
 namespace CSVFile
 {
@@ -49,6 +51,7 @@ namespace CSVFile
         #endregion
 
         #region Iterate through a CSV File
+#if HAS_ASYNC
         /// <summary>
         /// Retrieve the next line from the file.
         /// </summary>
@@ -62,6 +65,7 @@ namespace CSVFile
             // Get the next line
             return await CSV.ParseMultiLine(Stream, Settings).ConfigureAwait(false);
         }
+
 
         /// <summary>
         /// Retrieve headers for this CSV file
@@ -82,17 +86,62 @@ namespace CSVFile
             }
             return _headers;
         }
+#else
+        /// <summary>
+        /// Retrieve the next line from the file.
+        /// </summary>
+        /// <param name="line">The next available CSV line retrieved from the stream</param>
+        /// <returns>One line from the file.</returns>
+        public string[] NextLine()
+        {
+            // If this is the firest line, retrieve headers before gathering data
+            Headers();
+
+            // Get the next line
+            return CSV.ParseMultiLine(Stream, Settings);
+        }
+
+
+        /// <summary>
+        /// Retrieve headers for this CSV file
+        /// </summary>
+        /// <returns>The for headers.</returns>
+        public string[] Headers()
+        {
+            if (_headers == null)
+            {
+                if (Settings.HeaderRowIncluded)
+                {
+                    _headers = CSV.ParseMultiLine(Stream, Settings);
+                }
+                else
+                {
+                    _headers = Settings.AssumedHeaders?.ToArray();
+                }
+            }
+            return _headers;
+        }
+#endif
+
 
         /// <summary>
         /// Deserialize the CSV reader into a generic list
         /// </summary>
+#if HAS_ASYNC
         public async Task<List<T>> Deserialize<T>() where T : class, new()
+#else
+        public List<T> Deserialize<T>() where T : class, new()
+#endif
         {
             List<T> result = new List<T>();
             Type return_type = typeof(T);
 
             // Read in the first line - we have to have headers!
+#if HAS_ASYNC
             var h = await Headers().ConfigureAwait(false);
+#else
+            var h = Headers();
+#endif
             if (h == null) throw new Exception("CSV must have headers to be deserialized");
             int num_columns = h.Length;
 
@@ -161,7 +210,11 @@ namespace CSVFile
             int row_num = 1;
             while (true)
             {
+#if HAS_ASYNC
                 var line = await NextLine().ConfigureAwait(false);
+#else
+                var line = NextLine();
+#endif
                 if (line == null) break;
 
                 // Does this line match the length of the first line?  Does the caller want us to complain?

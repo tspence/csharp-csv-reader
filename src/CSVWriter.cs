@@ -6,7 +6,10 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
+#if HAS_ASYNC
 using System.Threading.Tasks;
+#endif
 
 namespace CSVFile
 {
@@ -25,7 +28,6 @@ namespace CSVFile
         /// </summary>
         public StreamWriter Stream { get; private set; }
 
-#region Constructors
         /// <summary>
         /// Construct a new CSV writer to produce output on the enclosed StreamWriter
         /// </summary>
@@ -40,9 +42,8 @@ namespace CSVFile
                 Settings = CSVSettings.CSV;
             }
         }
-#endregion
 
-#region Writing values
+#if HAS_ASYNC
         /// <summary>
         /// Write one line to the file
         /// </summary>
@@ -51,9 +52,7 @@ namespace CSVFile
         {
             await Stream.WriteLineAsync(line.ToCSVString(Settings)).ConfigureAwait(false);
         }
-#endregion
 
-#region Serialization
         /// <summary>
         /// Serialize a list of objects to CSV using this writer
         /// </summary>
@@ -65,9 +64,46 @@ namespace CSVFile
             // Since many people use this shortcut function and expect to see data right away, we flush here
             await Stream.FlushAsync().ConfigureAwait(false);
         }
-#endregion
+#else
+        /// <summary>
+        /// Write one line to the file
+        /// </summary>
+        /// <param name="line">The array of values for this line</param>
+        public void WriteLine(IEnumerable<object> line)
+        {
+            Stream.WriteLine(line.ToCSVString(Settings));
+        }
 
-#region Disposables
+        /// <summary>
+        /// Serialize a list of objects to CSV using this writer
+        /// </summary>
+        /// <typeparam name="IEnumerable">An IEnumerable that produces the list of objects to serialize.</typeparam>
+        public void WriteArray<T>(IEnumerable<T> list) where T : class, new()
+        {
+            // Did the caller want the header row?
+            if (Settings.HeaderRowIncluded)
+            {
+                Stream.Write(CSV.GetHeader(typeof(T), Settings));
+                Stream.Write(Settings.LineSeparator);
+            }
+
+            // Let's go through the array of objects
+            // Iterate through all the objects
+            var values = new List<object>();
+            var sb = new StringBuilder();
+            foreach (T obj in list)
+            {
+                sb.Length = 0;
+                sb.AppendAsCSV<T>(obj, Settings);
+                sb.Append(Settings.LineSeparator);
+                Stream.Write(sb.ToString());
+            }
+
+            // Since many people use this shortcut function and expect to see data right away, we flush here
+            Stream.Flush();
+        }
+#endif
+
         /// <summary>
         /// Close our resources - specifically, the stream reader
         /// </summary>
@@ -75,6 +111,5 @@ namespace CSVFile
         {
             Stream.Dispose();
         }
-#endregion
     }
 }

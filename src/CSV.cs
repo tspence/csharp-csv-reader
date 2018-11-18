@@ -7,7 +7,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+#if HAS_ASYNC
 using System.Threading.Tasks;
+#endif
 
 #if NEEDS_EXTENSION_ATTRIBUTE
 // Use this namespace to be able to declare extension methods
@@ -25,7 +27,7 @@ namespace CSVFile
     /// <summary>
     /// Root class that contains static functions for straightforward CSV parsing
     /// </summary>
-    public static class CSV
+    public static partial class CSV
     {
 #if NET20
         public const string VERSION = "NET20";
@@ -62,14 +64,17 @@ namespace CSVFile
         public const char DEFAULT_TSV_QUALIFIER = '"';
 
 
-#region Methods to read CSV data
         /// <summary>
         /// Parse a single row of data from a CSV line into an array of objects, while permitting embedded newlines
         /// </summary>
         /// <param name="inStream">The stream to read</param>
         /// <param name="settings">The CSV settings to use for this parsing operation (Default: CSV)</param>
         /// <returns>An array containing all fields in the next row of data, or null if it could not be parsed.</returns>
+#if HAS_ASYNC
         public static async Task<string[]> ParseMultiLine(StreamReader inStream, CSVSettings settings = null)
+#else
+        public static string[] ParseMultiLine(StreamReader inStream, CSVSettings settings = null)
+#endif
         {
             string line;
             string work = "";
@@ -77,7 +82,11 @@ namespace CSVFile
             while (!inStream.EndOfStream)
             {
                 // Read in a line
+#if HAS_ASYNC
                 line = await inStream.ReadLineAsync().ConfigureAwait(false);
+#else
+                line = inStream.ReadLine();
+#endif
                 if (line == null) break;
                 work = work + line;
 
@@ -220,20 +229,26 @@ namespace CSVFile
         /// <param name="settings">The CSV settings to use when parsing the source (Default: CSV)</param>
         /// <param name="source">The source CSV to deserialize</param>
         /// <returns></returns>
+#if HAS_ASYNC
         public static async Task<List<T>> Deserialize<T>(string source, CSVSettings settings = null) where T : class, new()
+#else
+        public static List<T> Deserialize<T>(string source, CSVSettings settings = null) where T : class, new()
+#endif
         {
             byte[] byteArray = Encoding.UTF8.GetBytes(source);
             using (var stream = new MemoryStream(byteArray))
             {
                 using (CSVReader cr = new CSVReader(new StreamReader(stream), settings))
                 {
+#if HAS_ASYNC
                     return await cr.Deserialize<T>().ConfigureAwait(false);
+#else
+                    return cr.Deserialize<T>();
+#endif
                 }
             }
         }
-#endregion
 
-#region CSV Output Functions
         /// <summary>
         /// Serialize a sequence of objects into a CSV string
         /// </summary>
@@ -281,9 +296,7 @@ namespace CSVFile
             // Here's your data serialized in CSV format
             return sb.ToString();
         }
-#endregion
 
-#region StringBuilder append functions
         /// <summary>
         /// Add a CSV Header line to a StringBuilder
         /// </summary>
@@ -313,6 +326,19 @@ namespace CSVFile
         }
 
         /// <summary>
+        /// Retrieve the CSV header for a specific type
+        /// </summary>
+        /// <returns>The CSVH eader.</returns>
+        /// <param name="type">Type.</param>
+        /// <param name="settings">Settings.</param>
+        public static string GetHeader(Type type, CSVSettings settings = null)
+        {
+            var sb = new StringBuilder();
+            sb.AppendCSVHeader(type, settings);
+            return sb.ToString();
+        }
+
+        /// <summary>
         /// Appends a single object to a StringBuilder in CSV format as a single line
         /// </summary>
         /// <param name="sb">The stringbuilder to append data</param>
@@ -325,6 +351,7 @@ namespace CSVFile
             if (obj == null) return;
 
             // Use CSV as default.
+
             if (settings == null) settings = CSVSettings.CSV;
 
             // Retrieve reflection information
@@ -400,9 +427,7 @@ namespace CSVFile
             // Subtract the trailing delimiter so we don't inadvertently add an empty column at the end
             sb.Length -= 1;
         }
-        #endregion
 
-        #region Chopping a CSV file into chunks
         /// <summary>
         /// Take a CSV file and chop it into multiple chunks of a specified maximum size.
         /// </summary>
@@ -411,7 +436,11 @@ namespace CSVFile
         /// <param name="maxLinesPerFile">The maximum number of lines to put into each file</param>
         /// <param name="settings">The CSV settings to use when chopping this file into chunks (Default: CSV)</param>
         /// <returns>Number of files chopped</returns>
+#if HAS_ASYNC
         public static async Task<int> ChopFile(string filename, string out_folder, int maxLinesPerFile, CSVSettings settings = null)
+#else
+        public static int ChopFile(string filename, string out_folder, int maxLinesPerFile, CSVSettings settings = null)
+#endif
         {
             // Default settings
             if (settings == null) settings = CSVSettings.CSV;
@@ -429,13 +458,21 @@ namespace CSVFile
             {
                 using (CSVReader cr = new CSVReader(sr, settings))
                 {
+#if HAS_ASYNC
                     var h = await cr.Headers().ConfigureAwait(false);
+#else
+                    var h = cr.Headers();
+#endif
 
                     // Okay, let's do the real work
                     string[] line;
                     while (true)
                     {
+#if HAS_ASYNC
                         line = await cr.NextLine().ConfigureAwait(false);
+#else
+                        line = cr.NextLine();
+#endif
                         if (line == null) break;
 
                         // Do we need to create a file for writing?
@@ -446,12 +483,20 @@ namespace CSVFile
                             cw = new CSVWriter(sw, settings);
                             if (settings.HeaderRowIncluded)
                             {
+#if HAS_ASYNC
                                 await cw.WriteLine(h).ConfigureAwait(false);
+#else
+                                cw.WriteLine(h);
+#endif
                             }
                         }
 
                         // Write one line
+#if HAS_ASYNC
                         await cw.WriteLine(line).ConfigureAwait(false);
+#else
+                        cw.WriteLine(line);
+#endif
 
                         // Count lines - close the file if done
                         line_count++;
@@ -474,6 +519,5 @@ namespace CSVFile
             }
             return next_file_id - 1;
         }
-        #endregion
     }
 }

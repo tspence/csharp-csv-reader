@@ -14,9 +14,85 @@ namespace CSVFile
     /// <summary>
     /// Extension methods for simplifying streams
     /// </summary>
-    public static class CSVStream
+    public static partial class CSV
     {
-        #region FileStream related functions
+        #region Extension methods for common tasks
+#if HAS_DATATABLE
+        /// <summary>
+        /// Write a data table to disk at the designated file name in CSV format
+        /// </summary>
+        /// <param name="dt"></param>
+        /// <param name="filename"></param>
+        /// <param name="settings">The CSV settings to use when exporting this DataTable (Default: CSV)</param>
+        public static async Task WriteToFile(this DataTable dt, string filename, CSVSettings settings = null)
+        {
+            using (StreamWriter sw = new StreamWriter(filename))
+            {
+                await WriteToStream(dt, sw, settings).ConfigureAwait(false);
+            }
+        }
+
+        /// <summary>
+        /// Write the data table to a stream in CSV format
+        /// </summary>
+        /// <param name="dt">The data table to write</param>
+        /// <param name="sw">The stream where the CSV text will be written</param>
+        /// <param name="settings">The CSV settings to use when exporting this DataTable (Default: CSV)</param>
+        public static async Task WriteToStream(this DataTable dt, StreamWriter sw, CSVSettings settings = null)
+        {
+            using (CSVWriter cw = new CSVWriter(sw, settings))
+            {
+                await cw.Write(dt).ConfigureAwait(false);
+            }
+        }
+
+        /// <summary>
+        /// Read in a single CSV file into a datatable in memory
+        /// </summary>
+        /// <param name="filename"></param>
+        /// <param name="settings">The CSV settings to use when exporting this array (Default: CSV)</param>
+        /// <returns>An data table of strings that were retrieved from the CSV file.</returns>
+        public static async Task<DataTable> FromFile(string filename, CSVSettings settings = null)
+        {
+            using (var sr = new StreamReader(filename))
+            {
+                return await FromStream(sr, settings).ConfigureAwait(false);
+            }
+        }
+
+        /// <summary>
+        /// Read in a single CSV file into a datatable in memory
+        /// </summary>
+        /// <param name="stream">The stream source from which to load the datatable.</param>
+        /// <param name="settings">The CSV settings to use when exporting this array (Default: CSV)</param>
+        /// <returns>An data table of strings that were retrieved from the CSV file.</returns>
+        public static async Task<DataTable> FromStream(StreamReader stream, CSVSettings settings = null)
+        {
+            using (CSVReader cr = new CSVReader(stream, settings))
+            {
+                return await cr.ReadAsDataTable().ConfigureAwait(false);
+            }
+        }
+
+        /// <summary>
+        /// Convert a CSV file (in string form) into a data table
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="settings">The CSV settings to use when exporting this array (Default: CSV)</param>
+        /// <returns></returns>
+        public static async Task<DataTable> FromString(string source, CSVSettings settings = null)
+        {
+            byte[] byteArray = Encoding.UTF8.GetBytes(source);
+            using (MemoryStream stream = new MemoryStream(byteArray))
+            {
+                using (CSVReader cr = new CSVReader(new StreamReader(stream), settings))
+                {
+                    return await cr.ReadAsDataTable().ConfigureAwait(false);
+                }
+            }
+        }
+#endif
+
         /// <summary>
         /// Serialize an object array to a stream in CSV format
         /// </summary>

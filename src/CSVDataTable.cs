@@ -10,7 +10,9 @@ using System.Data;
 #endif
 using System.IO;
 using System.Text;
+#if HAS_ASYNC
 using System.Threading.Tasks;
+#endif
 
 namespace CSVFile
 {
@@ -18,69 +20,34 @@ namespace CSVFile
     /// <summary>
     /// Extension class for simplifying data table operations
     /// </summary>
-    public static class CSVDataTable
+    public static partial class CSV
     {
-#region Reading CSV into a DataTable
-        /// <summary>
-        /// Read in a single CSV file into a datatable in memory
-        /// </summary>
-        /// <param name="filename"></param>
-        /// <param name="settings">The CSV settings to use when exporting this array (Default: CSV)</param>
-        /// <returns>An data table of strings that were retrieved from the CSV file.</returns>
-        public static async Task<DataTable> FromFile(string filename, CSVSettings settings = null)
-        {
-            using (var sr = new StreamReader(filename))
-            {
-                return await FromStream(sr, settings).ConfigureAwait(false);
-            }
-        }
-
-        /// <summary>
-        /// Read in a single CSV file into a datatable in memory
-        /// </summary>
-        /// <param name="stream">The stream source from which to load the datatable.</param>
-        /// <param name="settings">The CSV settings to use when exporting this array (Default: CSV)</param>
-        /// <returns>An data table of strings that were retrieved from the CSV file.</returns>
-        public static async Task<DataTable> FromStream(StreamReader stream, CSVSettings settings = null)
-        {
-            using (CSVReader cr = new CSVReader(stream, settings))
-            {
-                return await cr.ReadAsDataTable().ConfigureAwait(false);
-            }
-        }
-
-        /// <summary>
-        /// Convert a CSV file (in string form) into a data table
-        /// </summary>
-        /// <param name="source"></param>
-        /// <param name="settings">The CSV settings to use when exporting this array (Default: CSV)</param>
-        /// <returns></returns>
-        public static async Task<DataTable> FromString(string source, CSVSettings settings = null)
-        {
-            byte[] byteArray = Encoding.UTF8.GetBytes(source);
-            using (MemoryStream stream = new MemoryStream(byteArray))
-            {
-                using (CSVReader cr = new CSVReader(new StreamReader(stream), settings))
-                {
-                    return await cr.ReadAsDataTable().ConfigureAwait(false);
-                }
-            }
-        }
-
-
         /// <summary>
         /// Read the entire stream into a data table in memory
         /// </summary>
+#if HAS_ASYNC
         public static async Task<DataTable> ReadAsDataTable(this CSVReader reader)
+#else
+        public static DataTable ReadAsDataTable(this CSVReader reader)
+#endif
         {
             DataTable dt = new DataTable();
             string[] firstLine = null;
 
             // File contains column names - so name each column properly
+#if HAS_ASYNC
             var h = await reader.Headers().ConfigureAwait(false);
+#else
+            var h = reader.Headers();
+#endif
             if (h == null)
             {
+#if HAS_ASYNC
                 firstLine = await reader.NextLine().ConfigureAwait(false);
+#else
+                firstLine = reader.NextLine();
+#endif
+
                 var list = new List<string>();
                 for (int i = 0; i < firstLine.Length; i++)
                 {
@@ -106,7 +73,11 @@ namespace CSVFile
             // Start reading through the file
             while (true)
             {
+#if HAS_ASYNC
                 var line = await reader.NextLine().ConfigureAwait(false);
+#else
+                var line = reader.NextLine();
+#endif
                 if (line == null) break;
 
                 // Does this line match the length of the first line?
@@ -141,10 +112,92 @@ namespace CSVFile
             // Here's your data table
             return dt;
         }
-        #endregion
+#endif
+
+        /// <summary>
+        /// Write a DataTable to a string in CSV format
+        /// </summary>
+        /// <param name="dt">The datatable to write</param>
+        /// <param name="settings">The CSV settings to use when exporting this DataTable (Default: CSV)</param>
+        /// <returns>The CSV string representing the object array.</returns>
+#if HAS_ASYNC
+        public static async Task<string> WriteToString(this DataTable dt, CSVSettings settings = null)
+#else
+        public static string WriteToString(this DataTable dt, CSVSettings settings = null)
+#endif
+        {
+            using (var ms = new MemoryStream())
+            {
+                var sw = new StreamWriter(ms);
+                var cw = new CSVWriter(sw, settings);
+#if HAS_ASYNC
+                await cw.Write(dt).ConfigureAwait(false);
+                await sw.FlushAsync().ConfigureAwait(false);
+#else
+                cw.Write(dt);
+                sw.Flush();
+#endif
+                ms.Position = 0;
+                using (var sr = new StreamReader(ms))
+                {
+                    return sr.ReadToEnd();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Write the data table to a stream in CSV format
+        /// </summary>
+        /// <param name="dt">The data table to write</param>
+#if HAS_ASYNC
+        public static async Task Write(this CSVWriter writer, DataTable dt)
+        {
+            // Write headers, if the caller requested we do so
+            if (writer.Settings.HeaderRowIncluded)
+            {
+                var headers = new List<object>();
+                foreach (DataColumn col in dt.Columns)
+                {
+                    headers.Add(col.ColumnName);
+                }
+                await writer.WriteLine(headers).ConfigureAwait(false);
+            }
+
+            // Now produce the rows
+            foreach (DataRow dr in dt.Rows)
+            {
+                await writer.WriteLine(dr.ItemArray).ConfigureAwait(false);
+            }
+
+            // Flush the stream
+            await writer.Stream.FlushAsync().ConfigureAwait(false);
+        }
+#else
+        public static void Write(this CSVWriter writer, DataTable dt)
+        {
+            // Write headers, if the caller requested we do so
+            if (writer.Settings.HeaderRowIncluded)
+            {
+                var headers = new List<object>();
+                foreach (DataColumn col in dt.Columns)
+                {
+                    headers.Add(col.ColumnName);
+                }
+                writer.WriteLine(headers);
+            }
+
+            // Now produce the rows
+            foreach (DataRow dr in dt.Rows)
+            {
+                writer.WriteLine(dr.ItemArray);
+            }
+
+            // Flush the stream
+            writer.Stream.Flush();
+        }
+#endif
 
 #if HAS_SMTPCLIENT
-        #region CSV Attachment Email Shortcut
         /// <summary>
         /// Quick shortcut to send a datatable as an attachment via SMTP
         /// </summary>
@@ -179,87 +232,6 @@ namespace CSVFile
             }
 #endif
         }
-        #endregion
 #endif
-
-        #region Writing a DataTable to CSV
-        /// <summary>
-        /// Write a data table to disk at the designated file name in CSV format
-        /// </summary>
-        /// <param name="dt"></param>
-        /// <param name="filename"></param>
-        /// <param name="settings">The CSV settings to use when exporting this DataTable (Default: CSV)</param>
-        public static async Task WriteToFile(this DataTable dt, string filename, CSVSettings settings = null)
-        {
-            using (StreamWriter sw = new StreamWriter(filename))
-            {
-                await WriteToStream(dt, sw, settings).ConfigureAwait(false);
-            }
-        }
-
-        /// <summary>
-        /// Write the data table to a stream in CSV format
-        /// </summary>
-        /// <param name="dt">The data table to write</param>
-        /// <param name="sw">The stream where the CSV text will be written</param>
-        /// <param name="settings">The CSV settings to use when exporting this DataTable (Default: CSV)</param>
-        public static async Task WriteToStream(this DataTable dt, StreamWriter sw, CSVSettings settings = null)
-        {
-            using (CSVWriter cw = new CSVWriter(sw, settings))
-            {
-                await cw.Write(dt).ConfigureAwait(false);
-            }
-        }
-
-        /// <summary>
-        /// Write a DataTable to a string in CSV format
-        /// </summary>
-        /// <param name="dt">The datatable to write</param>
-        /// <param name="settings">The CSV settings to use when exporting this DataTable (Default: CSV)</param>
-        /// <returns>The CSV string representing the object array.</returns>
-        public static async Task<string> WriteToString(this DataTable dt, CSVSettings settings = null)
-        {
-            using (var ms = new MemoryStream())
-            {
-                var sw = new StreamWriter(ms);
-                var cw = new CSVWriter(sw, settings);
-                await cw.Write(dt).ConfigureAwait(false);
-                sw.Flush();
-                ms.Position = 0;
-                using (var sr = new StreamReader(ms))
-                {
-                    return sr.ReadToEnd();
-                }
-            }
-        }
-
-        /// <summary>
-        /// Write the data table to a stream in CSV format
-        /// </summary>
-        /// <param name="dt">The data table to write</param>
-        public static async Task Write(this CSVWriter writer, DataTable dt)
-        {
-            // Write headers, if the caller requested we do so
-            if (writer.Settings.HeaderRowIncluded)
-            {
-                var headers = new List<object>();
-                foreach (DataColumn col in dt.Columns)
-                {
-                    headers.Add(col.ColumnName);
-                }
-                await writer.WriteLine(headers).ConfigureAwait(false);
-            }
-
-            // Now produce the rows
-            foreach (DataRow dr in dt.Rows)
-            {
-                await writer.WriteLine(dr.ItemArray).ConfigureAwait(false);
-            }
-
-            // Flush the stream
-            await writer.Stream.FlushAsync().ConfigureAwait(false);
-        }
-        #endregion
     }
-#endif
 }

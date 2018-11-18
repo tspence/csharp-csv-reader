@@ -54,11 +54,11 @@
     <Compile Include="..\CSVSettings.cs">
       <Link>CSVSettings.cs</Link>
     </Compile>
-    <Compile Include="..\CSVStream.cs">
-      <Link>CSVStream.cs</Link>
-    </Compile>
     <Compile Include="..\AssemblyInfo.cs">
       <Link>AssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\CSVExtensions.cs">
+      <Link>CSVExtensions.cs</Link>
     </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
