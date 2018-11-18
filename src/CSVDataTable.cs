@@ -10,6 +10,7 @@ using System.Data;
 #endif
 using System.IO;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace CSVFile
 {
@@ -26,11 +27,11 @@ namespace CSVFile
         /// <param name="filename"></param>
         /// <param name="settings">The CSV settings to use when exporting this array (Default: CSV)</param>
         /// <returns>An data table of strings that were retrieved from the CSV file.</returns>
-        public static DataTable FromFile(string filename, CSVSettings settings = null)
+        public static async Task<DataTable> FromFile(string filename, CSVSettings settings = null)
         {
             using (var sr = new StreamReader(filename))
             {
-                return FromStream(sr, settings);
+                return await FromStream(sr, settings).ConfigureAwait(false);
             }
         }
 
@@ -40,11 +41,11 @@ namespace CSVFile
         /// <param name="stream">The stream source from which to load the datatable.</param>
         /// <param name="settings">The CSV settings to use when exporting this array (Default: CSV)</param>
         /// <returns>An data table of strings that were retrieved from the CSV file.</returns>
-        public static DataTable FromStream(StreamReader stream, CSVSettings settings = null)
+        public static async Task<DataTable> FromStream(StreamReader stream, CSVSettings settings = null)
         {
             using (CSVReader cr = new CSVReader(stream, settings))
             {
-                return cr.ReadAsDataTable();
+                return await cr.ReadAsDataTable().ConfigureAwait(false);
             }
         }
 
@@ -54,14 +55,14 @@ namespace CSVFile
         /// <param name="source"></param>
         /// <param name="settings">The CSV settings to use when exporting this array (Default: CSV)</param>
         /// <returns></returns>
-        public static DataTable FromString(string source, CSVSettings settings = null)
+        public static async Task<DataTable> FromString(string source, CSVSettings settings = null)
         {
             byte[] byteArray = Encoding.UTF8.GetBytes(source);
             using (MemoryStream stream = new MemoryStream(byteArray))
             {
                 using (CSVReader cr = new CSVReader(new StreamReader(stream), settings))
                 {
-                    return cr.ReadAsDataTable();
+                    return await cr.ReadAsDataTable().ConfigureAwait(false);
                 }
             }
         }
@@ -70,15 +71,16 @@ namespace CSVFile
         /// <summary>
         /// Read the entire stream into a data table in memory
         /// </summary>
-        public static DataTable ReadAsDataTable(this CSVReader reader)
+        public static async Task<DataTable> ReadAsDataTable(this CSVReader reader)
         {
             DataTable dt = new DataTable();
             string[] firstLine = null;
 
             // File contains column names - so name each column properly
-            if (reader.Headers == null)
+            var h = await reader.Headers().ConfigureAwait(false);
+            if (h == null)
             {
-                firstLine = reader.NextLine();
+                firstLine = await reader.NextLine();
                 var list = new List<string>();
                 for (int i = 0; i < firstLine.Length; i++)
                 {
@@ -87,10 +89,10 @@ namespace CSVFile
             }
 
             // Add headers
-            int numColumns = reader.Headers.Length;
-            for (int i = 0; i < reader.Headers.Length; i++)
+            int numColumns = h.Length;
+            for (int i = 0; i < h.Length; i++)
             {
-                dt.Columns.Add(new DataColumn(reader.Headers[i], typeof(string)));
+                dt.Columns.Add(new DataColumn(h[i], typeof(string)));
             }
 
             // If we had to read the first line to get dimensions, add it
@@ -102,8 +104,10 @@ namespace CSVFile
             }
 
             // Start reading through the file
-            foreach (var line in reader.Lines())
+            while (true)
             {
+                var line = await reader.NextLine().ConfigureAwait(false);
+                if (line == null) break;
 
                 // Does this line match the length of the first line?
                 if (line.Length != numColumns)
@@ -185,11 +189,11 @@ namespace CSVFile
         /// <param name="dt"></param>
         /// <param name="filename"></param>
         /// <param name="settings">The CSV settings to use when exporting this DataTable (Default: CSV)</param>
-        public static void WriteToFile(this DataTable dt, string filename, CSVSettings settings = null)
+        public static async Task WriteToFile(this DataTable dt, string filename, CSVSettings settings = null)
         {
             using (StreamWriter sw = new StreamWriter(filename))
             {
-                WriteToStream(dt, sw, settings);
+                await WriteToStream(dt, sw, settings).ConfigureAwait(false);
             }
         }
 
@@ -199,11 +203,11 @@ namespace CSVFile
         /// <param name="dt">The data table to write</param>
         /// <param name="sw">The stream where the CSV text will be written</param>
         /// <param name="settings">The CSV settings to use when exporting this DataTable (Default: CSV)</param>
-        public static void WriteToStream(this DataTable dt, StreamWriter sw, CSVSettings settings = null)
+        public static async Task WriteToStream(this DataTable dt, StreamWriter sw, CSVSettings settings = null)
         {
             using (CSVWriter cw = new CSVWriter(sw, settings))
             {
-                cw.Write(dt);
+                await cw.Write(dt).ConfigureAwait(false);
             }
         }
 
@@ -213,13 +217,13 @@ namespace CSVFile
         /// <param name="dt">The datatable to write</param>
         /// <param name="settings">The CSV settings to use when exporting this DataTable (Default: CSV)</param>
         /// <returns>The CSV string representing the object array.</returns>
-        public static string WriteToString(this DataTable dt, CSVSettings settings = null)
+        public static async Task<string> WriteToString(this DataTable dt, CSVSettings settings = null)
         {
             using (var ms = new MemoryStream())
             {
                 var sw = new StreamWriter(ms);
                 var cw = new CSVWriter(sw, settings);
-                cw.Write(dt);
+                await cw.Write(dt).ConfigureAwait(false);
                 sw.Flush();
                 ms.Position = 0;
                 using (var sr = new StreamReader(ms))
@@ -233,7 +237,7 @@ namespace CSVFile
         /// Write the data table to a stream in CSV format
         /// </summary>
         /// <param name="dt">The data table to write</param>
-        public static void Write(this CSVWriter writer, DataTable dt)
+        public static async Task Write(this CSVWriter writer, DataTable dt)
         {
             // Write headers, if the caller requested we do so
             if (writer.Settings.HeaderRowIncluded)
@@ -243,17 +247,17 @@ namespace CSVFile
                 {
                     headers.Add(col.ColumnName);
                 }
-                writer.WriteLine(headers);
+                await writer.WriteLine(headers).ConfigureAwait(false);
             }
 
             // Now produce the rows
             foreach (DataRow dr in dt.Rows)
             {
-                writer.WriteLine(dr.ItemArray);
+                await writer.WriteLine(dr.ItemArray).ConfigureAwait(false);
             }
 
             // Flush the stream
-            writer.Stream.Flush();
+            await writer.Stream.FlushAsync().ConfigureAwait(false);
         }
         #endregion
     }

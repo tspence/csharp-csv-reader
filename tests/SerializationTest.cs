@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using NUnit.Framework;
 using CSVFile;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace CSVTestSuite
 {
@@ -36,7 +37,7 @@ namespace CSVTestSuite
         }
 
         [Test]
-        public void TestObjectSerialization()
+        public async Task TestObjectSerialization()
         {
             // Deserialize an array to a list of objects!
             List<TestClassOne> list = null;
@@ -47,7 +48,7 @@ namespace CSVTestSuite
             byte[] byteArray = Encoding.UTF8.GetBytes(source);
             MemoryStream stream = new MemoryStream(byteArray);
             using (CSVReader cr = new CSVReader(new StreamReader(stream))) {
-                list = cr.Deserialize<TestClassOne>();
+                list = await cr.Deserialize<TestClassOne>();
             }
 
             // Test the array
@@ -73,7 +74,7 @@ namespace CSVTestSuite
         }
 
         [Test]
-        public void TestStructSerialization()
+        public async Task TestStructSerialization()
         {
             List<TestClassTwo> list = new List<TestClassTwo>();
             list.Add(new TestClassTwo() { FirstColumn = "hi1!", SecondColumn = 12, ThirdColumn = EnumTestType.First });
@@ -84,7 +85,7 @@ namespace CSVTestSuite
             string csv = CSV.Serialize<TestClassTwo>(list);
 
             // Deserialize back from a CSV string - should not throw any errors!
-            List<TestClassTwo> newlist = CSV.Deserialize<TestClassTwo>(csv);
+            List<TestClassTwo> newlist = await CSV.Deserialize<TestClassTwo>(csv);
 
             // Compare original objects to new ones
             for (int i = 0; i < list.Count; i++) {
@@ -95,7 +96,7 @@ namespace CSVTestSuite
         }
 
         [Test]
-        public void TestNullSerialization()
+        public async Task TestNullSerialization()
         {
             List<TestClassTwo> list = new List<TestClassTwo>();
             list.Add(new TestClassTwo() { FirstColumn = "hi1!", SecondColumn = 12, ThirdColumn = EnumTestType.First });
@@ -107,7 +108,7 @@ namespace CSVTestSuite
             string csv = CSV.Serialize<TestClassTwo>(list, CSVSettings.CSV_PERMIT_NULL);
 
             // Deserialize back from a CSV string - should not throw any errors!
-            List<TestClassTwo> newlist = CSV.Deserialize<TestClassTwo>(csv, CSVSettings.CSV_PERMIT_NULL);
+            List<TestClassTwo> newlist = await CSV.Deserialize<TestClassTwo>(csv, CSVSettings.CSV_PERMIT_NULL);
 
             // Compare original objects to new ones
             for (int i = 0; i < list.Count; i++)

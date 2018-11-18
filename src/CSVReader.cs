@@ -8,13 +8,14 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.ComponentModel;
+using System.Threading.Tasks;
 
 namespace CSVFile
 {
     /// <summary>
     /// Read a stream in as CSV, parsing it to an enumerable
     /// </summary>
-    public class CSVReader : IEnumerable<string[]>, IDisposable
+    public class CSVReader : IDisposable
     {
         /// <summary>
         /// The settings to use for this reader session
@@ -30,7 +31,7 @@ namespace CSVFile
         /// <summary>
         /// If the first row in the file is a header row, this will be populated
         /// </summary>
-        public string[] Headers = null;
+        private string[] _headers;
 
         #region Constructors
         /// <summary>
@@ -44,77 +45,56 @@ namespace CSVFile
             Settings = settings;
             if (Settings == null) Settings = CSVSettings.CSV;
 
-            // Do we need to parse headers?
-            if (Settings.HeaderRowIncluded)
-            {
-                Headers = NextLine();
-            }
-            else
-            {
-                Headers = Settings.AssumedHeaders?.ToArray();
-            }
         }
         #endregion
 
         #region Iterate through a CSV File
         /// <summary>
-        /// Iterate through all lines in this CSV file
-        /// </summary>
-        /// <returns>An array of all data columns in the line</returns>
-        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
-        {
-            return Lines().GetEnumerator();
-        }
-
-        /// <summary>
-        /// Iterate through all lines in this CSV file
-        /// </summary>
-        /// <returns>An array of all data columns in the line</returns>
-        IEnumerator<string[]> System.Collections.Generic.IEnumerable<string[]>.GetEnumerator()
-        {
-            return Lines().GetEnumerator();
-        }
-
-        /// <summary>
-        /// Iterate through all lines in this CSV file
-        /// </summary>
-        /// <returns>An array of all data columns in the line</returns>
-        public IEnumerable<string[]> Lines()
-        {
-            while (true)
-            {
-
-                // Attempt to parse the line successfully
-                string[] line = NextLine();
-
-                // If we were unable to parse the line successfully, that's all the file has
-                if (line == null) break;
-
-                // We got something - give the caller an object
-                yield return line;
-            }
-        }
-
-        /// <summary>
         /// Retrieve the next line from the file.
         /// </summary>
+        /// <param name="line">The next available CSV line retrieved from the stream</param>
         /// <returns>One line from the file.</returns>
-        public string[] NextLine()
+        public async Task<string[]> NextLine()
         {
-            return CSV.ParseMultiLine(Stream, Settings);
+            // If this is the firest line, retrieve headers before gathering data
+            await Headers();
+
+            // Get the next line
+            return await CSV.ParseMultiLine(Stream, Settings).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Retrieve headers for this CSV file
+        /// </summary>
+        /// <returns>The for headers.</returns>
+        public async Task<string[]> Headers()
+        {
+            if (_headers == null)
+            {
+                if (Settings.HeaderRowIncluded)
+                {
+                    _headers = await CSV.ParseMultiLine(Stream, Settings).ConfigureAwait(false); 
+                }
+                else 
+                {
+                    _headers = Settings.AssumedHeaders?.ToArray();
+                }
+            }
+            return _headers;
         }
 
         /// <summary>
         /// Deserialize the CSV reader into a generic list
         /// </summary>
-        public List<T> Deserialize<T>() where T : class, new()
+        public async Task<List<T>> Deserialize<T>() where T : class, new()
         {
             List<T> result = new List<T>();
             Type return_type = typeof(T);
 
             // Read in the first line - we have to have headers!
-            if (Headers == null) throw new Exception("CSV must have headers to be deserialized");
-            int num_columns = Headers.Length;
+            var h = await Headers().ConfigureAwait(false);
+            if (h == null) throw new Exception("CSV must have headers to be deserialized");
+            int num_columns = h.Length;
 
             // Determine how to handle each column in the file - check properties, fields, and methods
             Type[] column_types = new Type[num_columns];
@@ -124,19 +104,19 @@ namespace CSVFile
             MethodInfo[] method_handlers = new MethodInfo[num_columns];
             for (int i = 0; i < num_columns; i++)
             {
-                prop_handlers[i] = return_type.GetProperty(Headers[i]);
+                prop_handlers[i] = return_type.GetProperty(h[i]);
 
                 // If we failed to get a property handler, let's try a field handler
                 if (prop_handlers[i] == null)
                 {
-                    field_handlers[i] = return_type.GetField(Headers[i]);
+                    field_handlers[i] = return_type.GetField(h[i]);
 
                     // If we failed to get a field handler, let's try a method
                     if (field_handlers[i] == null)
                     {
 
                         // Methods must be treated differently - we have to ensure that the method has a single parameter
-                        MethodInfo mi = return_type.GetMethod(Headers[i]);
+                        MethodInfo mi = return_type.GetMethod(h[i]);
                         if (mi != null)
                         {
                             if (mi.GetParameters().Length == 1)
@@ -146,14 +126,14 @@ namespace CSVFile
                             }
                             else if (!Settings.IgnoreHeaderErrors)
                             {
-                                throw new Exception($"The column header '{Headers[i]}' matched a method with more than one parameter.");
+                                throw new Exception($"The column header '{h[i]}' matched a method with more than one parameter.");
                             }
 
                             // Does the caller want us to throw an error on bad columns?
                         }
                         else if (!Settings.IgnoreHeaderErrors)
                         {
-                            throw new Exception($"The column header '{Headers[i]}' was not found in the class '{return_type.FullName}'.");
+                            throw new Exception($"The column header '{h[i]}' was not found in the class '{return_type.FullName}'.");
                         }
                     }
                     else
@@ -172,15 +152,17 @@ namespace CSVFile
                     column_convert[i] = TypeDescriptor.GetConverter(column_types[i]);
                     if ((column_convert[i] == null) && !Settings.IgnoreHeaderErrors)
                     {
-                        throw new Exception($"The column {Headers[i]} (type {column_types[i]}) does not have a type converter.");
+                        throw new Exception($"The column {h[i]} (type {column_types[i]}) does not have a type converter.");
                     }
                 }
             }
 
             // Alright, let's retrieve CSV lines and parse each one!
             int row_num = 1;
-            foreach (string[] line in Lines())
+            while (true)
             {
+                var line = await NextLine().ConfigureAwait(false);
+                if (line == null) break;
 
                 // Does this line match the length of the first line?  Does the caller want us to complain?
                 if ((line.Length != num_columns) && !Settings.IgnoreHeaderErrors) {
@@ -243,76 +225,6 @@ namespace CSVFile
         public void Dispose()
         {
             Stream.Dispose();
-        }
-#endregion
-
-#region Chopping a CSV file into chunks
-        /// <summary>
-        /// Take a CSV file and chop it into multiple chunks of a specified maximum size.
-        /// </summary>
-        /// <param name="filename">The input filename to chop</param>
-        /// <param name="out_folder">The folder where the chopped CSV will be saved</param>
-        /// <param name="maxLinesPerFile">The maximum number of lines to put into each file</param>
-        /// <param name="settings">The CSV settings to use when chopping this file into chunks (Default: CSV)</param>
-        /// <returns>Number of files chopped</returns>
-        public static int ChopFile(string filename, string out_folder, int maxLinesPerFile, CSVSettings settings = null)
-        {
-            // Default settings
-            if (settings == null) settings = CSVSettings.CSV;
-
-            // Let's begin parsing
-            int file_id = 1;
-            int line_count = 0;
-            string file_prefix = Path.GetFileNameWithoutExtension(filename);
-            string ext = Path.GetExtension(filename);
-            CSVWriter cw = null;
-            StreamWriter sw = null;
-
-            // Read in lines from the file
-            using (var sr = new StreamReader(filename))
-            {
-                using (CSVReader cr = new CSVReader(sr, settings))
-                {
-
-                    // Okay, let's do the real work
-                    foreach (string[] line in cr.Lines())
-                    {
-
-                        // Do we need to create a file for writing?
-                        if (cw == null)
-                        {
-                            string fn = Path.Combine(out_folder, file_prefix + file_id.ToString() + ext);
-                            sw = new StreamWriter(fn);
-                            cw = new CSVWriter(sw, settings);
-                            if (settings.HeaderRowIncluded)
-                            {
-                                cw.WriteLine(cr.Headers);
-                            }
-                        }
-
-                        // Write one line
-                        cw.WriteLine(line);
-
-                        // Count lines - close the file if done
-                        line_count++;
-                        if (line_count >= maxLinesPerFile)
-                        {
-                            cw.Dispose();
-                            cw = null;
-                            file_id++;
-                            line_count = 0;
-                        }
-                    }
-                }
-            }
-
-            // Ensore the final CSVWriter is closed properly
-            if (cw != null)
-            {
-                cw.Dispose();
-                cw = null;
-            }
-            return file_id;
         }
 #endregion
     }

@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using NUnit.Framework;
 using CSVFile;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace CSVTestSuite
 {
@@ -16,7 +17,7 @@ namespace CSVTestSuite
     public class ReaderTest
     {
         [Test]
-        public void TestBasicReader()
+        public async Task TestBasicReader()
         {
             string source = "Name,Title,Phone\n" +
                 "JD,Doctor,x234\n" +
@@ -36,7 +37,9 @@ namespace CSVTestSuite
             using (StreamReader sr = new StreamReader(stream)) {
                 using (CSVReader cr = new CSVReader(sr, settings)) {
                     int i = 0;
-                    foreach (string[] line in cr) {
+                    while (true) {
+                        var line = await cr.NextLine();
+                        if (line == null) break;
                         if (i == 0) {
                             Assert.AreEqual(line[0], "Name");
                             Assert.AreEqual(line[1], "Title");
@@ -65,7 +68,7 @@ namespace CSVTestSuite
         }
 
         [Test]
-        public void TestAlternateDelimiterQualifiers()
+        public async Task TestAlternateDelimiterQualifiers()
         {
             string source = "Name\tTitle\tPhone\n" +
                 "JD\tDoctor\tx234\n" +
@@ -78,11 +81,14 @@ namespace CSVTestSuite
             MemoryStream stream = new MemoryStream(byteArray);
             using (StreamReader sr = new StreamReader(stream)) {
                 using (CSVReader cr = new CSVReader(sr, CSVSettings.TSV)) {
-                    Assert.AreEqual(cr.Headers[0], "Name");
-                    Assert.AreEqual(cr.Headers[1], "Title");
-                    Assert.AreEqual(cr.Headers[2], "Phone");
+                    var h = await cr.Headers();
+                    Assert.AreEqual(h[0], "Name");
+                    Assert.AreEqual(h[1], "Title");
+                    Assert.AreEqual(h[2], "Phone");
                     int i = 1;
-                    foreach (string[] line in cr) {
+                    while (true) {
+                        var line = await cr.NextLine();
+                        if (line == null) break;
                         if (i == 1) {
                             Assert.AreEqual(line[0], "JD");
                             Assert.AreEqual(line[1], "Doctor");

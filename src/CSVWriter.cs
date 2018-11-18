@@ -6,6 +6,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace CSVFile
 {
@@ -46,9 +47,9 @@ namespace CSVFile
         /// Write one line to the file
         /// </summary>
         /// <param name="line">The array of values for this line</param>
-        public void WriteLine(IEnumerable<object> line)
+        public async Task WriteLine(IEnumerable<object> line)
         {
-            Stream.WriteLine(line.ToCSVString(Settings));
+            await Stream.WriteLineAsync(line.ToCSVString(Settings)).ConfigureAwait(false);
         }
 #endregion
 
@@ -57,12 +58,12 @@ namespace CSVFile
         /// Serialize a list of objects to CSV using this writer
         /// </summary>
         /// <typeparam name="IEnumerable">An IEnumerable that produces the list of objects to serialize.</typeparam>
-        public void WriteArray<T>(IEnumerable<T> list) where T: class, new()
+        public async Task WriteArray<T>(IEnumerable<T> list) where T: class, new()
         {
-            Stream.Write(CSV.Serialize<T>(list, Settings));
+            await Stream.WriteAsync(CSV.Serialize<T>(list, Settings));
 
-            // Flush the stream
-            Stream.Flush();
+            // Since many people use this shortcut function and expect to see data right away, we flush here
+            await Stream.FlushAsync();
         }
 #endregion
 
@@ -72,8 +73,6 @@ namespace CSVFile
         /// </summary>
         public void Dispose()
         {
-            Stream.Flush();
-            Stream.Close();
             Stream.Dispose();
         }
 #endregion

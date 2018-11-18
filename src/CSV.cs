@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Threading.Tasks;
 
 #if NEEDS_EXTENSION_ATTRIBUTE
 // Use this namespace to be able to declare extension methods
@@ -68,18 +69,20 @@ namespace CSVFile
         /// <param name="inStream">The stream to read</param>
         /// <param name="settings">The CSV settings to use for this parsing operation (Default: CSV)</param>
         /// <returns>An array containing all fields in the next row of data, or null if it could not be parsed.</returns>
-        public static string[] ParseMultiLine(StreamReader inStream, CSVSettings settings = null)
+        public static async Task<string[]> ParseMultiLine(StreamReader inStream, CSVSettings settings = null)
         {
-            StringBuilder sb = new StringBuilder();
+            string line;
+            string work = "";
             string[] array = null;
             while (!inStream.EndOfStream)
             {
                 // Read in a line
-                sb.Append(inStream.ReadLine());
+                line = await inStream.ReadLineAsync().ConfigureAwait(false);
+                if (line == null) break;
+                work = work + line;
 
                 // Does it parse?
-                string s = sb.ToString();
-                if (TryParseLine(s, out array, settings))
+                if (TryParseLine(work, out array, settings))
                 {
                     return array;
                 }
@@ -87,7 +90,7 @@ namespace CSVFile
                 // We didn't succeed on the first try - our text must have an embedded newline in it.
                 // Let's assume that we were in the middle of parsing a field when we encountered a newline,
                 // and continue parsing.
-                sb.Append(settings.LineSeparator);
+                work = work + settings.LineSeparator;
             }
 
             // Fails to parse - return the best array we were able to get
@@ -217,14 +220,14 @@ namespace CSVFile
         /// <param name="settings">The CSV settings to use when parsing the source (Default: CSV)</param>
         /// <param name="source">The source CSV to deserialize</param>
         /// <returns></returns>
-        public static List<T> Deserialize<T>(string source, CSVSettings settings = null) where T : class, new()
+        public static async Task<List<T>> Deserialize<T>(string source, CSVSettings settings = null) where T : class, new()
         {
             byte[] byteArray = Encoding.UTF8.GetBytes(source);
             using (var stream = new MemoryStream(byteArray))
             {
                 using (CSVReader cr = new CSVReader(new StreamReader(stream), settings))
                 {
-                    return cr.Deserialize<T>();
+                    return await cr.Deserialize<T>();
                 }
             }
         }
@@ -397,6 +400,80 @@ namespace CSVFile
             // Subtract the trailing delimiter so we don't inadvertently add an empty column at the end
             sb.Length -= 1;
         }
-#endregion
+        #endregion
+
+        #region Chopping a CSV file into chunks
+        /// <summary>
+        /// Take a CSV file and chop it into multiple chunks of a specified maximum size.
+        /// </summary>
+        /// <param name="filename">The input filename to chop</param>
+        /// <param name="out_folder">The folder where the chopped CSV will be saved</param>
+        /// <param name="maxLinesPerFile">The maximum number of lines to put into each file</param>
+        /// <param name="settings">The CSV settings to use when chopping this file into chunks (Default: CSV)</param>
+        /// <returns>Number of files chopped</returns>
+        public static async Task<int> ChopFile(string filename, string out_folder, int maxLinesPerFile, CSVSettings settings = null)
+        {
+            // Default settings
+            if (settings == null) settings = CSVSettings.CSV;
+
+            // Let's begin parsing
+            int next_file_id = 1;
+            int line_count = 0;
+            string file_prefix = Path.GetFileNameWithoutExtension(filename);
+            string ext = Path.GetExtension(filename);
+            CSVWriter cw = null;
+            StreamWriter sw = null;
+
+            // Read in lines from the file
+            using (var sr = new StreamReader(filename))
+            {
+                using (CSVReader cr = new CSVReader(sr, settings))
+                {
+                    var h = await cr.Headers().ConfigureAwait(false);
+
+                    // Okay, let's do the real work
+                    string[] line;
+                    while (true)
+                    {
+                        line = await cr.NextLine().ConfigureAwait(false);
+                        if (line == null) break;
+
+                        // Do we need to create a file for writing?
+                        if (cw == null)
+                        {
+                            string fn = Path.Combine(out_folder, file_prefix + next_file_id.ToString() + ext);
+                            sw = new StreamWriter(fn);
+                            cw = new CSVWriter(sw, settings);
+                            if (settings.HeaderRowIncluded)
+                            {
+                                await cw.WriteLine(h).ConfigureAwait(false);
+                            }
+                        }
+
+                        // Write one line
+                        await cw.WriteLine(line).ConfigureAwait(false);
+
+                        // Count lines - close the file if done
+                        line_count++;
+                        if (line_count >= maxLinesPerFile)
+                        {
+                            cw.Dispose();
+                            cw = null;
+                            next_file_id++;
+                            line_count = 0;
+                        }
+                    }
+                }
+            }
+
+            // Ensore the final CSVWriter is closed properly
+            if (cw != null)
+            {
+                cw.Dispose();
+                cw = null;
+            }
+            return next_file_id - 1;
+        }
+        #endregion
     }
 }

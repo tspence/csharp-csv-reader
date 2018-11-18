@@ -10,6 +10,7 @@ using NUnit.Framework;
 using CSVFile;
 using System.IO;
 using System.Data;
+using System.Threading.Tasks;
 
 namespace CSVTestSuite
 {
@@ -30,9 +31,9 @@ namespace CSVTestSuite
             "Dr. Kelso,Chief of Medicine,x100";
 
         [Test]
-        public void TestBasicDataTable()
+        public async Task TestBasicDataTable()
         {
-            DataTable dt = CSVDataTable.FromString(source);
+            DataTable dt = await CSVDataTable.FromString(source);
             Assert.AreEqual(dt.Columns.Count, 3);
             Assert.AreEqual(dt.Rows.Count, 4);
             Assert.AreEqual(dt.Rows[0].ItemArray[0], "JD");
@@ -50,9 +51,9 @@ namespace CSVTestSuite
         }
 
         [Test]
-        public void TestDataTableWithEmbeddedNewlines()
+        public async Task TestDataTableWithEmbeddedNewlines()
         {
-            DataTable dt = CSVDataTable.FromString(source_embedded_newlines);
+            DataTable dt = await CSVDataTable.FromString(source_embedded_newlines);
             Assert.AreEqual(dt.Columns.Count, 3);
             Assert.AreEqual(dt.Rows.Count, 4);
             Assert.AreEqual(dt.Rows[0].ItemArray[0], "JD");
@@ -70,7 +71,7 @@ namespace CSVTestSuite
         }
 
         [Test]
-        public void DataTableChopTest()
+        public async Task DataTableChopTest()
         {
             string[] array_first = new string[] { "first", "two", "three", "four, five" };
             string[] array_second = new string[] { "second", "two", "three", "four, five" };
@@ -93,29 +94,29 @@ namespace CSVTestSuite
 
             // Save this string to a test file
             string sourcefile = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString() + ".csv");
-            CSVDataTable.WriteToFile(dt, sourcefile);
+            await CSVDataTable.WriteToFile(dt, sourcefile);
 
             // Create an empty test folder
             string dirname = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
             Directory.CreateDirectory(dirname);
 
             // Chop this file into one-line chunks
-            CSVReader.ChopFile(sourcefile, dirname, 5000);
+            var num = await CSV.ChopFile(sourcefile, dirname, 5000);
 
             // Verify that we got three files
             string[] files = Directory.GetFiles(dirname);
             Assert.AreEqual(3, files.Length);
 
             // Read in each file and verify that each one has one line
-            dt = CSVDataTable.FromFile(files[0]);
+            dt = await CSVDataTable.FromFile(files[0]);
             Assert.AreEqual(5000, dt.Rows.Count);
             Assert.AreEqual("first", dt.Rows[0].ItemArray[0]);
 
-            dt = CSVDataTable.FromFile(files[1]);
+            dt = await CSVDataTable.FromFile(files[1]);
             Assert.AreEqual(5000, dt.Rows.Count);
             Assert.AreEqual("second", dt.Rows[0].ItemArray[0]);
 
-            dt = CSVDataTable.FromFile(files[2]);
+            dt = await CSVDataTable.FromFile(files[2]);
             Assert.AreEqual(5000, dt.Rows.Count);
             Assert.AreEqual("third", dt.Rows[0].ItemArray[0]);
 
@@ -125,41 +126,42 @@ namespace CSVTestSuite
         }
 
         [Test]
-        public void DataTableChoppingFiles()
+        public async Task DataTableChoppingFiles()
         {
             string source = @"timestamp,TestString,SetComment,PropertyString,IntField,IntProperty
 2012-05-01,test1,""Hi there, I said!"",Bob,57,0
 2011-04-01,test2,""What's up, buttercup?"",Ralph,1,-999
 1975-06-03,test3,""Bye and bye, dragonfly!"",Jimmy's The Bomb,12,13";
-            DataTable dt = CSVDataTable.FromString(source);
+            DataTable dt = await CSVDataTable.FromString(source);
 
             // Save this string to a test file
             string outfile = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString() + ".csv");
-            CSVDataTable.WriteToFile(dt, outfile);
+            await CSVDataTable.WriteToFile(dt, outfile);
 
             // Create an empty test folder
             string dirname = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
             Directory.CreateDirectory(dirname);
 
             // Chop this file into one-line chunks
-            CSVReader.ChopFile(outfile, dirname, 1);
+            var num = await CSV.ChopFile(outfile, dirname, 1);
 
             // Verify that we got three files
             string[] files = Directory.GetFiles(dirname);
             Assert.AreEqual(3, files.Length);
+            Assert.AreEqual(3, num);
 
             // Read in each file and verify that each one has one line
-            dt = CSVDataTable.FromFile(files[0]);
+            dt = await CSVDataTable.FromFile(files[0]);
             Assert.AreEqual(1, dt.Rows.Count);
             Assert.AreEqual("2012-05-01", dt.Rows[0].ItemArray[0]);
             Assert.AreEqual("test1", dt.Rows[0].ItemArray[1]);
 
-            dt = CSVDataTable.FromFile(files[1]);
+            dt = await CSVDataTable.FromFile(files[1]);
             Assert.AreEqual(1, dt.Rows.Count);
             Assert.AreEqual("2011-04-01", dt.Rows[0].ItemArray[0]);
             Assert.AreEqual("test2", dt.Rows[0].ItemArray[1]);
 
-            dt = CSVDataTable.FromFile(files[2]);
+            dt = await CSVDataTable.FromFile(files[2]);
             Assert.AreEqual(1, dt.Rows.Count);
             Assert.AreEqual("1975-06-03", dt.Rows[0].ItemArray[0]);
             Assert.AreEqual("test3", dt.Rows[0].ItemArray[1]);
