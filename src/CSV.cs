@@ -107,7 +107,7 @@ namespace CSVFile
         }
 
         /// <summary>
-        /// Parse a line from a CSV file and return an array of fields, or null if 
+        /// Parse a line from a CSV file and return an array of fields, or null if it fails
         /// </summary>
         /// <param name="line">One line of text from a CSV file</param>
         /// <param name="settings">The CSV settings to use for this parsing operation (Default: CSV)</param>
