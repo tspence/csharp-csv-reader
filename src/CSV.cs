@@ -356,6 +356,12 @@ namespace CSVFile
             if (settings == null) settings = CSVSettings.CSV;
             var q = settings.TextQualifier.ToString();
 
+            var riskyChars = char[3];
+            riskyChars[0] = settings.FieldDelimiter;
+            riskyChars[1] = settings.TextQualifier;
+            riskyChars[2] = '\n';  // this includes \r\n sequence aswell
+            bool riskyLineSeparator = !settings.LineSeparator.Contains("\n");
+            
             // Okay, let's begin
             foreach (object o in row)
             {
@@ -376,7 +382,7 @@ namespace CSVFile
                 {
 
                     // Does this string contain any risky characters?  Risky is defined as delim, qual, or newline
-                    if (settings.ForceQualifiers || (s.IndexOf(settings.FieldDelimiter) >= 0) || (s.IndexOf(settings.TextQualifier) >= 0) || s.Contains(settings.LineSeparator))
+                    if (settings.ForceQualifiers || (s.IndexOfAny(riskyChars) >= 0) || riskyLineSeparator && s.Contains(settings.LineSeparator))
                     {
                         sb.Append(q);
 
