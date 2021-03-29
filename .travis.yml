@@ -3,5 +3,5 @@ mono: none
 dotnet: 5.0.201
 solution: csharp-csv-reader.sln
 script:
-  - dotnet build
+  - dotnet restore
   - dotnet test
