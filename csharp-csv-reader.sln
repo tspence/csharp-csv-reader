@@ -29,9 +29,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "src.net40", "src\net40\src.
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "net50", "net50", "{770E3CED-88C5-4B62-B9DE-85B28E9617F7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "src.net50", "src\net50\src.net50\src.net50.csproj", "{3EA8FCEF-F7A1-40A9-8433-549D1CFDFD99}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "src.net50", "src\net50\src.net50.csproj", "{3EA8FCEF-F7A1-40A9-8433-549D1CFDFD99}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "tests.net50", "tests\net50\tests.net50\tests.net50.csproj", "{E0C2033B-B2D2-470F-A2BC-F1FA402DBA08}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "tests.net50", "tests\net50\tests.net50.csproj", "{E0C2033B-B2D2-470F-A2BC-F1FA402DBA08}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
