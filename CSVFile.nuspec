@@ -1,28 +1,29 @@
 <?xml version="1.0"?>
 <package >
-  <metadata>
-    <id>CSVFile</id>
-    <version>2.0.4</version>
-    <title>CSVFile</title>
-    <authors>Ted Spence</authors>
-    <owners>Ted Spence</owners>
-    <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
-    <projectUrl>https://github.com/tspence/csharp-csv-reader</projectUrl>
-    <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>A tiny CSV and TSV parsing library with few dependencies.  Compatible with most dot net versions.</description>
-    <releaseNotes>
-        Better support for serialization and deserialization.
-        New "CSVSettings" class that reduces the number of parameters.
-        Support for DotNet2.0, DotNet4.0, and NetStandard2.0.
-        Due to compatibility issues, DataTable support is not present in NetStandard2.
-    </releaseNotes>
-    <copyright>Copyright 2006 - 2018</copyright>
-    <tags>csv parser</tags>
-  </metadata>
-  <files>
-    <file src="src\net20\bin\release\net20\csvfile.*" target="lib\net20" />
-    <file src="src\net40\bin\release\net40\csvfile.*" target="lib\net40" />
-    <file src="src\net45\bin\release\net45\csvfile.*" target="lib\net45" />
-    <file src="src\netstandard20\bin\release\netstandard2.0\csvfile.*" target="lib\netstandard20" />
-  </files>
+	<metadata>
+		<id>CSVFile</id>
+		<version>3.0.0</version>
+		<title>CSVFile</title>
+		<authors>Ted Spence</authors>
+		<owners>Ted Spence</owners>
+		<licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
+		<projectUrl>https://github.com/tspence/csharp-csv-reader</projectUrl>
+		<requireLicenseAcceptance>false</requireLicenseAcceptance>
+		<description>A tiny CSV and TSV parsing library with few dependencies.  Compatible with most dot net versions.</description>
+		<releaseNotes>
+			Better support for serialization and deserialization.
+			New "CSVSettings" class that reduces the number of parameters.
+			Updated for .NET 5.0; includes legacy support for DotNet2.0, DotNet4.0, and NetStandard2.0.
+			Due to compatibility issues, DataTable support is not present in NetStandard2.
+		</releaseNotes>
+		<copyright>Copyright 2006 - 2021</copyright>
+		<tags>csv parser</tags>
+	</metadata>
+	<files>
+		<file src="src\net20\bin\release\net20\csvfile.*" target="lib\net20" />
+		<file src="src\net40\bin\release\net40\csvfile.*" target="lib\net40" />
+		<file src="src\net45\bin\release\net45\csvfile.*" target="lib\net45" />
+		<file src="src\net45\bin\release\net50\csvfile.*" target="lib\net50" />
+		<file src="src\netstandard20\bin\release\netstandard2.0\csvfile.*" target="lib\netstandard20" />
+	</files>
 </package>
