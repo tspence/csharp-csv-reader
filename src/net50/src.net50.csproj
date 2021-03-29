@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\CSV.cs" Link="CSV.cs" />
+    <Compile Include="..\CSVDataTable.cs" Link="CSVDataTable.cs" />
+    <Compile Include="..\CSVReader.cs" Link="CSVReader.cs" />
+    <Compile Include="..\CSVSettings.cs" Link="CSVSettings.cs" />
+    <Compile Include="..\CSVStream.cs" Link="CSVStream.cs" />
+    <Compile Include="..\CSVWriter.cs" Link="CSVWriter.cs" />
+  </ItemGroup>
+
+</Project>

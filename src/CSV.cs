@@ -26,9 +26,7 @@ namespace CSVFile
     /// </summary>
     public static class CSV
     {
-#if NET20
-        public const string VERSION = "NET20";
-#elif NET40
+#if NET40
         public const string VERSION = "NET40";
 #elif NET45
         public const string VERSION = "NET45";
@@ -356,7 +354,7 @@ namespace CSVFile
             if (settings == null) settings = CSVSettings.CSV;
             var q = settings.TextQualifier.ToString();
 
-            var riskyChars = char[3];
+            var riskyChars = new char[3];
             riskyChars[0] = settings.FieldDelimiter;
             riskyChars[1] = settings.TextQualifier;
             riskyChars[2] = '\n';  // this includes \r\n sequence aswell

@@ -1,16 +1,16 @@
 [![NuGet](https://img.shields.io/nuget/v/CSVFile.svg?style=plastic)](https://www.nuget.org/packages/CSVFile/)
-[![Travis-CI](https://api.travis-ci.org/tspence/csharp-csv-reader.svg?style=plastic&branch=master)](https://travis-ci.org/tspence/csharp-csv-reader/branches)
+[![Travis-CI](https://api.travis-ci.com/tspence/csharp-csv-reader.svg?style=plastic&branch=master)](https://travis-ci.com/tspence/csharp-csv-reader/branches)
 
 # csharp-csv-reader
 This library is a series of unit tested, thoroughly commented CSV parsing functions which I have developed over the past eight or nine years. Extremely small and easy to implement; includes unit tests for the majority of odd CSV edge cases. Library supports different delimiters, qualifiers, and embedded newlines. Can read and write from data tables.
 
 ## Why use CSharp CSV Reader?
 A few reasons:
-* Full compatibility all the way back to C# 2.0 - easy to integrate into legacy projects.
-* Between 16-32 kilobytes in size, depending on framework
-* No dependencies
-* Handles all the horrible edge cases from poorly written CSV generating software: custom delimiters, embedded newlines, and doubled-up text qualifiers
-* Reads via streams; which means if you have a 16GB .csv.gz file it can be streamed into memory
+* Version 3.X of CSVFile provide compatibility to C# 4.0; versions 2.X provide compatibility all the way back to C# 2.0.  Makes it easy to integrate this library into extremely old legacy projects.
+* Between 16-32 kilobytes in size, depending on framework.
+* No dependencies.
+* Handles all the horrible edge cases from poorly written CSV generating software: custom delimiters, embedded newlines, and doubled-up text qualifiers.
+* Reads via streams; which means if you have a 16GB .csv.gz file it can be streamed into memory.
 
 # Tutorial
 Want to get started? Here are a few walkthroughs.
