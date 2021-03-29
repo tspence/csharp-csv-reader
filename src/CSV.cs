@@ -356,7 +356,7 @@ namespace CSVFile
             if (settings == null) settings = CSVSettings.CSV;
             var q = settings.TextQualifier.ToString();
 
-            var riskyChars = char[3];
+            var riskyChars = new char[3];
             riskyChars[0] = settings.FieldDelimiter;
             riskyChars[1] = settings.TextQualifier;
             riskyChars[2] = '\n';  // this includes \r\n sequence aswell
