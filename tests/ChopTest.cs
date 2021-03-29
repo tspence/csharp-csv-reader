@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using NUnit.Framework;
 using System.IO;
 using CSVFile;
+using System.Linq;
 
 namespace CSVTestSuite
 {
@@ -56,7 +57,8 @@ namespace CSVTestSuite
 
             // Save this string to a test file
             string singlefile = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString() + ".csv");
-            File.WriteAllText(singlefile, CSV.Serialize<SimpleChopClass>(list));
+            var rawcsv = CSV.Serialize<SimpleChopClass>(list);
+            File.WriteAllText(singlefile, rawcsv);
 
             // Create an empty test folder
             string dirname = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
@@ -66,7 +68,7 @@ namespace CSVTestSuite
             CSVReader.ChopFile(singlefile, dirname, 5000);
 
             // Verify that we got three files
-            string[] files = Directory.GetFiles(dirname);
+            string[] files = Directory.GetFiles(dirname).OrderBy(f => f).ToArray();
             Assert.AreEqual(3, files.Length);
 
             // Read in each file and verify that each one has one line
