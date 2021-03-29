@@ -90,15 +90,10 @@ namespace CSVFile
             message.Attachments.Add(a);
 
             // Send the email
-#if NET20
-            var smtp = new System.Net.Mail.SmtpClient(smtp_host);
-            smtp.Send(message);
-#else
             using (System.Net.Mail.SmtpClient smtp = new System.Net.Mail.SmtpClient(smtp_host))
             {
                 smtp.Send(message);
             }
-#endif
         }
 #endregion
 #endif

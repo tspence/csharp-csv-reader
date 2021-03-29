@@ -26,9 +26,7 @@ namespace CSVFile
     /// </summary>
     public static class CSV
     {
-#if NET20
-        public const string VERSION = "NET20";
-#elif NET40
+#if NET40
         public const string VERSION = "NET40";
 #elif NET45
         public const string VERSION = "NET45";

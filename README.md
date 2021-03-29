@@ -6,11 +6,11 @@ This library is a series of unit tested, thoroughly commented CSV parsing functi
 
 ## Why use CSharp CSV Reader?
 A few reasons:
-* Full compatibility all the way back to C# 2.0 - easy to integrate into legacy projects.
-* Between 16-32 kilobytes in size, depending on framework
-* No dependencies
-* Handles all the horrible edge cases from poorly written CSV generating software: custom delimiters, embedded newlines, and doubled-up text qualifiers
-* Reads via streams; which means if you have a 16GB .csv.gz file it can be streamed into memory
+* Version 3.X of CSVFile provide compatibility to C# 4.0; versions 2.X provide compatibility all the way back to C# 2.0.  Makes it easy to integrate this library into extremely old legacy projects.
+* Between 16-32 kilobytes in size, depending on framework.
+* No dependencies.
+* Handles all the horrible edge cases from poorly written CSV generating software: custom delimiters, embedded newlines, and doubled-up text qualifiers.
+* Reads via streams; which means if you have a 16GB .csv.gz file it can be streamed into memory.
 
 # Tutorial
 Want to get started? Here are a few walkthroughs.
