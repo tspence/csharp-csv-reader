@@ -97,7 +97,8 @@ namespace CSVTestSuite
             Directory.Delete(dirname, true);
             File.Delete(singlefile);
         }
-        /*
+
+#if HAS_DATATABLE
         [Test]
         public void DataTableChoppingFiles()
         {
@@ -105,7 +106,7 @@ namespace CSVTestSuite
 2012-05-01,test1,""Hi there, I said!"",Bob,57,0
 2011-04-01,test2,""What's up, buttercup?"",Ralph,1,-999
 1975-06-03,test3,""Bye and bye, dragonfly!"",Jimmy's The Bomb,12,13";
-            DataTable dt = CSVDataTable.FromString(source);
+            var dt = CSVDataTable.FromString(source);
 
             // Save this string to a test file
             string test_rootfn = Guid.NewGuid().ToString();
@@ -142,6 +143,7 @@ namespace CSVTestSuite
             // Clean up
             Directory.Delete(dirname, true);
             File.Delete(outfile);
-        }*/
+        }
+#endif
     }
 }
