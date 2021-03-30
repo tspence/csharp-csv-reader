@@ -57,6 +57,9 @@ namespace CSVTestSuite
                             Assert.AreEqual(line[0], "Dr. Kelso");
                             Assert.AreEqual(line[1], "Chief of Medicine");
                             Assert.AreEqual(line[2], "x100");
+                        } else
+                        {
+                            Assert.IsTrue(false, "Should not get here");
                         }
                         i++;
                     }

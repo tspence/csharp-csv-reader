@@ -77,22 +77,12 @@ namespace CSVFile
         /// <returns>An array of all data columns in the line</returns>
         public IEnumerable<string[]> Lines()
         {
-            while (true)
-            {
-
-                // Attempt to parse the line successfully
-                string[] line = NextLine();
-
-                // If we were unable to parse the line successfully, that's all the file has
-                if (line == null) break;
-
-                // We got something - give the caller an object
-                yield return line;
-            }
+            return CSV.ParseStream(_instream, _settings);
         }
 
         /// <summary>
         /// Retrieve the next line from the file.
+        /// DEPRECATED - 
         /// </summary>
         /// <returns>One line from the file.</returns>
         public string[] NextLine()
