@@ -117,16 +117,21 @@ namespace CSVFile
                 {
                     // Our next task is to find the end of this qualified-text field
                     int p2 = -1;
-                    while (p2 < 0 && !inStream.EndOfStream) {
+                    while (p2 < 0) {
 
                         // If we don't see an end in sight, read more from the stream
                         p2 = line.IndexOf(settings.TextQualifier, i + 1);
                         if (p2 < 0) {
 
                             // No text qualifiers yet? Let's read more from the stream and continue
-                            work.Append(line);
+                            work.Append(line.Substring(i + 1));
                             i = -1;
-                            line = inStream.ReadLine() + settings.LineSeparator;
+                            var newLine = inStream.ReadLine();
+                            if (String.IsNullOrEmpty(newLine) && inStream.EndOfStream)
+                            {
+                                break;
+                            }
+                            line = newLine + settings.LineSeparator;
                             continue;
                         }
 
