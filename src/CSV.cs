@@ -7,6 +7,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+#if NET50
+using System.Threading.Tasks;
+#endif
 
 #if NEEDS_EXTENSION_ATTRIBUTE
 // Use this namespace to be able to declare extension methods
@@ -174,8 +177,130 @@ namespace CSVFile
             }
         }
 
+#if NET50
+        /// <summary>
+        /// Parse a CSV stream into IEnumerable<string[]>, while permitting embedded newlines
+        /// </summary>
+        /// <param name="inStream">The stream to read</param>
+        /// <param name="settings">The CSV settings to use for this parsing operation (Default: CSV)</param>
+        /// <returns>An enumerable object that can be examined to retrieve rows from the stream.</returns>
+        public static async IAsyncEnumerable<string[]> ParseStreamAsync(StreamReader inStream, CSVSettings settings = null)
+        {
+            string line = "";
+            int i = -1;
+            List<string> list = new List<string>();
+            var work = new StringBuilder();
+
+            // Ensure settings are non-null
+            if (settings == null)
+            {
+                settings = CSVSettings.CSV;
+            }
+
+            // Begin reading from the stream
+            while (i < line.Length || !inStream.EndOfStream)
+            {
+                // Consume the next character of data
+                i++;
+                if (i >= line.Length)
+                {
+                    var newLine = await inStream.ReadLineAsync();
+                    line += newLine + settings.LineSeparator;
+                }
+                char c = line[i];
+
+                // Are we at a line separator? If so, yield our work and begin again
+                if (String.Equals(line.Substring(i, settings.LineSeparator.Length), settings.LineSeparator))
+                {
+                    list.Add(work.ToString());
+                    yield return list.ToArray();
+                    list.Clear();
+                    work.Clear();
+                    if (inStream.EndOfStream)
+                    {
+                        break;
+                    }
+
+                    // Read in next line
+                    if (i + settings.LineSeparator.Length >= line.Length)
+                    {
+                        line = (await inStream.ReadLineAsync()) + settings.LineSeparator;
+                    }
+                    else
+                    {
+                        line = line.Substring(i + settings.LineSeparator.Length);
+                    }
+                    i = -1;
+
+                    // While starting a field, do we detect a text qualifier?
+                }
+                else if ((c == settings.TextQualifier) && (work.Length == 0))
+                {
+                    // Our next task is to find the end of this qualified-text field
+                    int p2 = -1;
+                    while (p2 < 0)
+                    {
+
+                        // If we don't see an end in sight, read more from the stream
+                        p2 = line.IndexOf(settings.TextQualifier, i + 1);
+                        if (p2 < 0)
+                        {
+
+                            // No text qualifiers yet? Let's read more from the stream and continue
+                            work.Append(line.Substring(i + 1));
+                            i = -1;
+                            var newLine = await inStream.ReadLineAsync();
+                            if (String.IsNullOrEmpty(newLine) && inStream.EndOfStream)
+                            {
+                                break;
+                            }
+                            line = newLine + settings.LineSeparator;
+                            continue;
+                        }
+
+                        // Append the text between the qualifiers
+                        work.Append(line.Substring(i + 1, p2 - i - 1));
+                        i = p2;
+
+                        // If the user put in a doubled-up qualifier, e.g. `""`, insert a single one and continue
+                        if (((p2 + 1) < line.Length) && (line[p2 + 1] == settings.TextQualifier))
+                        {
+                            work.Append(settings.TextQualifier);
+                            i++;
+                            p2 = -1;
+                            continue;
+                        }
+                    }
+
+                    // Does this start a new field?
+                }
+                else if (c == settings.FieldDelimiter)
+                {
+                    // Is this a null token, and do we permit null tokens?
+                    AddToken(list, work, settings);
+
+                    // Test for special case: when the user has written a casual comma, space, and text qualifier, skip the space
+                    // Checks if the second parameter of the if statement will pass through successfully
+                    // e.g. `"bob", "mary", "bill"`
+                    if (i + 2 <= line.Length - 1)
+                    {
+                        if (line[i + 1].Equals(' ') && line[i + 2].Equals(settings.TextQualifier))
+                        {
+                            i++;
+                        }
+                    }
+                }
+                else
+                {
+                    work.Append(c);
+                }
+            }
+        }
+#endif
+
         /// <summary>
         /// Parse a single row of data from a CSV line into an array of objects, while permitting embedded newlines
+        /// DEPRECATED - Please use ParseStream instead.
         /// </summary>
         /// <param name="inStream">The stream to read</param>
         /// <param name="settings">The CSV settings to use for this parsing operation (Default: CSV)</param>
@@ -340,9 +465,30 @@ namespace CSVFile
                 }
             }
         }
+
+#if NET50
+        /// <summary>
+        /// Deserialize a CSV string into a list of typed objects
+        /// </summary>
+        /// <typeparam name="T">The type of objects to deserialize</typeparam>
+        /// <param name="settings">The CSV settings to use when parsing the source (Default: CSV)</param>
+        /// <param name="source">The source CSV to deserialize</param>
+        /// <returns></returns>
+        public static async Task<List<T>> DeserializeAsync<T>(string source, CSVSettings settings = null) where T : class, new()
+        {
+            byte[] byteArray = Encoding.UTF8.GetBytes(source);
+            using (var stream = new MemoryStream(byteArray))
+            {
+                using (var cr = await CSVAsyncReader.From(new StreamReader(stream), settings))
+                {
+                    return await cr.Deserialize<T>();
+                }
+            }
+        }
+#endif
 #endregion
 
-#region CSV Output Functions
+        #region CSV Output Functions
         /// <summary>
         /// Serialize a sequence of objects into a CSV string
         /// </summary>

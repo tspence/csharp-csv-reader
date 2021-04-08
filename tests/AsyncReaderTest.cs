@@ -9,14 +9,15 @@ using System.Collections.Generic;
 using NUnit.Framework;
 using CSVFile;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace CSVTestSuite
 {
     [TestFixture]
-    public class ReaderTest
+    public class AsyncReaderTest
     {
         [Test]
-        public void TestBasicReader()
+        public async Task TestBasicReader()
         {
             string source = "Name,Title,Phone\n" +
                 "JD,Doctor,x234\n" +
@@ -33,10 +34,11 @@ namespace CSVTestSuite
             // Convert into stream
             byte[] byteArray = Encoding.UTF8.GetBytes(source);
             MemoryStream stream = new MemoryStream(byteArray);
-            using (StreamReader sr = new StreamReader(stream)) {
-                using (CSVReader cr = new CSVReader(sr, settings)) {
+            using (var sr = new StreamReader(stream)) {
+                using (var cr = await CSVAsyncReader.From(sr, settings))
+                {
                     int i = 0;
-                    foreach (string[] line in cr) {
+                    await foreach (string[] line in cr) {
                         Assert.AreEqual(3, line.Length);
                         if (i == 0) {
                             Assert.AreEqual(line[0], "Name");
@@ -70,7 +72,7 @@ namespace CSVTestSuite
 
 
         [Test]
-        public void TestDanglingFields()
+        public async Task TestDanglingFields()
         {
             string source = "Name,Title,Phone,Dangle\n" +
                 "JD,Doctor,x234,\n" +
@@ -89,9 +91,10 @@ namespace CSVTestSuite
             byte[] byteArray = Encoding.UTF8.GetBytes(source);
             MemoryStream stream = new MemoryStream(byteArray);
             using (StreamReader sr = new StreamReader(stream)) {
-                using (CSVReader cr = new CSVReader(sr, settings)) {
+                using (var cr = await CSVAsyncReader.From(sr, settings))
+                {
                     int i = 0;
-                    foreach (string[] line in cr) {
+                    await foreach (string[] line in cr) {
                         Assert.AreEqual(4, line.Length);
                         if (i == 0) {
                             Assert.AreEqual(line[0], "Name");
@@ -134,7 +137,7 @@ namespace CSVTestSuite
         }
 
         [Test]
-        public void TestAlternateDelimiterQualifiers()
+        public async Task TestAlternateDelimiterQualifiers()
         {
             string source = "Name\tTitle\tPhone\n" +
                 "JD\tDoctor\tx234\n" +
@@ -146,12 +149,13 @@ namespace CSVTestSuite
             byte[] byteArray = Encoding.UTF8.GetBytes(source);
             MemoryStream stream = new MemoryStream(byteArray);
             using (StreamReader sr = new StreamReader(stream)) {
-                using (var cr = new CSVReader(sr, new CSVSettings() { HeaderRowIncluded = true, FieldDelimiter = '\t' })) {
+                using (var cr = await CSVAsyncReader.From(sr, new CSVSettings() { HeaderRowIncluded = true, FieldDelimiter = '\t' }))
+                {
                     Assert.AreEqual(cr.Headers[0], "Name");
                     Assert.AreEqual(cr.Headers[1], "Title");
                     Assert.AreEqual(cr.Headers[2], "Phone");
                     int i = 1;
-                    foreach (string[] line in cr) {
+                    await foreach (string[] line in cr) {
                         if (i == 1) {
                             Assert.AreEqual(line[0], "JD");
                             Assert.AreEqual(line[1], "Doctor");

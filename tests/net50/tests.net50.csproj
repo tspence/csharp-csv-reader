@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="..\AsyncReaderTest.cs" Link="AsyncReaderTest.cs" />
     <Compile Include="..\BasicParseTests.cs" Link="BasicParseTests.cs" />
     <Compile Include="..\ChopTest.cs" Link="ChopTest.cs" />
     <Compile Include="..\DataTableReaderTest.cs" Link="DataTableReaderTest.cs" />
