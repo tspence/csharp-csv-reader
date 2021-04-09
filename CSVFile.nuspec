@@ -2,7 +2,7 @@
 <package >
 	<metadata>
 		<id>CSVFile</id>
-		<version>3.0.1</version>
+		<version>3.0.2</version>
 		<title>CSVFile</title>
 		<authors>Ted Spence</authors>
 		<owners>Ted Spence</owners>
@@ -11,10 +11,9 @@
 		<requireLicenseAcceptance>false</requireLicenseAcceptance>
 		<description>A tiny CSV and TSV parsing library with few dependencies.  Compatible with most dot net versions.</description>
 		<releaseNotes>
-			Better support for serialization and deserialization.
-			New "CSVSettings" class that reduces the number of parameters.
-			Updated for .NET 5.0; includes legacy support for DotNet2.0, DotNet4.0, and NetStandard2.0.
-			Due to compatibility issues, DataTable support is not present in NetStandard2.
+			Supports async / await for I/O using IAsyncEnumerable.
+			Fix performance issue that affected files with lots of embedded newlines.
+			Updated for .NET 5.0.
 		</releaseNotes>
 		<copyright>Copyright 2006 - 2021</copyright>
     	<tags>fast csv parser serialization deserialization streaming async</tags>
