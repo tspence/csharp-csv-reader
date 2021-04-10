@@ -2,27 +2,34 @@
 <package >
 	<metadata>
 		<id>CSVFile</id>
-		<version>3.0.0</version>
+		<version>3.0.2</version>
 		<title>CSVFile</title>
 		<authors>Ted Spence</authors>
 		<owners>Ted Spence</owners>
-		<licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
+		<license type="file">LICENSE</license>
 		<projectUrl>https://github.com/tspence/csharp-csv-reader</projectUrl>
 		<requireLicenseAcceptance>false</requireLicenseAcceptance>
 		<description>A tiny CSV and TSV parsing library with few dependencies.  Compatible with most dot net versions.</description>
 		<releaseNotes>
-			Better support for serialization and deserialization.
-			New "CSVSettings" class that reduces the number of parameters.
-			Updated for .NET 5.0; includes legacy support for DotNet2.0, DotNet4.0, and NetStandard2.0.
-			Due to compatibility issues, DataTable support is not present in NetStandard2.
+			Supports async / await for I/O using IAsyncEnumerable.
+			Fix performance issue that affected files with lots of embedded newlines.
+			Updated for .NET 5.0.
 		</releaseNotes>
 		<copyright>Copyright 2006 - 2021</copyright>
-		<tags>csv parser</tags>
+    	<tags>fast csv parser serialization deserialization streaming async</tags>
+		<repository type="git" url="https://github.com/tspence/csharp-csv-reader" />
+		<dependencies>
+			<group targetFramework=".NETFramework4.0"/>
+			<group targetFramework=".NETFramework4.5"/>
+			<group targetFramework="net5.0"/>
+			<group targetFramework=".NETStandard2.0"/>
+		</dependencies>
 	</metadata>
 	<files>
+		<file src=".\LICENSE*" target=""/>
 		<file src="src\net40\bin\release\net40\csvfile.*" target="lib\net40" />
 		<file src="src\net45\bin\release\net45\csvfile.*" target="lib\net45" />
-		<file src="src\net45\bin\release\net50\csvfile.*" target="lib\net50" />
+		<file src="src\net50\bin\release\net5.0\csvfile.*" target="lib\net5.0" />
 		<file src="src\netstandard20\bin\release\netstandard2.0\csvfile.*" target="lib\netstandard20" />
 	</files>
 </package>

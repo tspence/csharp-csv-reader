@@ -2,7 +2,7 @@
 [![Travis-CI](https://api.travis-ci.com/tspence/csharp-csv-reader.svg?style=plastic&branch=master)](https://travis-ci.com/tspence/csharp-csv-reader/branches)
 
 # csharp-csv-reader
-This library is a series of unit tested, thoroughly commented CSV parsing functions which I have developed over the past eight or nine years. Extremely small and easy to implement; includes unit tests for the majority of odd CSV edge cases. Library supports different delimiters, qualifiers, and embedded newlines. Can read and write from data tables.
+This library is a series of unit tested, thoroughly commented CSV parsing functions which I have developed off and on since 2006. Extremely small and easy to implement; includes unit tests for the majority of odd CSV edge cases. Library supports different delimiters, qualifiers, and embedded newlines. Can read and write from data tables.
 
 ## Why use CSharp CSV Reader?
 A few reasons:
@@ -10,7 +10,7 @@ A few reasons:
 * Between 16-32 kilobytes in size, depending on framework.
 * No dependencies.
 * Handles all the horrible edge cases from poorly written CSV generating software: custom delimiters, embedded newlines, and doubled-up text qualifiers.
-* Reads via streams; which means if you have a 16GB .csv.gz file it can be streamed into memory.
+* Reads via streams, optionally using asynchronous I/O.  You can parse CSV files larger than you can hold in memory without thrashing.
 
 # Tutorial
 Want to get started? Here are a few walkthroughs.
@@ -18,7 +18,7 @@ Want to get started? Here are a few walkthroughs.
 ## Custom CSV Settings
 Do you have files that use the pipe symbol as a delimiter, or does your application need double quotes around all fields? No problem!
 
-```
+```csharp
 var settings = new CSVSettings()
 {
     FieldDelimiter = '|',
@@ -28,12 +28,12 @@ var settings = new CSVSettings()
 s = array.ToCSVString(settings);
 ```
 
-## Iterate Through A Massive File
-When you receive a gigantic 20GB file that is formatted CSV, you obviously can't parse it all into memory at once. Maybe you want to deserialize a ZIP file and the CSV within it at the same time - here's how you do that:
+## Streaming asynchronous CSV 
+The latest asynchronous I/O frameworks allow you to stream CSV data off disk without blocking.  Here's how to use the asynchronous I/O features of Dot Net 5.0:
 
-```
-using (CSVReader cr = new CSVReader(myfilename)) {
-    foreach (string[] line in cr) {
+```csharp
+using (var cr = await CSVAsyncReader.from(stream, settings)) {
+    await foreach (string[] line in cr) {
         // Do whatever you want with this one line - the buffer will
         // only hold a small amount of memory at once, so you can 
         // iterate at your own pace!
@@ -41,23 +41,35 @@ using (CSVReader cr = new CSVReader(myfilename)) {
 }
 ```
 
+## Streaming CSV without async
+
+Don't worry if your project isn't yet able to use asynchronous foreach loops.  You can still use the existing reader logic:
+
+```csharp
+using (CSVReader cr = new CSVReader(sr, settings)) {
+    foreach (string[] line in cr) {
+        // Process this one line
+    }
+}
+```
+
 ## Serialize and Deserialize
 You can serialize and deserialize between List<T> and CSV arrays.  Serialization supports all basic value types, and it can even optionally support storing null values in CSV cells.
 
-```
+```csharp
 var list = new List<MyClass>();
 
 // Serialize an array of objects to a CSV string
 string csv = CSV.Serialize<MyClass>(list);
 
 // Deserialize a CSV back into an array of objects
-var newlist = CSV.Deserialize<MyClass>(csv);
+var newlist = await CSV.Deserialize<MyClass>(csv);
 ```
 
 ## Data Table Support (for older DotNet frameworks)
 For those of you who work in older frameworks that still use DataTables, this feature is still available:
 
-```
+```csharp
 // This code assumes the file is on disk, and the first row of the file
 // has the names of the columns on it
 DataTable dt = CSV.LoadDataTable(myfilename);
