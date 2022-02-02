@@ -5,7 +5,6 @@
  */
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.IO;
 #if HAS_DATATABLE
 using System.Data;

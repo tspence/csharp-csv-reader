@@ -3,17 +3,12 @@
  * License: http://www.apache.org/licenses/LICENSE-2.0 
  * Home page: https://github.com/tspence/csharp-csv-reader
  */
-using System;
-using System.Collections.Generic;
-#if HAS_DATATABLE
 using System.Data;
-#endif
 using System.IO;
 using System.Text;
 
 namespace CSVFile
 {
-#if HAS_DATATABLE
     public static class CSVDataTable
     {
         /// <summary>
@@ -144,5 +139,4 @@ namespace CSVFile
             }
         }
     }
-#endif
 }
