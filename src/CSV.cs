@@ -525,35 +525,27 @@ namespace CSVFile
                 settings = CSVSettings.CSV;
             }
 
-            // Okay, let's begin
+            // Okay, let's add headers (if desired) and objects
             var sb = new StringBuilder();
-
-            // Did the caller want the header row?
             if (settings.HeaderRowIncluded)
             {
-                sb.AppendCSVHeader(typeof(T), settings);
-                sb.Append(settings.LineSeparator);
+                sb.AppendCSVHeader<T>(settings);
             }
-
-            // Let's go through the array of objects
-            // Iterate through all the objects
             foreach (var obj in list)
             {
-                sb.AppendAsCSV(obj, settings);
-                sb.Append(settings.LineSeparator);
+                sb.AppendCSVLine(obj, settings);
             }
-
+            
             // Here's your data serialized in CSV format
             return sb.ToString();
         }
 
         /// <summary>
-        /// Add a CSV Header line to a StringBuilder
+        /// Add a CSV Header line to a StringBuilder for a specific type
         /// </summary>
         /// <param name="sb">The StringBuilder to append data</param>
-        /// <param name="type">The type of data to emit a header</param>
         /// <param name="settings">The CSV settings to use when exporting this array (Default: CSV)</param>
-        public static void AppendCSVHeader(this StringBuilder sb, Type type, CSVSettings settings = null)
+        public static void AppendCSVHeader<T>(this StringBuilder sb, CSVSettings settings = null)
         {
             // ReSharper disable once ConvertIfStatementToNullCoalescingAssignment
             if (settings == null)
@@ -561,9 +553,11 @@ namespace CSVFile
                 settings = CSVSettings.CSV;
             }
 
+            var type = typeof(T);
             var headers = type.GetFields().Select(fi => fi.Name).ToList();
             headers.AddRange(type.GetProperties().Select(pi => pi.Name));
             AppendCSVRow(sb, headers, settings);
+            sb.Append(settings.LineSeparator);
         }
 
         /// <summary>
@@ -573,24 +567,22 @@ namespace CSVFile
         /// <param name="obj">The single object to append in CSV-line format</param>
         /// <param name="settings">The CSV settings to use when exporting this array (Default: CSV)</param>
         /// <typeparam name="T">The 1st type parameter.</typeparam>
-        public static void AppendAsCSV<T>(this StringBuilder sb, T obj, CSVSettings settings = null) where T : class, new()
+        public static void AppendCSVLine<T>(this StringBuilder sb, T obj, CSVSettings settings = null) where T : class, new()
         {
-            // Skip any null objects
-            if (obj == null) return;
-
             // ReSharper disable once ConvertIfStatementToNullCoalescingAssignment
             if (settings == null)
             {
                 settings = CSVSettings.CSV;
             }
-
+            
             // Retrieve reflection information
             var type = typeof(T);
             var values = type.GetFields().Select(fi => fi.GetValue(obj)).ToList();
             values.AddRange(type.GetProperties().Select(pi => pi.GetValue(obj, null)));
 
-            // Output one line of CSV
+            // Output all the CSV items
             AppendCSVRow(sb, values, settings);
+            sb.Append(settings.LineSeparator);
         }
 
         /// <summary>

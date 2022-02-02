@@ -43,7 +43,7 @@ namespace CSVFile
             }
             else
             {
-                Headers = _settings.AssumedHeaders?.ToArray();
+                Headers = _settings.AssumedHeaders;
             }
         }
 

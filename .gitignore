@@ -6,3 +6,4 @@ obj
 *project.lock.json
 .vs/
 packages/
+.idea/

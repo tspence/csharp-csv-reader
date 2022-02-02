@@ -78,7 +78,7 @@ namespace CSVFile
         /// <summary>
         /// If `HeaderRowIncluded` is false, use these values for the headers
         /// </summary>
-        public List<string> AssumedHeaders { get; set; } = null;
+        public string[] AssumedHeaders { get; set; }
 
         /// <summary>
         /// Set this value to true to allow parsing for files where each row has a different number of fields

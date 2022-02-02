@@ -52,7 +52,7 @@ namespace CSVFile
             }
             else
             {
-                reader.Headers = reader._settings.AssumedHeaders?.ToArray();
+                reader.Headers = reader._settings.AssumedHeaders;
             }
             return reader;
         }
