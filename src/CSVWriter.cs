@@ -20,7 +20,6 @@ namespace CSVFile
 
         protected StreamWriter _outstream;
 
-#region Constructors
         /// <summary>
         /// Construct a new CSV writer to produce output on the enclosed StreamWriter
         /// </summary>
@@ -35,9 +34,7 @@ namespace CSVFile
                 _settings = CSVSettings.CSV;
             }
         }
-#endregion
 
-#region Writing values
         /// <summary>
         /// Write one line to the file
         /// </summary>
@@ -46,9 +43,7 @@ namespace CSVFile
         {
             _outstream.WriteLine(line.ToCSVString(_settings));
         }
-#endregion
 
-#region Data Table Functions (not available in dot-net-portable mode)
 #if HAS_DATATABLE
         /// <summary>
         /// Write the data table to a stream in CSV format
@@ -74,9 +69,7 @@ namespace CSVFile
             _outstream.Flush();
         }
 #endif
-#endregion
 
-#region Serialization
         /// <summary>
         /// Serialize a list of objects to CSV using this writer
         /// </summary>
@@ -88,9 +81,7 @@ namespace CSVFile
             // Flush the stream
             _outstream.Flush();
         }
-#endregion
 
-#region Disposables
         /// <summary>
         /// Close our resources - specifically, the stream reader
         /// </summary>
@@ -100,6 +91,5 @@ namespace CSVFile
             _outstream.Close();
             _outstream.Dispose();
         }
-#endregion
     }
 }

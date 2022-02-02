@@ -33,6 +33,8 @@ namespace CSVFile
         public const string VERSION = "NET40";
 #elif NET45
         public const string VERSION = "NET45";
+#elif NET50
+        public const string VERSION = "NET50";
 #elif NETSTANDARD10
         public const string VERSION = "NETSTANDARD10";
 #elif NETSTANDARD20
@@ -62,7 +64,6 @@ namespace CSVFile
         public const char DEFAULT_TSV_QUALIFIER = '"';
 
 
-#region Methods to read CSV data
         /// <summary>
         /// Parse a CSV stream into IEnumerable<string[]>, while permitting embedded newlines
         /// </summary>
@@ -486,9 +487,7 @@ namespace CSVFile
             }
         }
 #endif
-#endregion
 
-        #region CSV Output Functions
         /// <summary>
         /// Serialize a sequence of objects into a CSV string
         /// </summary>
@@ -536,9 +535,7 @@ namespace CSVFile
             // Here's your data serialized in CSV format
             return sb.ToString();
         }
-#endregion
 
-#region StringBuilder append functions
         /// <summary>
         /// Add a CSV Header line to a StringBuilder
         /// </summary>
@@ -661,6 +658,5 @@ namespace CSVFile
             // Subtract the trailing delimiter so we don't inadvertently add an empty column at the end
             sb.Length -= 1;
         }
-#endregion
     }
 }

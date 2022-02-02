@@ -12,7 +12,6 @@ namespace CSVFile
 {
     public static class CSVStream
     {
-        #region FileStream related functions (not available on dot-net-portable)
         /// <summary>
         /// Serialize an object array to a stream in CSV format
         /// </summary>
@@ -67,9 +66,7 @@ namespace CSVFile
                 return cr.Deserialize<T>();
             }
         }
-        #endregion
 
-        #region Minimal portable functions
         /// <summary>
         /// Convert a CSV file (in string form) into a list of string arrays 
         /// </summary>
@@ -88,6 +85,5 @@ namespace CSVFile
             }
             return results;
         }
-        #endregion
     }
 }

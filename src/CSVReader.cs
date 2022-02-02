@@ -21,14 +21,11 @@ namespace CSVFile
 
         protected StreamReader _instream;
 
-        #region Public Variables
         /// <summary>
         /// If the first row in the file is a header row, this will be populated
         /// </summary>
         public string[] Headers = null;
-        #endregion
 
-        #region Constructors
         /// <summary>
         /// Construct a new CSV reader off a streamed source
         /// </summary>
@@ -50,9 +47,7 @@ namespace CSVFile
                 Headers = _settings.AssumedHeaders?.ToArray();
             }
         }
-        #endregion
 
-        #region Iterate through a CSV File
         /// <summary>
         /// Iterate through all lines in this CSV file
         /// </summary>
@@ -89,9 +84,7 @@ namespace CSVFile
         {
             return CSV.ParseMultiLine(_instream, _settings);
         }
-        #endregion
 
-#region Read a file into a data table
 #if HAS_DATATABLE
         /// <summary>
         /// Read this file into a data table in memory
@@ -287,9 +280,7 @@ namespace CSVFile
             // Here's your array!
             return result;
         }
-#endregion
 
-#region Disposal
         /// <summary>
         /// Close our resources - specifically, the stream reader
         /// </summary>
@@ -297,9 +288,7 @@ namespace CSVFile
         {
             _instream.Dispose();
         }
-#endregion
 
-#region Chopping a CSV file into chunks
         /// <summary>
         /// Take a CSV file and chop it into multiple chunks of a specified maximum size.
         /// </summary>
@@ -367,6 +356,5 @@ namespace CSVFile
             }
             return file_id;
         }
-#endregion
     }
 }
