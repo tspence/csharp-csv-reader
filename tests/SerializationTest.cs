@@ -118,5 +118,32 @@ namespace CSVTestSuite
                 Assert.AreEqual(list[i].ThirdColumn, newlist[i].ThirdColumn);
             }
         }
+
+        [Test]
+        public void TestCaseInsensitiveDeserializer()
+        {
+            List<TestClassTwo> list = new List<TestClassTwo>();
+            list.Add(new TestClassTwo() { FirstColumn = "hi1!", SecondColumn = 12, ThirdColumn = EnumTestType.First });
+            list.Add(new TestClassTwo() { FirstColumn = "hi2, hi2, hi2!", SecondColumn = 34, ThirdColumn = EnumTestType.Second });
+            list.Add(new TestClassTwo() { FirstColumn = @"hi3 says, ""Hi Three!""", SecondColumn = 56, ThirdColumn = EnumTestType.Third });
+            list.Add(new TestClassTwo() { FirstColumn = null, SecondColumn = 7, ThirdColumn = EnumTestType.Fourth });
+
+            string csv = "FIRSTCOLUMN,SECONDCOLUMN,THIRDCOLUMN\n" +
+                "hi1!,12,First\n" +
+                "\"hi2, hi2, hi2!\",34,Second\n" +
+                "\"hi3 says, \"\"Hi Three!\"\"\",56,Third\n" +
+                "NULL,7,Fourth";
+
+            // Deserialize back from a CSV string - should not throw any errors!
+            List<TestClassTwo> newlist = CSV.Deserialize<TestClassTwo>(csv, CSVSettings.CSV_PERMIT_NULL);
+
+            // Compare original objects to new ones
+            for (int i = 0; i < list.Count; i++)
+            {
+                Assert.AreEqual(list[i].FirstColumn, newlist[i].FirstColumn);
+                Assert.AreEqual(list[i].SecondColumn, newlist[i].SecondColumn);
+                Assert.AreEqual(list[i].ThirdColumn, newlist[i].ThirdColumn);
+            }
+        }
     }
 }

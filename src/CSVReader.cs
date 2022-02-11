@@ -161,6 +161,13 @@ namespace CSVFile
             if (Headers == null) throw new Exception("CSV must have headers to be deserialized");
             int num_columns = Headers.Length;
 
+            // Set binding flags correctly
+            var bindings = BindingFlags.Public | BindingFlags.Instance;
+            if (!_settings.HeadersCaseSensitive)
+            {
+                bindings |= BindingFlags.IgnoreCase;
+            }
+
             // Determine how to handle each column in the file - check properties, fields, and methods
             Type[] column_types = new Type[num_columns];
             TypeConverter[] column_convert = new TypeConverter[num_columns];
@@ -169,19 +176,19 @@ namespace CSVFile
             MethodInfo[] method_handlers = new MethodInfo[num_columns];
             for (int i = 0; i < num_columns; i++)
             {
-                prop_handlers[i] = return_type.GetProperty(Headers[i]);
+                prop_handlers[i] = return_type.GetProperty(Headers[i], bindings);
 
                 // If we failed to get a property handler, let's try a field handler
                 if (prop_handlers[i] == null)
                 {
-                    field_handlers[i] = return_type.GetField(Headers[i]);
+                    field_handlers[i] = return_type.GetField(Headers[i], bindings);
 
                     // If we failed to get a field handler, let's try a method
                     if (field_handlers[i] == null)
                     {
 
                         // Methods must be treated differently - we have to ensure that the method has a single parameter
-                        MethodInfo mi = return_type.GetMethod(Headers[i]);
+                        MethodInfo mi = return_type.GetMethod(Headers[i], bindings);
                         if (mi != null)
                         {
                             if (mi.GetParameters().Length == 1)

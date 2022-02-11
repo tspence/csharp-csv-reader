@@ -91,6 +91,11 @@ namespace CSVFile
         public bool IgnoreHeaderErrors { get; set; }
 
         /// <summary>
+        /// Expect headers to be case sensitive during deserialization
+        /// </summary>
+        public bool HeadersCaseSensitive { get; set; }
+
+        /// <summary>
         /// Standard comma-separated value (CSV) file settings
         /// </summary>
         public static readonly CSVSettings CSV = new CSVSettings();
