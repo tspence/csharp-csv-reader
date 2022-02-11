@@ -6,6 +6,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 #if NET50
 using System.Threading.Tasks;
@@ -33,6 +34,8 @@ namespace CSVFile
         public const string VERSION = "NET40";
 #elif NET45
         public const string VERSION = "NET45";
+#elif NET50
+        public const string VERSION = "NET50";
 #elif NETSTANDARD10
         public const string VERSION = "NETSTANDARD10";
 #elif NETSTANDARD20
@@ -57,26 +60,25 @@ namespace CSVFile
         public const char DEFAULT_TSV_DELIMITER = '\t';
 
         /// <summary>
-        /// The default TSV (tabe delimited file) text qualifier.  This is used to encode strings that contain the field delimiter.
+        /// The default TSV (tab delimited file) text qualifier.  This is used to encode strings that contain the field delimiter.
         /// </summary>
         public const char DEFAULT_TSV_QUALIFIER = '"';
 
 
-#region Methods to read CSV data
         /// <summary>
-        /// Parse a CSV stream into IEnumerable<string[]>, while permitting embedded newlines
+        /// Parse a CSV stream into <![CDATA[ IEnumerable<string[]> ]]>, while permitting embedded newlines
         /// </summary>
         /// <param name="inStream">The stream to read</param>
         /// <param name="settings">The CSV settings to use for this parsing operation (Default: CSV)</param>
         /// <returns>An enumerable object that can be examined to retrieve rows from the stream.</returns>
         public static IEnumerable<string[]> ParseStream(StreamReader inStream, CSVSettings settings = null)
         {
-            string line = "";
-            int i = -1;
-            List<string> list = new List<string>();
+            var line = "";
+            var i = -1;
+            var list = new List<string>();
             var work = new StringBuilder();
 
-            // Ensure settings are non-null
+            // ReSharper disable once ConvertIfStatementToNullCoalescingAssignment
             if (settings == null) {
                 settings = CSVSettings.CSV;
             }
@@ -148,7 +150,6 @@ namespace CSVFile
                             work.Append(settings.TextQualifier);
                             i++;
                             p2 = -1;
-                            continue;
                         }
                     }
 
@@ -179,19 +180,19 @@ namespace CSVFile
 
 #if NET50
         /// <summary>
-        /// Parse a CSV stream into IEnumerable<string[]>, while permitting embedded newlines
+        /// Parse a CSV stream into <![CDATA[ IEnumerable<string[]> ]]> asynchronously, while permitting embedded newlines
         /// </summary>
         /// <param name="inStream">The stream to read</param>
         /// <param name="settings">The CSV settings to use for this parsing operation (Default: CSV)</param>
         /// <returns>An enumerable object that can be examined to retrieve rows from the stream.</returns>
         public static async IAsyncEnumerable<string[]> ParseStreamAsync(StreamReader inStream, CSVSettings settings = null)
         {
-            string line = "";
-            int i = -1;
-            List<string> list = new List<string>();
+            var line = "";
+            var i = -1;
+            var list = new List<string>();
             var work = new StringBuilder();
 
-            // Ensure settings are non-null
+            // ReSharper disable once ConvertIfStatementToNullCoalescingAssignment
             if (settings == null)
             {
                 settings = CSVSettings.CSV;
@@ -268,7 +269,6 @@ namespace CSVFile
                             work.Append(settings.TextQualifier);
                             i++;
                             p2 = -1;
-                            continue;
                         }
                     }
 
@@ -305,10 +305,18 @@ namespace CSVFile
         /// <param name="inStream">The stream to read</param>
         /// <param name="settings">The CSV settings to use for this parsing operation (Default: CSV)</param>
         /// <returns>An array containing all fields in the next row of data, or null if it could not be parsed.</returns>
+        [Obsolete("Use ParseLine instead; it correctly implements multiline reading.")]
         public static string[] ParseMultiLine(StreamReader inStream, CSVSettings settings = null)
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             string[] array = null;
+            
+            // ReSharper disable once ConvertIfStatementToNullCoalescingAssignment
+            if (settings == null)
+            {
+                settings = CSVSettings.CSV;
+            }
+            
             while (!inStream.EndOfStream)
             {
                 // Read in a line
@@ -352,23 +360,25 @@ namespace CSVFile
         /// <param name="row">The array of fields found in the line</param>
         public static bool TryParseLine(string line, out string[] row, CSVSettings settings = null)
         {
-            // Ensure settings are non-null
-            if (settings == null) settings = CSVSettings.CSV;
+            // ReSharper disable once ConvertIfStatementToNullCoalescingAssignment
+            if (settings == null)
+            {
+                settings = CSVSettings.CSV;
+            }
 
             // Okay, let's begin parsing
-            List<string> list = new List<string>();
+            var list = new List<string>();
             var work = new StringBuilder();
-            for (int i = 0; i < line.Length; i++)
+            for (var i = 0; i < line.Length; i++)
             {
                 char c = line[i];
 
                 // If we are starting a new field, is this field text qualified?
                 if ((c == settings.TextQualifier) && (work.Length == 0))
                 {
-                    int p2;
                     while (true)
                     {
-                        p2 = line.IndexOf(settings.TextQualifier, i + 1);
+                        var p2 = line.IndexOf(settings.TextQualifier, i + 1);
 
                         // If no closing qualifier is found, this string is broken; return failure.
                         if (p2 < 0)
@@ -486,9 +496,7 @@ namespace CSVFile
             }
         }
 #endif
-#endregion
 
-        #region CSV Output Functions
         /// <summary>
         /// Serialize a sequence of objects into a CSV string
         /// </summary>
@@ -497,7 +505,7 @@ namespace CSVFile
         /// <param name="settings">The field delimiter character (Default: comma)</param>
         public static string ToCSVString(this IEnumerable<object> row, CSVSettings settings = null)
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             AppendCSVRow(sb, row, settings);
             return sb.ToString();
         }
@@ -511,95 +519,70 @@ namespace CSVFile
         /// <returns>The completed CSV string representing one line per element in list</returns>
         public static string Serialize<T>(IEnumerable<T> list, CSVSettings settings = null) where T : class, new()
         {
-            // Use CSV as default.
-            if (settings == null) settings = CSVSettings.CSV;
+            // ReSharper disable once ConvertIfStatementToNullCoalescingAssignment
+            if (settings == null)
+            {
+                settings = CSVSettings.CSV;
+            }
 
-            // Okay, let's begin
-            StringBuilder sb = new StringBuilder();
-
-            // Did the caller want the header row?
+            // Okay, let's add headers (if desired) and objects
+            var sb = new StringBuilder();
             if (settings.HeaderRowIncluded)
             {
-                sb.AppendCSVHeader(typeof(T), settings);
-                sb.Append(settings.LineSeparator);
+                sb.AppendCSVHeader<T>(settings);
             }
-
-            // Let's go through the array of objects
-            // Iterate through all the objects
-            var values = new List<object>();
-            foreach (T obj in list)
+            foreach (var obj in list)
             {
-                sb.AppendAsCSV<T>(obj, settings);
-                sb.Append(settings.LineSeparator);
+                sb.AppendCSVLine(obj, settings);
             }
-
+            
             // Here's your data serialized in CSV format
             return sb.ToString();
         }
-#endregion
 
-#region StringBuilder append functions
         /// <summary>
-        /// Add a CSV Header line to a StringBuilder
+        /// Add a CSV Header line to a StringBuilder for a specific type
         /// </summary>
-        /// <param name="sb">The stringbuilder to append data</param>
-        /// <param name="type">The type of data to emit a header</param>
+        /// <param name="sb">The StringBuilder to append data</param>
         /// <param name="settings">The CSV settings to use when exporting this array (Default: CSV)</param>
-        public static void AppendCSVHeader(this StringBuilder sb, Type type, CSVSettings settings = null)
+        public static void AppendCSVHeader<T>(this StringBuilder sb, CSVSettings settings = null)
         {
-            // Use CSV as default.
-            if (settings == null) settings = CSVSettings.CSV;
-
-            // Retrieve reflection information
-            var filist = type.GetFields();
-            var pilist = type.GetProperties();
-
-            // Gather information about headers
-            var headers = new List<object>();
-            foreach (var fi in filist)
+            // ReSharper disable once ConvertIfStatementToNullCoalescingAssignment
+            if (settings == null)
             {
-                headers.Add(fi.Name);
+                settings = CSVSettings.CSV;
             }
-            foreach (var pi in pilist)
-            {
-                headers.Add(pi.Name);
-            }
+
+            var type = typeof(T);
+            var headers = type.GetFields().Select(fi => fi.Name).ToList();
+            headers.AddRange(type.GetProperties().Select(pi => pi.Name));
             AppendCSVRow(sb, headers, settings);
+            sb.Append(settings.LineSeparator);
         }
 
         /// <summary>
         /// Appends a single object to a StringBuilder in CSV format as a single line
         /// </summary>
-        /// <param name="sb">The stringbuilder to append data</param>
+        /// <param name="sb">The StringBuilder to append data</param>
         /// <param name="obj">The single object to append in CSV-line format</param>
         /// <param name="settings">The CSV settings to use when exporting this array (Default: CSV)</param>
         /// <typeparam name="T">The 1st type parameter.</typeparam>
-        public static void AppendAsCSV<T>(this StringBuilder sb, T obj, CSVSettings settings = null) where T : class, new()
+        public static void AppendCSVLine<T>(this StringBuilder sb, T obj, CSVSettings settings = null) where T : class, new()
         {
-            // Skip any null objects
-            if (obj == null) return;
-
-            // Use CSV as default.
-            if (settings == null) settings = CSVSettings.CSV;
-
+            // ReSharper disable once ConvertIfStatementToNullCoalescingAssignment
+            if (settings == null)
+            {
+                settings = CSVSettings.CSV;
+            }
+            
             // Retrieve reflection information
             var type = typeof(T);
-            var filist = type.GetFields();
-            var pilist = type.GetProperties();
+            var values = type.GetFields().Select(fi => fi.GetValue(obj)).ToList();
+            values.AddRange(type.GetProperties().Select(pi => pi.GetValue(obj, null)));
 
-            // Retrieve all the fields and properties
-            List<object> values = new List<object>();
-            foreach (var fi in filist)
-            {
-                values.Add(fi.GetValue(obj));
-            }
-            foreach (var pi in pilist)
-            {
-                values.Add(pi.GetValue(obj, null));
-            }
-
-            // Output one line of CSV
+            // Output all the CSV items
             AppendCSVRow(sb, values, settings);
+            sb.Append(settings.LineSeparator);
         }
 
         /// <summary>
@@ -610,18 +593,21 @@ namespace CSVFile
         /// <param name="settings">The CSV settings to use when exporting this array (Default: CSV)</param>
         private static void AppendCSVRow(this StringBuilder sb, IEnumerable<object> row, CSVSettings settings = null)
         {
-            // Use CSV as default.
-            if (settings == null) settings = CSVSettings.CSV;
+            // ReSharper disable once ConvertIfStatementToNullCoalescingAssignment
+            if (settings == null)
+            {
+                settings = CSVSettings.CSV;
+            }
             var q = settings.TextQualifier.ToString();
 
             var riskyChars = new char[3];
             riskyChars[0] = settings.FieldDelimiter;
             riskyChars[1] = settings.TextQualifier;
-            riskyChars[2] = '\n';  // this includes \r\n sequence aswell
-            bool riskyLineSeparator = !settings.LineSeparator.Contains("\n");
+            riskyChars[2] = '\n';  // this includes \r\n sequence as well
+            var riskyLineSeparator = !settings.LineSeparator.Contains("\n");
             
             // Okay, let's begin
-            foreach (object o in row)
+            foreach (var o in row)
             {
                 // If this is null, check our settings for what they want us to do
                 if (o == null)
@@ -635,12 +621,11 @@ namespace CSVFile
                 }
 
                 // Okay, let's handle this value normally
-                string s = o.ToString();
-                if (s.Length > 0)
+                var s = o.ToString();
+                if (!string.IsNullOrEmpty(s))
                 {
-
-                    // Does this string contain any risky characters?  Risky is defined as delim, qual, or newline
-                    if (settings.ForceQualifiers || (s.IndexOfAny(riskyChars) >= 0) || riskyLineSeparator && s.Contains(settings.LineSeparator))
+                    // Does this string contain any risky characters, or are we in force-qualifiers / allow-null mode?
+                    if (settings.ForceQualifiers || settings.AllowNull || (s.IndexOfAny(riskyChars) >= 0) || riskyLineSeparator && s.Contains(settings.LineSeparator))
                     {
                         sb.Append(q);
 
@@ -661,6 +646,5 @@ namespace CSVFile
             // Subtract the trailing delimiter so we don't inadvertently add an empty column at the end
             sb.Length -= 1;
         }
-#endregion
     }
 }

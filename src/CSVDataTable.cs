@@ -3,20 +3,14 @@
  * License: http://www.apache.org/licenses/LICENSE-2.0 
  * Home page: https://github.com/tspence/csharp-csv-reader
  */
-using System;
-using System.Collections.Generic;
-#if HAS_DATATABLE
 using System.Data;
-#endif
 using System.IO;
 using System.Text;
 
 namespace CSVFile
 {
-#if HAS_DATATABLE
     public static class CSVDataTable
     {
-#region Reading CSV into a DataTable
         /// <summary>
         /// Read in a single CSV file into a datatable in memory
         /// </summary>
@@ -62,10 +56,8 @@ namespace CSVFile
                 }
             }
         }
-#endregion
 
 #if HAS_SMTPCLIENT
-#region CSV Attachment Email Shortcut
         /// <summary>
         /// Quick shortcut to send a datatable as an attachment via SMTP
         /// </summary>
@@ -95,10 +87,8 @@ namespace CSVFile
                 smtp.Send(message);
             }
         }
-#endregion
 #endif
 
-#region Writing a DataTable to CSV
         /// <summary>
         /// Write a data table to disk at the designated file name in CSV format
         /// </summary>
@@ -148,7 +138,5 @@ namespace CSVFile
                 }
             }
         }
-#endregion
     }
-#endif
 }

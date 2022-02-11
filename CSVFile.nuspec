@@ -2,7 +2,7 @@
 <package >
 	<metadata>
 		<id>CSVFile</id>
-		<version>3.0.2</version>
+		<version>3.0.3</version>
 		<title>CSVFile</title>
 		<authors>Ted Spence</authors>
 		<owners>Ted Spence</owners>
@@ -11,11 +11,11 @@
 		<requireLicenseAcceptance>false</requireLicenseAcceptance>
 		<description>A tiny CSV and TSV parsing library with few dependencies.  Compatible with most dot net versions.</description>
 		<releaseNotes>
-			Supports async / await for I/O using IAsyncEnumerable.
-			Fix performance issue that affected files with lots of embedded newlines.
-			Updated for .NET 5.0.
+			Refactoring frameworks for improved serialization using streaming.
+			The streaming code has been getting pretty stale, so this PR cleans up a lot of the logic and better handles settings.
+			Now supports case insensitive header deserialization.
 		</releaseNotes>
-		<copyright>Copyright 2006 - 2021</copyright>
+		<copyright>Copyright 2006 - 2022</copyright>
     	<tags>fast csv parser serialization deserialization streaming async</tags>
 		<repository type="git" url="https://github.com/tspence/csharp-csv-reader" />
 		<dependencies>

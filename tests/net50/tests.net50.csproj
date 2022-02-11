@@ -6,6 +6,10 @@
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DefineConstants>TRACE;NET50</DefineConstants>
+  </PropertyGroup>
+
   <ItemGroup>
     <Compile Include="..\AsyncReaderTest.cs" Link="AsyncReaderTest.cs" />
     <Compile Include="..\BasicParseTests.cs" Link="BasicParseTests.cs" />
