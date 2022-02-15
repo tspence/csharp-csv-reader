@@ -33,7 +33,7 @@ namespace CSVTestSuite
         {
             public string FirstColumn;
             public int SecondColumn;
-            public EnumTestType ThirdColumn;
+            public EnumTestType? ThirdColumn;
         }
 
         [Test]
@@ -144,6 +144,55 @@ namespace CSVTestSuite
                 Assert.AreEqual(list[i].SecondColumn, newlist[i].SecondColumn);
                 Assert.AreEqual(list[i].ThirdColumn, newlist[i].ThirdColumn);
             }
+        }
+        
+        [Test]
+        public void TestNullDeserialization()
+        {
+            var csv = "FIRSTCOLUMN,SECONDCOLUMN,THIRDCOLUMN\n" +
+                         ",,\n" +
+                         "\"hi2, hi2, hi2!\",34,Second\n" +
+                         "\"hi3 says, \"\"Hi Three!\"\"\",56,Third\n" +
+                         "NULL,7,Fourth";
+            var settings = new CSVSettings()
+            {
+                AllowNull = true,
+                NullToken = string.Empty,
+            };
+
+            // Deserialize back from a CSV string - should not throw any errors!
+            var list = CSV.Deserialize<TestClassTwo>(csv, settings);
+            Assert.AreEqual(null, list[0].FirstColumn);
+            Assert.AreEqual(0, list[0].SecondColumn);
+            Assert.AreEqual(null, list[0].ThirdColumn);
+        }
+        
+        [Test]
+        public void TestNullDeserializationWithToken()
+        {
+            var csv = "FIRSTCOLUMN,SECONDCOLUMN,THIRDCOLUMN\n" +
+                      "SPECIAL_NULL,SPECIAL_NULL,SPECIAL_NULL\n" +
+                      "\"hi2, hi2, hi2!\",34,Second\n" +
+                      "\"hi3 says, \"\"Hi Three!\"\"\",56,Third\n" +
+                      "NULL,7,Fourth\n" +
+                      ",8,Second";
+            var settings = new CSVSettings()
+            {
+                AllowNull = true,
+                NullToken = "SPECIAL_NULL",
+            };
+
+            // Deserialize back from a CSV string - should not throw any errors!
+            var list = CSV.Deserialize<TestClassTwo>(csv, settings);
+            Assert.AreEqual(null, list[0].FirstColumn);
+            Assert.AreEqual(0, list[0].SecondColumn);
+            Assert.AreEqual(null, list[0].ThirdColumn);
+            
+            // Did the regular text "NULL" still come through?
+            Assert.AreEqual("NULL", list[3].FirstColumn);
+            
+            // Did an empty field get imported as an empty string?
+            Assert.AreEqual("", list[4].FirstColumn);
         }
     }
 }

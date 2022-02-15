@@ -246,7 +246,7 @@ namespace CSVFile
 
                     // Attempt to convert this to the specified type
                     object value = null;
-                    if (_settings.AllowNull && (line[i] == null))
+                    if (_settings.AllowNull && (line[i] == null || line[i] == _settings.NullToken))
                     {
                         value = null;
                     } 
