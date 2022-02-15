@@ -26,7 +26,8 @@
 		</dependencies>
 	</metadata>
 	<files>
-		<file src=".\LICENSE*" target=""/>
+		<file src=".\LICENSE" target=""/>
+		<file src=".\README.md" target=""/>
 		<file src="src\net40\bin\release\net40\csvfile.*" target="lib\net40" />
 		<file src="src\net45\bin\release\net45\csvfile.*" target="lib\net45" />
 		<file src="src\net50\bin\release\net5.0\csvfile.*" target="lib\net5.0" />
