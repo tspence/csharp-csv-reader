@@ -30,6 +30,9 @@ namespace CSVFile
     /// </summary>
     public static class CSV
     {
+        /// <summary>
+        /// Use this to determine what version of DotNet was used to build this library
+        /// </summary>
 #if NET40
         public const string VERSION = "NET40";
 #elif NET45

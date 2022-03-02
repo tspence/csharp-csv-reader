@@ -13,6 +13,9 @@ using System.Threading;
 
 namespace CSVFile
 {
+    /// <summary>
+    /// A reader that reads from a stream and emits CSV records (using DotNet 5.0 asynchronous streaming)
+    /// </summary>
     public class CSVAsyncReader : IAsyncEnumerable<string[]>, IDisposable
     {
         private readonly CSVSettings _settings;
@@ -36,6 +39,12 @@ namespace CSVFile
             _enumerable = null;
         }
 
+        /// <summary>
+        /// Construct an asynchronous CSV reader from an existing stream
+        /// </summary>
+        /// <param name="source">The stream to read</param>
+        /// <param name="settings">The CSV settings to use</param>
+        /// <returns></returns>
         public static async Task<CSVAsyncReader> From(StreamReader source, CSVSettings settings = null)
         {
             var reader = new CSVAsyncReader(source, settings);
@@ -74,6 +83,11 @@ namespace CSVFile
             _stream.Dispose();
         }
 
+        /// <summary>
+        /// Fetch an enumerator for asynchronous reading
+        /// </summary>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
         public IAsyncEnumerator<string[]> GetAsyncEnumerator(CancellationToken cancellationToken = default)
         {
             return _enumerable.GetAsyncEnumerator(cancellationToken);

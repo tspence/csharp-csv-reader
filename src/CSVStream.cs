@@ -52,7 +52,6 @@ namespace CSVFile
         /// <summary>
         /// Read in a single CSV file as an array of objects
         /// </summary>
-        /// <typeparam name="T">The type of objects to deserialize from this CSV.</typeparam>
         /// <returns>An array of objects that were retrieved from the CSV stream.</returns>
         public IEnumerable<T> Read()
         {

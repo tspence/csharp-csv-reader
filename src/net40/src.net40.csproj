@@ -10,6 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>CSVFile</RootNamespace>
     <AssemblyName>CSVFile</AssemblyName>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>

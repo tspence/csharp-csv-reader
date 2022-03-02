@@ -14,16 +14,18 @@ using System.ComponentModel;
 
 namespace CSVFile
 {
+    /// <summary>
+    /// A reader that reads from a stream and emits CSV records
+    /// </summary>
     public class CSVReader : IEnumerable<string[]>, IDisposable
     {
-        protected CSVSettings _settings;
-
-        protected StreamReader _instream;
+        private readonly CSVSettings _settings;
+        private readonly StreamReader _stream;
 
         /// <summary>
         /// If the first row in the file is a header row, this will be populated
         /// </summary>
-        public string[] Headers = null;
+        public readonly string[] Headers = null;
 
         /// <summary>
         /// Construct a new CSV reader off a streamed source
@@ -32,7 +34,7 @@ namespace CSVFile
         /// <param name="settings">The CSV settings to use for this reader (Default: CSV)</param>
         public CSVReader(StreamReader source, CSVSettings settings = null)
         {
-            _instream = source;
+            _stream = source;
             _settings = settings;
             if (_settings == null) _settings = CSVSettings.CSV;
 
@@ -71,7 +73,7 @@ namespace CSVFile
         /// <returns>An array of all data columns in the line</returns>
         public IEnumerable<string[]> Lines()
         {
-            return CSV.ParseStream(_instream, _settings);
+            return CSV.ParseStream(_stream, _settings);
         }
 
         /// <summary>
@@ -81,7 +83,7 @@ namespace CSVFile
         /// <returns>One line from the file.</returns>
         public string[] NextLine()
         {
-            return CSV.ParseMultiLine(_instream, _settings);
+            return CSV.ParseMultiLine(_stream, _settings);
         }
 
 #if HAS_DATATABLE
@@ -292,7 +294,7 @@ namespace CSVFile
         /// </summary>
         public void Dispose()
         {
-            _instream.Dispose();
+            _stream.Dispose();
         }
 
         /// <summary>

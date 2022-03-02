@@ -14,11 +14,13 @@ using System.Reflection;
 
 namespace CSVFile
 {
+    /// <summary>
+    /// Writes CSV objects to a stream
+    /// </summary>
     public class CSVWriter : IDisposable
     {
-        protected CSVSettings _settings;
-
-        protected StreamWriter _outstream;
+        private readonly CSVSettings _settings;
+        private readonly StreamWriter _stream;
 
         /// <summary>
         /// Construct a new CSV writer to produce output on the enclosed StreamWriter
@@ -27,7 +29,7 @@ namespace CSVFile
         /// <param name="settings">The CSV settings to use when writing to the stream (Default: CSV)</param>
         public CSVWriter(StreamWriter dest, CSVSettings settings = null)
         {
-            _outstream = dest;
+            _stream = dest;
             _settings = settings;
             if (_settings == null)
             {
@@ -41,7 +43,7 @@ namespace CSVFile
         /// <param name="line">The array of values for this line</param>
         public void WriteLine(IEnumerable<object> line)
         {
-            _outstream.WriteLine(line.ToCSVString(_settings));
+            _stream.WriteLine(line.ToCSVString(_settings));
         }
 
 #if HAS_DATATABLE
@@ -66,20 +68,20 @@ namespace CSVFile
             }
 
             // Flush the stream
-            _outstream.Flush();
+            _stream.Flush();
         }
 #endif
 
         /// <summary>
         /// Serialize a list of objects to CSV using this writer
         /// </summary>
-        /// <typeparam name="IEnumerable">An IEnumerable that produces the list of objects to serialize.</typeparam>
+        /// <param name="list">An IEnumerable that produces the list of objects to serialize.</param>
         public void WriteArray<T>(IEnumerable<T> list) where T: class, new()
         {
-            _outstream.Write(CSV.Serialize<T>(list, _settings));
+            _stream.Write(CSV.Serialize<T>(list, _settings));
 
             // Flush the stream
-            _outstream.Flush();
+            _stream.Flush();
         }
 
         /// <summary>
@@ -87,9 +89,9 @@ namespace CSVFile
         /// </summary>
         public void Dispose()
         {
-            _outstream.Flush();
-            _outstream.Close();
-            _outstream.Dispose();
+            _stream.Flush();
+            _stream.Close();
+            _stream.Dispose();
         }
     }
 }

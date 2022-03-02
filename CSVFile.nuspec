@@ -2,11 +2,11 @@
 <package >
 	<metadata>
 		<id>CSVFile</id>
-		<version>3.0.4</version>
+		<version>3.0.5</version>
 		<title>CSVFile</title>
 		<authors>Ted Spence</authors>
 		<owners>Ted Spence</owners>
-		<license type="file">LICENSE</license>
+		<license type="file">docs/LICENSE</license>
 		<projectUrl>https://github.com/tspence/csharp-csv-reader</projectUrl>
 		<requireLicenseAcceptance>false</requireLicenseAcceptance>
 		<description>A tiny CSV and TSV parsing library with few dependencies.  Compatible with most dot net versions.</description>
@@ -15,22 +15,27 @@
 			* When using a null token of (empty string), fields would fail validation rather than load as defaults.
 			* When using a special null token, data would not always be recognized correctly.
 		</releaseNotes>
+		<readme>docs/README.md</readme>
 		<copyright>Copyright 2006 - 2022</copyright>
     	<tags>fast csv parser serialization deserialization streaming async</tags>
 		<repository type="git" url="https://github.com/tspence/csharp-csv-reader" />
 		<dependencies>
 			<group targetFramework=".NETFramework4.0"/>
 			<group targetFramework=".NETFramework4.5"/>
-			<group targetFramework="net5.0"/>
 			<group targetFramework=".NETStandard2.0"/>
+			<group targetFramework="netcoreapp3.1"/>
+			<group targetFramework="net5.0"/>
+			<group targetFramework="net6.0"/>
 		</dependencies>
 	</metadata>
 	<files>
-		<file src=".\LICENSE" target=""/>
-		<file src=".\README.md" target=""/>
-		<file src="src\net40\bin\release\net40\csvfile.*" target="lib\net40" />
-		<file src="src\net45\bin\release\net45\csvfile.*" target="lib\net45" />
-		<file src="src\net50\bin\release\net5.0\csvfile.*" target="lib\net5.0" />
-		<file src="src\netstandard20\bin\release\netstandard2.0\csvfile.*" target="lib\netstandard20" />
+		<file src=".\LICENSE" target="docs/LICENSE"/>
+		<file src=".\README.md" target="docs/README.md"/>
+		<file src="src\net40\bin\debug\net40\*" target="lib\net40" />
+		<file src="src\net45\bin\debug\net45\*" target="lib\net45" />
+		<file src="src\net50\bin\debug\net5.0\*" target="lib\net5.0" />
+		<file src="src\net50\bin\debug\net6.0\*" target="lib\net6.0" />
+		<file src="src\net50\bin\Debug\netcoreapp3.1\*" target="lib\netcoreapp3.1" />
+		<file src="src\netstandard20\bin\debug\netstandard2.0\*" target="lib\netstandard20" />
 	</files>
 </package>
