@@ -9,11 +9,13 @@
 		<license type="file">docs/LICENSE</license>
 		<projectUrl>https://github.com/tspence/csharp-csv-reader</projectUrl>
 		<requireLicenseAcceptance>false</requireLicenseAcceptance>
-		<description>A tiny CSV and TSV parsing library with few dependencies.  Compatible with most dot net versions.</description>
+		<summary>Tiny and fast CSV and TSV parsing library (40KB) with zero dependencies.  Compatible with most dot net versions.</summary>
+		<description>Tiny and fast CSV and TSV parsing library (40KB) with zero dependencies.  Compatible with most dot net versions.</description>
 		<releaseNotes>
-			Fixed issue with serialization using settings files with null tokens.
-			* When using a null token of (empty string), fields would fail validation rather than load as defaults.
-			* When using a special null token, data would not always be recognized correctly.
+			Improved compatibility with multiple versions of the Dot Net framework.
+			* Version 3.0.5 builds for Dot Net 4.0, 4.5, Net Standard 2.0, Net Core 3.1, 5.0, and 6.0
+			* Some improvements on compiler warnings
+			* Included XML documentation with modern Dot Net Core versions 
 		</releaseNotes>
 		<readme>docs/README.md</readme>
 		<copyright>Copyright 2006 - 2022</copyright>
