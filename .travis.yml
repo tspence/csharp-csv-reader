@@ -6,10 +6,11 @@ jobs:
     - dotnet: 6.0.100
       mono: none
       script:
-        - dotnet restore
-        - dotnet test
-    - dotnet: 5.0.201
+        - dotnet restore ./src/net50/src.net50.csproj
+        - dotnet test ./src/net50/tests.net50.csproj
+    - dotnet: 2.1.502
       mono: none
       script:
-        - dotnet restore
-        - dotnet test
+        - dotnet restore ./src/netstandard20/src.netstandard20.csproj
+        - dotnet test ./src/netstandard20/tests.netstandard20.csproj
+      
