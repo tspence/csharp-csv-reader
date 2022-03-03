@@ -13,7 +13,7 @@ jobs:
       mono: none
       script:
         - dotnet restore ./src/net50/src.net50.csproj
-        - dotnet build ./src/net50/src.net50.csproj
+        - dotnet build ./src/net50/src.net50.csproj -f net5.0
         - dotnet test ./tests/net50/tests.net50.csproj -f net5.0
     - dotnet: 2.1.502
       mono: none
