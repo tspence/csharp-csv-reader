@@ -1,7 +1,15 @@
 language: csharp
-mono: none
-dotnet: 6.0.100
 solution: csharp-csv-reader.sln
-script:
-  - dotnet restore
-  - dotnet test
+
+jobs:
+  include:
+    - dotnet: 6.0.100
+      mono: none
+      script:
+        - dotnet restore
+        - dotnet test
+    - dotnet: 5.0.201
+      mono: none
+      script:
+        - dotnet restore
+        - dotnet test
