@@ -1,7 +1,23 @@
 language: csharp
-mono: none
-dotnet: 5.0.201
 solution: csharp-csv-reader.sln
-script:
-  - dotnet restore
-  - dotnet test
+
+jobs:
+  include:
+    - dotnet: 6.0.100
+      mono: none
+      script:
+        - dotnet restore ./src/net60/src.net60.csproj
+        - dotnet build ./src/net60/src.net60.csproj
+        - dotnet test ./tests/net60/tests.net60.csproj
+    - dotnet: 5.0.201
+      mono: none
+      script:
+        - dotnet restore ./src/net50/src.net50.csproj
+        - dotnet build ./src/net50/src.net50.csproj
+        - dotnet test ./tests/net50/tests.net50.csproj
+    - dotnet: 2.1.502
+      mono: none
+      script:
+        - dotnet restore ./src/netstandard20/src.netstandard20.csproj
+        - dotnet build ./src/netstandard20/src.netstandard20.csproj
+        - dotnet test ./tests/netstandard20/tests.netstandard20.csproj

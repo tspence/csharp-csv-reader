@@ -30,6 +30,9 @@ namespace CSVFile
     /// </summary>
     public static class CSV
     {
+        /// <summary>
+        /// Use this to determine what version of DotNet was used to build this library
+        /// </summary>
 #if NET40
         public const string VERSION = "NET40";
 #elif NET45
@@ -297,47 +300,6 @@ namespace CSVFile
             }
         }
 #endif
-
-        /// <summary>
-        /// Parse a single row of data from a CSV line into an array of objects, while permitting embedded newlines
-        /// DEPRECATED - Please use ParseStream instead.
-        /// </summary>
-        /// <param name="inStream">The stream to read</param>
-        /// <param name="settings">The CSV settings to use for this parsing operation (Default: CSV)</param>
-        /// <returns>An array containing all fields in the next row of data, or null if it could not be parsed.</returns>
-        [Obsolete("Use ParseLine instead; it correctly implements multiline reading.")]
-        public static string[] ParseMultiLine(StreamReader inStream, CSVSettings settings = null)
-        {
-            var sb = new StringBuilder();
-            string[] array = null;
-            
-            // ReSharper disable once ConvertIfStatementToNullCoalescingAssignment
-            if (settings == null)
-            {
-                settings = CSVSettings.CSV;
-            }
-            
-            while (!inStream.EndOfStream)
-            {
-                // Read in a line
-                sb.Append(inStream.ReadLine());
-
-                // Does it parse?
-                string s = sb.ToString();
-                if (TryParseLine(s, out array, settings))
-                {
-                    return array;
-                }
-
-                // We didn't succeed on the first try - our text must have an embedded newline in it.
-                // Let's assume that we were in the middle of parsing a field when we encountered a newline,
-                // and continue parsing.
-                sb.Append(settings.LineSeparator);
-            }
-
-            // Fails to parse - return the best array we were able to get
-            return array;
-        }
 
         /// <summary>
         /// Parse a line from a CSV file and return an array of fields, or null if 

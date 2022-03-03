@@ -9,6 +9,9 @@ using System.Text;
 
 namespace CSVFile
 {
+    /// <summary>
+    /// Code to assist in working with DataTable objects and CSV sources
+    /// </summary>
     public static class CSVDataTable
     {
         /// <summary>
