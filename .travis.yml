@@ -12,7 +12,6 @@ jobs:
     - dotnet: 5.0.201
       mono: none
       script:
-        - dotnet restore ./src/net50/src.net50.csproj
         - dotnet build ./src/net50/src.net50.csproj -f net5.0
         - dotnet test ./tests/net50/tests.net50.csproj -f net5.0
     - dotnet: 2.1.502
@@ -21,4 +20,3 @@ jobs:
         - dotnet restore ./src/netstandard20/src.netstandard20.csproj
         - dotnet build ./src/netstandard20/src.netstandard20.csproj
         - dotnet test ./tests/netstandard20/tests.netstandard20.csproj
-      
