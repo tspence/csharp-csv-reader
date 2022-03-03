@@ -36,12 +36,17 @@ namespace CSVFile
         {
             _stream = source;
             _settings = settings;
-            if (_settings == null) _settings = CSVSettings.CSV;
+            // ReSharper disable once ConvertIfStatementToNullCoalescingExpression
+            if (_settings == null)
+            {
+                _settings = CSVSettings.CSV;
+            }
 
             // Do we need to parse headers?
             if (_settings.HeaderRowIncluded)
             {
-                Headers = NextLine();
+                var line = source.ReadLine();
+                Headers = CSV.ParseLine(line, _settings);
             }
             else
             {
@@ -76,16 +81,6 @@ namespace CSVFile
             return CSV.ParseStream(_stream, _settings);
         }
 
-        /// <summary>
-        /// Retrieve the next line from the file.
-        /// DEPRECATED - 
-        /// </summary>
-        /// <returns>One line from the file.</returns>
-        public string[] NextLine()
-        {
-            return CSV.ParseMultiLine(_stream, _settings);
-        }
-
 #if HAS_DATATABLE
         /// <summary>
         /// Read this file into a data table in memory
@@ -99,7 +94,8 @@ namespace CSVFile
             // File contains column names - so name each column properly
             if (Headers == null)
             {
-                firstLine = NextLine();
+                var rawLine = _stream.ReadLine();
+                firstLine = CSV.ParseLine(rawLine, _settings);
                 var list = new List<string>();
                 for (int i = 0; i < firstLine.Length; i++) {
                     list.Add($"Column{i}");

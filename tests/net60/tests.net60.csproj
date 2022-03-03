@@ -4,11 +4,11 @@
 
     <IsPackable>false</IsPackable>
 
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFrameworks>net6.0;netcoreapp3.1</TargetFrameworks>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DefineConstants>TRACE;NET50</DefineConstants>
+    <DefineConstants>TRACE;NET60</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
@@ -28,7 +28,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\net50\src.net50.csproj" />
+    <ProjectReference Include="..\..\src\net60\src.net60.csproj" />
   </ItemGroup>
 
 </Project>
