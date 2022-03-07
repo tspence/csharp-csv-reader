@@ -6,20 +6,9 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
 #if NET50
 using System.Threading.Tasks;
-#endif
-
-#if NEEDS_EXTENSION_ATTRIBUTE
-// Use this namespace to be able to declare extension methods
-namespace System.Runtime.CompilerServices
-{
-    [AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Class
-         | AttributeTargets.Method)]
-    public sealed class ExtensionAttribute : Attribute { }
-}
 #endif
 
 namespace CSVFile
@@ -33,12 +22,16 @@ namespace CSVFile
         /// <summary>
         /// Use this to determine what version of DotNet was used to build this library
         /// </summary>
-#if NET40
+#if NET20
+        public const string VERSION = "NET20";
+#elif NET40
         public const string VERSION = "NET40";
 #elif NET45
         public const string VERSION = "NET45";
 #elif NET50
         public const string VERSION = "NET50";
+#elif NET60
+        public const string VERSION = "NET60";
 #elif NETSTANDARD10
         public const string VERSION = "NETSTANDARD10";
 #elif NETSTANDARD20
@@ -102,7 +95,7 @@ namespace CSVFile
                     list.Add(work.ToString());
                     yield return list.ToArray();
                     list.Clear();
-                    work.Clear();
+                    work.Length = 0;
                     if (inStream.EndOfStream)
                     {
                         break;
@@ -465,7 +458,11 @@ namespace CSVFile
         /// <returns>A single line of CSV encoded data containing these values</returns>
         /// <param name="row">A list or array of objects to serialize</param>
         /// <param name="settings">The field delimiter character (Default: comma)</param>
+#if NET20
+        public static string ToCSVString(IEnumerable<object> row, CSVSettings settings = null)
+#else
         public static string ToCSVString(this IEnumerable<object> row, CSVSettings settings = null)
+#endif
         {
             var sb = new StringBuilder();
             AppendCSVRow(sb, row, settings);
@@ -491,11 +488,11 @@ namespace CSVFile
             var sb = new StringBuilder();
             if (settings.HeaderRowIncluded)
             {
-                sb.AppendCSVHeader<T>(settings);
+                AppendCSVHeader<T>(sb, settings);
             }
             foreach (var obj in list)
             {
-                sb.AppendCSVLine(obj, settings);
+                AppendCSVLine(sb, obj, settings);
             }
             
             // Here's your data serialized in CSV format
@@ -507,7 +504,11 @@ namespace CSVFile
         /// </summary>
         /// <param name="sb">The StringBuilder to append data</param>
         /// <param name="settings">The CSV settings to use when exporting this array (Default: CSV)</param>
+#if NET20
+        public static void AppendCSVHeader<T>(StringBuilder sb, CSVSettings settings = null)
+#else
         public static void AppendCSVHeader<T>(this StringBuilder sb, CSVSettings settings = null)
+#endif
         {
             // ReSharper disable once ConvertIfStatementToNullCoalescingAssignment
             if (settings == null)
@@ -516,8 +517,15 @@ namespace CSVFile
             }
 
             var type = typeof(T);
-            var headers = type.GetFields().Select(fi => fi.Name).ToList();
-            headers.AddRange(type.GetProperties().Select(pi => pi.Name));
+            var headers = new List<object>();
+            foreach (var field in type.GetFields())
+            {
+                headers.Add(field.Name);
+            }
+            foreach (var prop in type.GetProperties())
+            {
+                headers.Add(prop.Name);
+            }
             AppendCSVRow(sb, headers, settings);
             sb.Append(settings.LineSeparator);
         }
@@ -529,7 +537,11 @@ namespace CSVFile
         /// <param name="obj">The single object to append in CSV-line format</param>
         /// <param name="settings">The CSV settings to use when exporting this array (Default: CSV)</param>
         /// <typeparam name="T">The 1st type parameter.</typeparam>
+#if NET20
+        public static void AppendCSVLine<T>(StringBuilder sb, T obj, CSVSettings settings = null) where T : class, new()
+#else
         public static void AppendCSVLine<T>(this StringBuilder sb, T obj, CSVSettings settings = null) where T : class, new()
+#endif
         {
             // ReSharper disable once ConvertIfStatementToNullCoalescingAssignment
             if (settings == null)
@@ -539,8 +551,15 @@ namespace CSVFile
             
             // Retrieve reflection information
             var type = typeof(T);
-            var values = type.GetFields().Select(fi => fi.GetValue(obj)).ToList();
-            values.AddRange(type.GetProperties().Select(pi => pi.GetValue(obj, null)));
+            var values = new List<object>();
+            foreach (var field in type.GetFields())
+            {
+                values.Add(field.GetValue(obj));
+            }
+            foreach (var prop in type.GetProperties())
+            {
+                values.Add(prop.GetValue(obj, null));
+            }
 
             // Output all the CSV items
             AppendCSVRow(sb, values, settings);
@@ -553,7 +572,11 @@ namespace CSVFile
         /// <param name="sb">The StringBuilder to append</param>
         /// <param name="row">The list of objects to append</param>
         /// <param name="settings">The CSV settings to use when exporting this array (Default: CSV)</param>
+#if NET20
+        private static void AppendCSVRow(StringBuilder sb, IEnumerable<object> row, CSVSettings settings = null)
+#else
         private static void AppendCSVRow(this StringBuilder sb, IEnumerable<object> row, CSVSettings settings = null)
+#endif
         {
             // ReSharper disable once ConvertIfStatementToNullCoalescingAssignment
             if (settings == null)

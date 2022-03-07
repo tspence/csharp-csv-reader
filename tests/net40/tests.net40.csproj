@@ -14,7 +14,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug</OutputPath>
-    <DefineConstants>DEBUG;NET40</DefineConstants>
+    <DefineConstants>DEBUG;NET40;HAS_DATATABLE;HAS_SMTPCLIENT</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
@@ -54,13 +54,13 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\src\net40\src.net40.csproj">
-      <Project>{6E72622B-03F6-4C09-8B81-47C011C5FF8E}</Project>
-      <Name>src.net45</Name>
-    </ProjectReference>
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
+    <ProjectReference Include="..\..\src\net40\src.net40.csproj">
+      <Project>{6e72622b-03f6-4c09-8b81-47c011c5ff8f}</Project>
+      <Name>src.net40</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

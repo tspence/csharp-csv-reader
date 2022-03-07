@@ -43,7 +43,7 @@ namespace CSVFile
         /// <param name="line">The array of values for this line</param>
         public void WriteLine(IEnumerable<object> line)
         {
-            _stream.WriteLine(line.ToCSVString(_settings));
+            _stream.WriteLine(CSV.ToCSVString(line, _settings));
         }
 
 #if HAS_DATATABLE
