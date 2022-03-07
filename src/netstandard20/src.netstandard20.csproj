@@ -15,12 +15,6 @@
     <DefineConstants>TRACE;NETSTANDARD20;RELEASE;HAS_ASYNC;</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
-  </ItemGroup>
-  <ItemGroup>
-    <None Remove="csharp-csv-reader.net40.project.json" />
-    <None Remove="csharp-csv-reader.net40.project.lock.json" />
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="..\CSV.cs">
       <Link>CSV.cs</Link>
     </Compile>
