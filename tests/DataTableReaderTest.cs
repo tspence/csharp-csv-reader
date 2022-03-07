@@ -10,6 +10,7 @@ using NUnit.Framework;
 using CSVFile;
 using System.IO;
 using System.Data;
+using System.Linq;
 
 namespace CSVTestSuite
 {
@@ -17,22 +18,22 @@ namespace CSVTestSuite
     [TestFixture]
     public class DataTableReaderTest
     {
-        const string source = "Name,Title,Phone\n" +
-            "JD,Doctor,x234\n" +
-            "Janitor,Janitor,x235\n" +
-            "\"Dr. Reed, Eliot\",Private Practice,x236\n" +
-            "Dr. Kelso,Chief of Medicine,x100";
+        private const string source = "Name,Title,Phone\n" +
+                                      "JD,Doctor,x234\n" +
+                                      "Janitor,Janitor,x235\n" +
+                                      "\"Dr. Reed, Eliot\",Private Practice,x236\n" +
+                                      "Dr. Kelso,Chief of Medicine,x100";
 
-        const string source_embedded_newlines = "Name,Title,Phone\n" +
-            "JD,Doctor,x234\n" +
-            "Janitor,Janitor,x235\n" +
-            "\"Dr. Reed, \nEliot\",\"Private \"\"Practice\"\"\",x236\n" +
-            "Dr. Kelso,Chief of Medicine,x100";
+        private const string source_embedded_newlines = "Name,Title,Phone\n" +
+                                                        "JD,Doctor,x234\n" +
+                                                        "Janitor,Janitor,x235\n" +
+                                                        "\"Dr. Reed, \nEliot\",\"Private \"\"Practice\"\"\",x236\n" +
+                                                        "Dr. Kelso,Chief of Medicine,x100";
 
         [Test]
         public void TestBasicDataTable()
         {
-            DataTable dt = CSVDataTable.FromString(source);
+            var dt = CSVDataTable.FromString(source);
             Assert.AreEqual(dt.Columns.Count, 3);
             Assert.AreEqual(dt.Rows.Count, 4);
             Assert.AreEqual(dt.Rows[0].ItemArray[0], "JD");
@@ -52,7 +53,7 @@ namespace CSVTestSuite
         [Test]
         public void TestDataTableWithEmbeddedNewlines()
         {
-            DataTable dt = CSVDataTable.FromString(source_embedded_newlines);
+            var dt = CSVDataTable.FromString(source_embedded_newlines);
             Assert.AreEqual(dt.Columns.Count, 3);
             Assert.AreEqual(dt.Rows.Count, 4);
             Assert.AreEqual(dt.Rows[0].ItemArray[0], "JD");
@@ -72,39 +73,40 @@ namespace CSVTestSuite
         [Test]
         public void DataTableChopTest()
         {
-            string[] array_first = new string[] { "first", "two", "three", "four, five" };
-            string[] array_second = new string[] { "second", "two", "three", "four, five" };
-            string[] array_third = new string[] { "third", "two", "three", "four, five" };
-            DataTable dt = new DataTable();
+            var array_first = new string[] { "first", "two", "three", "four, five" };
+            var array_second = new string[] { "second", "two", "three", "four, five" };
+            var array_third = new string[] { "third", "two", "three", "four, five" };
+            var dt = new DataTable();
             dt.Columns.Add("col1");
             dt.Columns.Add("col2");
             dt.Columns.Add("col3");
             dt.Columns.Add("col4");
             dt.Columns.Add("col5");
-            for (int i = 0; i < 5000; i++) {
+            for (var i = 0; i < 5000; i++) {
                 dt.Rows.Add(array_first);
             }
-            for (int i = 0; i < 5000; i++) {
+            for (var i = 0; i < 5000; i++) {
                 dt.Rows.Add(array_second);
             }
-            for (int i = 0; i < 5000; i++) {
+            for (var i = 0; i < 5000; i++) {
                 dt.Rows.Add(array_third);
             }
 
             // Save this string to a test file
-            string sourcefile = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString() + ".csv");
-            CSVDataTable.WriteToFile(dt, sourcefile);
+            var sourceFile = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString() + ".csv");
+            CSVDataTable.WriteToFile(dt, sourceFile);
 
             // Create an empty test folder
-            string dirname = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+            var dirname = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
             Directory.CreateDirectory(dirname);
 
             // Chop this file into one-line chunks
-            CSVReader.ChopFile(sourcefile, dirname, 5000);
+            CSVReader.ChopFile(sourceFile, dirname, 5000);
 
             // Verify that we got three files
-            string[] files = Directory.GetFiles(dirname);
-            Assert.AreEqual(3, files.Length);
+            var files = Directory.GetFiles(dirname).ToList();
+            files.Sort();
+            Assert.AreEqual(3, files.Count);
 
             // Read in each file and verify that each one has one line
             dt = CSVDataTable.FromFile(files[0]);
@@ -121,32 +123,33 @@ namespace CSVTestSuite
 
             // Clean up
             Directory.Delete(dirname, true);
-            File.Delete(sourcefile);
+            File.Delete(sourceFile);
         }
 
         [Test]
         public void DataTableChoppingFiles()
         {
-            string source = @"timestamp,TestString,SetComment,PropertyString,IntField,IntProperty
+            var sourceText = @"timestamp,TestString,SetComment,PropertyString,IntField,IntProperty
 2012-05-01,test1,""Hi there, I said!"",Bob,57,0
 2011-04-01,test2,""What's up, buttercup?"",Ralph,1,-999
 1975-06-03,test3,""Bye and bye, dragonfly!"",Jimmy's The Bomb,12,13";
-            DataTable dt = CSVDataTable.FromString(source);
+            var dt = CSVDataTable.FromString(sourceText);
 
             // Save this string to a test file
-            string outfile = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString() + ".csv");
+            var outfile = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString() + ".csv");
             CSVDataTable.WriteToFile(dt, outfile);
 
             // Create an empty test folder
-            string dirname = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+            var dirname = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
             Directory.CreateDirectory(dirname);
 
             // Chop this file into one-line chunks
             CSVReader.ChopFile(outfile, dirname, 1);
 
             // Verify that we got three files
-            string[] files = Directory.GetFiles(dirname);
-            Assert.AreEqual(3, files.Length);
+            var files = Directory.GetFiles(dirname).ToList();
+            files.Sort();
+            Assert.AreEqual(3, files.Count);
 
             // Read in each file and verify that each one has one line
             dt = CSVDataTable.FromFile(files[0]);
