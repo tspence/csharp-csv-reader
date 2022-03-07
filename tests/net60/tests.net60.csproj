@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DefineConstants>TRACE;NET60</DefineConstants>
+    <DefineConstants>TRACE;NET60;HAS_DATATABLE;HAS_ASYNC;</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
