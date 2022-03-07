@@ -18,7 +18,7 @@ namespace CSVTestSuite
         public void TestForceQualifiers()
         {
             string[] array = new string[] { "one", "two", "three", "four, five" };
-            string s = array.ToCSVString();
+            string s = CSV.ToCSVString(array);
             Assert.AreEqual(s, "one,two,three,\"four, five\"");
 
             // Now construct new settings
@@ -28,7 +28,7 @@ namespace CSVTestSuite
                 TextQualifier = '\'',
                 ForceQualifiers = true
             };
-            s = array.ToCSVString(settings);
+            s = CSV.ToCSVString(array, settings);
             Assert.AreEqual(s, "'one'|'two'|'three'|'four, five'");
         }
 
@@ -39,21 +39,21 @@ namespace CSVTestSuite
             public double Latitude { get; set; }
             public double Longitude { get; set; }
         }
-        
+
         [Test]
         public void TestStringBuilder()
         {
             // Check if we can get string headers properly
             var sb = new StringBuilder();
-            sb.AppendCSVHeader<ExampleCsvType>();
+            CSV.AppendCSVHeader<ExampleCsvType>(sb);
             Assert.AreEqual($"ID,Name,Latitude,Longitude{Environment.NewLine}", sb.ToString());
-            
+
             // Check if we can serialize a class line by line
-            sb.AppendCSVLine(new ExampleCsvType() { ID = 1, Name = "Smith, Alice", Latitude = 57.2, Longitude = 31.4 });
+            CSV.AppendCSVLine(sb, new ExampleCsvType() { ID = 1, Name = "Smith, Alice", Latitude = 57.2, Longitude = 31.4 });
             Assert.AreEqual($"ID,Name,Latitude,Longitude{Environment.NewLine}1,\"Smith, Alice\",57.2,31.4{Environment.NewLine}", sb.ToString());
-            sb.AppendCSVLine(new ExampleCsvType() { ID = 2, Name = "Palmer, Robert", Latitude = 57.3, Longitude = 31.5 });
+            CSV.AppendCSVLine(sb, new ExampleCsvType() { ID = 2, Name = "Palmer, Robert", Latitude = 57.3, Longitude = 31.5 });
             Assert.AreEqual($"ID,Name,Latitude,Longitude{Environment.NewLine}1,\"Smith, Alice\",57.2,31.4{Environment.NewLine}2,\"Palmer, Robert\",57.3,31.5{Environment.NewLine}", sb.ToString());
-            sb.AppendCSVLine(new ExampleCsvType() { ID = 3, Name = "Jameson, Charlie", Latitude = 57.4, Longitude = 31.6 });
+            CSV.AppendCSVLine(sb, new ExampleCsvType() { ID = 3, Name = "Jameson, Charlie", Latitude = 57.4, Longitude = 31.6 });
             Assert.AreEqual($"ID,Name,Latitude,Longitude{Environment.NewLine}1,\"Smith, Alice\",57.2,31.4{Environment.NewLine}2,\"Palmer, Robert\",57.3,31.5{Environment.NewLine}3,\"Jameson, Charlie\",57.4,31.6{Environment.NewLine}", sb.ToString());
         }
     }

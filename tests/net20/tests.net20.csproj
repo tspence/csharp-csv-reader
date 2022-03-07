@@ -49,7 +49,9 @@
     <Compile Include="..\SerializationTest.cs">
       <Link>SerializationTest.cs</Link>
     </Compile>
-    <Compile Include="WriterTest.net20.cs" />
+    <Compile Include="..\WriterTest.cs">
+      <Link>WriterTest.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
