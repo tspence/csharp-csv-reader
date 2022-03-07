@@ -11,16 +11,6 @@ using System.Text;
 using System.Threading.Tasks;
 #endif
 
-#if NEEDS_EXTENSION_ATTRIBUTE
-// Use this namespace to be able to declare extension methods
-namespace System.Runtime.CompilerServices
-{
-    [AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Class
-         | AttributeTargets.Method)]
-    public sealed class ExtensionAttribute : Attribute { }
-}
-#endif
-
 namespace CSVFile
 {
 

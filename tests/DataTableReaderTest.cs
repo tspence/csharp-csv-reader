@@ -106,6 +106,9 @@ namespace CSVTestSuite
             // Verify that we got three files
             var files = Directory.GetFiles(dirname).ToList();
             files.Sort();
+            Assert.IsTrue(files[0].EndsWith("1.csv"));
+            Assert.IsTrue(files[1].EndsWith("2.csv"));
+            Assert.IsTrue(files[2].EndsWith("3.csv"));
             Assert.AreEqual(3, files.Count);
 
             // Read in each file and verify that each one has one line
@@ -149,6 +152,9 @@ namespace CSVTestSuite
             // Verify that we got three files
             var files = Directory.GetFiles(dirname).ToList();
             files.Sort();
+            Assert.IsTrue(files[0].EndsWith("1.csv"));
+            Assert.IsTrue(files[1].EndsWith("2.csv"));
+            Assert.IsTrue(files[2].EndsWith("3.csv"));
             Assert.AreEqual(3, files.Count);
 
             // Read in each file and verify that each one has one line
