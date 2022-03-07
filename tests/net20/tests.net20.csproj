@@ -1,0 +1,64 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\..\packages\NUnit.3.11.0\build\NUnit.props" Condition="Exists('..\..\packages\NUnit.3.11.0\build\NUnit.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{093B961F-DD8E-4F27-A903-5BD97447A162}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>csharpcsvreadertests.net20</RootNamespace>
+    <AssemblyName>tests.net20</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;NET40</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="nunit.framework">
+      <HintPath>..\..\packages\NUnit.3.11.0\lib\net20\nunit.framework.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\ChopTest.cs">
+      <Link>ChopTest.cs</Link>
+    </Compile>
+    <Compile Include="..\DataTableReaderTest.cs">
+      <Link>DataTableReaderTest.cs</Link>
+    </Compile>
+    <Compile Include="..\BasicParseTests.cs">
+      <Link>BasicParseTests.cs</Link>
+    </Compile>
+    <Compile Include="..\ReaderTest.cs">
+      <Link>ReaderTest.cs</Link>
+    </Compile>
+    <Compile Include="..\SerializationTest.cs">
+      <Link>SerializationTest.cs</Link>
+    </Compile>
+    <Compile Include="WriterTest.net20.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\net20\src.net20.csproj">
+      <Project>{d6ad7ac1-4445-4ce3-937a-8b65f64855e8}</Project>
+      <Name>src.net20</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+</Project>

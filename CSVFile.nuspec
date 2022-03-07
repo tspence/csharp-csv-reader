@@ -2,7 +2,7 @@
 <package >
 	<metadata>
 		<id>CSVFile</id>
-		<version>3.0.5</version>
+		<version>3.0.6</version>
 		<title>CSVFile</title>
 		<authors>Ted Spence</authors>
 		<owners>Ted Spence</owners>
@@ -12,16 +12,15 @@
 		<summary>Tiny and fast CSV and TSV parsing library (40KB) with zero dependencies.  Compatible with most dot net versions.</summary>
 		<description>Tiny and fast CSV and TSV parsing library (40KB) with zero dependencies.  Compatible with most dot net versions.</description>
 		<releaseNotes>
-			Improved compatibility with multiple versions of the Dot Net framework.
-			* Version 3.0.5 builds for Dot Net 4.0, 4.5, Net Standard 2.0, Net Core 3.1, 5.0, and 6.0
-			* Some improvements on compiler warnings
-			* Included XML documentation with modern Dot Net Core versions 
+			Add back in compatibility with DotNet 2.0!
+			* Extension functions are available, but without `this` keyword
 		</releaseNotes>
 		<readme>docs/README.md</readme>
 		<copyright>Copyright 2006 - 2022</copyright>
     	<tags>fast csv parser serialization deserialization streaming async</tags>
 		<repository type="git" url="https://github.com/tspence/csharp-csv-reader" />
 		<dependencies>
+			<group targetFramework=".NETFramework2.0"/>
 			<group targetFramework=".NETFramework4.0"/>
 			<group targetFramework=".NETFramework4.5"/>
 			<group targetFramework=".NETStandard2.0"/>
@@ -33,6 +32,7 @@
 	<files>
 		<file src=".\LICENSE" target="docs/LICENSE"/>
 		<file src=".\README.md" target="docs/README.md"/>
+		<file src="src\net20\bin\debug\net20\*" target="lib\net20" />
 		<file src="src\net40\bin\debug\net40\*" target="lib\net40" />
 		<file src="src\net45\bin\debug\net45\*" target="lib\net45" />
 		<file src="src\net50\bin\debug\net5.0\*" target="lib\net5.0" />
