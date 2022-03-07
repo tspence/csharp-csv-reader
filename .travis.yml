@@ -21,3 +21,8 @@ jobs:
         - dotnet restore ./src/netstandard20/src.netstandard20.csproj
         - dotnet build ./src/netstandard20/src.netstandard20.csproj
         - dotnet test ./tests/netstandard20/tests.netstandard20.csproj
+    - script:
+        - nuget restore ./src/net20/src.net20.csproj
+        - nuget install NUnit.Console -Version 3.11.1 -OutputDirectory testrunner
+        - msbuild /p:Configuration=Debug ./tests/net20/tests.net20.csproj
+        - mono ./testrunner/NUnit.ConsoleRunner.3.11.1/tools/nunit3-console.exe ./tests/net20/bin/Debug/tests.net20.dll

@@ -107,6 +107,9 @@ namespace CSVTestSuite
 2011-04-01,test2,""What's up, buttercup?"",Ralph,1,-999
 1975-06-03,test3,""Bye and bye, dragonfly!"",Jimmy's The Bomb,12,13";
             var dt = CSVDataTable.FromString(source);
+            Assert.AreEqual("2012-05-01", dt.Rows[0].ItemArray[0]);
+            Assert.AreEqual("2011-04-01", dt.Rows[1].ItemArray[0]);
+            Assert.AreEqual("1975-06-03", dt.Rows[2].ItemArray[0]);
 
             // Save this string to a test file
             string test_rootfn = Guid.NewGuid().ToString();
@@ -121,8 +124,12 @@ namespace CSVTestSuite
             CSVReader.ChopFile(outfile, dirname, 1);
 
             // Verify that we got three files
-            string[] files = Directory.GetFiles(dirname);
-            Assert.AreEqual(3, files.Length);
+            var files = Directory.GetFiles(dirname).ToList();
+            files.Sort();
+            Assert.IsTrue(files[0].EndsWith("1.csv"));
+            Assert.IsTrue(files[1].EndsWith("2.csv"));
+            Assert.IsTrue(files[2].EndsWith("3.csv"));
+            Assert.AreEqual(3, files.Count);
 
             // Read in each file and verify that each one has one line
             dt = CSVDataTable.FromFile(files[0]);
