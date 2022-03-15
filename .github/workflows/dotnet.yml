@@ -1,4 +1,4 @@
-name: .NET
+name: Build and Test
 
 on:
   push:
@@ -7,19 +7,35 @@ on:
     branches: [ main ]
 
 jobs:
-  build:
-
+  build-ubuntu:
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v2
+      name: Checkout Code
     - name: Setup .NET
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 5.0.x
-    - name: Restore dependencies
+        dotnet-version: 6.0.x
+    - name: Restore (NetStandard2.0)
       run: dotnet restore ./src/netstandard20/src.netstandard20.csproj
-    - name: Build
+    - name: Build (NetStandard2.0)
       run: dotnet build ./src/netstandard20/src.netstandard20.csproj
-    - name: Test
+    - name: Test (NetStandard2.0)
       run: dotnet test ./tests/netstandard20/tests.netstandard20.csproj
+      
+  build-windows:
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v2
+      name: Checkout Code
+    - name: Setup MSBuild Path
+      uses: warrenbuckley/Setup-MSBuild@v1
+    - name: Setup NuGet
+      uses: NuGet/setup-nuget@v1.0.2
+    - name: Restore (Net Framework)
+      run: nuget restore csharp-csv-reader.sln
+    - name: Build (Net Framework)
+      run: msbuild csharp-csv-reader.sln
+    - name: Test (Net Framework)
+      run: vstest.console csharp-csv-reader.sln
+ 
