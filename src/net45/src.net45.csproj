@@ -29,6 +29,7 @@
     <DefineConstants>TRACE;NET45;HAS_DATATABLE;HAS_ASYNC;</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Release\net45\src.net45.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />

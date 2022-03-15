@@ -8,15 +8,17 @@
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DefineConstants>TRACE;NETSTANDARD20;HAS_ASYNC;DEBUG</DefineConstants>
+    <DefineConstants>TRACE20;HAS_ASYNC;HAS_DATATABLE;</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType></DebugType>
-    <DefineConstants>TRACE;NETSTANDARD20;RELEASE;HAS_ASYNC;</DefineConstants>
+    <DefineConstants>TRACE20;HAS_ASYNC;HAS_DATATABLE;</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="..\CSV.cs">
       <Link>CSV.cs</Link>
+    </Compile>
+    <Compile Include="..\CSVDataTable.cs">
+      <Link>CSVDataTable.cs</Link>
     </Compile>
     <Compile Include="..\CSVReader.cs">
       <Link>CSVReader.cs</Link>

@@ -29,6 +29,7 @@
     <DefineConstants>TRACE;NET40;HAS_DATATABLE;HAS_SMTPCLIENT</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Release\net40\src.net40.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
