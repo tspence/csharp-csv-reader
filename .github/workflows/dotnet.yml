@@ -18,8 +18,8 @@ jobs:
       with:
         dotnet-version: 5.0.x
     - name: Restore dependencies
-      run: dotnet restore .\src\netstandard20\src.netstandard20.csproj
+      run: dotnet restore ./src/netstandard20/src.netstandard20.csproj
     - name: Build
-      run: dotnet build .\src\netstandard20\src.netstandard20.csproj
+      run: dotnet build ./src/netstandard20/src.netstandard20.csproj
     - name: Test
-      run: dotnet test .\tests\netstandard20\tests.netstandard20.csproj
+      run: dotnet test ./tests/netstandard20/tests.netstandard20.csproj
