@@ -4,6 +4,7 @@
  * Home page: https://github.com/tspence/csharp-csv-reader
  */
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 #if HAS_DATATABLE
@@ -11,8 +12,8 @@ using System.Data;
 #endif
 using System.Reflection;
 using System.ComponentModel;
-using System.Net.Mime;
 using System.Text;
+using System.Threading;
 
 // These suggestions from Resharper apply because we don't want it to recommend fixing things needed for Net20:
 // ReSharper disable LoopCanBeConvertedToQuery
@@ -26,7 +27,7 @@ namespace CSVFile
     /// <summary>
     /// A reader that reads from a stream and emits CSV records
     /// </summary>
-    public class CSVReader : IEnumerable<string[]>, IDisposable
+    public class CSVReader : IDisposable
     {
         private readonly CSVSettings _settings;
         private readonly StreamReader _stream;
@@ -34,7 +35,7 @@ namespace CSVFile
         /// <summary>
         /// If the first row in the file is a header row, this will be populated
         /// </summary>
-        public readonly string[] Headers = null;
+        public string[] Headers { get; private set; }
         
         /// <summary>
         /// Returns the settings currently in use for this reader
@@ -121,28 +122,22 @@ namespace CSVFile
         /// Iterate through all lines in this CSV file
         /// </summary>
         /// <returns>An array of all data columns in the line</returns>
-        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
-        {
-            return Lines().GetEnumerator();
-        }
-
-        /// <summary>
-        /// Iterate through all lines in this CSV file
-        /// </summary>
-        /// <returns>An array of all data columns in the line</returns>
-        IEnumerator<string[]> System.Collections.Generic.IEnumerable<string[]>.GetEnumerator()
-        {
-            return Lines().GetEnumerator();
-        }
-
-        /// <summary>
-        /// Iterate through all lines in this CSV file
-        /// </summary>
-        /// <returns>An array of all data columns in the line</returns>
         public IEnumerable<string[]> Lines()
         {
             return CSV.ParseStream(_stream, _settings);
         }
+
+#if NET50
+        /// <summary>
+        /// Iterate through all lines in this CSV file using async
+        /// </summary>
+        /// <returns>An array of all data columns in the line</returns>
+        public IAsyncEnumerable<string[]> LinesAsync()
+        {
+            return CSV.ParseStreamAsync(_stream, _settings);
+        }
+#endif
+
 
 #if HAS_DATATABLE
         /// <summary>
@@ -163,6 +158,8 @@ namespace CSVFile
                 for (var i = 0; i < firstLine.Length; i++) {
                     list.Add($"Column{i}");
                 }
+
+                this.Headers = list.ToArray();
             }
 
             // Add headers
@@ -181,7 +178,7 @@ namespace CSVFile
             }
 
             // Start reading through the file
-            foreach (var line in Lines()) {
+            foreach (var line in CSV.ParseStream(_stream, _settings)) {
 
                 // Does this line match the length of the first line?
                 if (line.Length != numColumns) {
@@ -292,7 +289,7 @@ namespace CSVFile
 
             // Alright, let's retrieve CSV lines and parse each one!
             var row_num = 1;
-            foreach (var line in Lines())
+            foreach (var line in CSV.ParseStream(_stream, _settings))
             {
 
                 // Does this line match the length of the first line?  Does the caller want us to complain?
@@ -384,7 +381,7 @@ namespace CSVFile
                 {
 
                     // Okay, let's do the real work
-                    foreach (var line in cr.Lines())
+                    foreach (string[] line in cr.Lines())
                     {
 
                         // Do we need to create a file for writing?
