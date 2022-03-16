@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using NUnit.Framework;
 using CSVFile;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace CSVTestSuite
@@ -48,7 +49,7 @@ namespace CSVTestSuite
             byte[] byteArray = Encoding.UTF8.GetBytes(source);
             MemoryStream stream = new MemoryStream(byteArray);
             using (CSVReader cr = new CSVReader(new StreamReader(stream))) {
-                list = cr.Deserialize<TestClassOne>();
+                list = cr.Deserialize<TestClassOne>().ToList();
             }
 
             // Test the array
@@ -85,7 +86,7 @@ namespace CSVTestSuite
             string csv = CSV.Serialize<TestClassTwo>(list);
 
             // Deserialize back from a CSV string - should not throw any errors!
-            List<TestClassTwo> newlist = CSV.Deserialize<TestClassTwo>(csv);
+            List<TestClassTwo> newlist = CSV.Deserialize<TestClassTwo>(csv).ToList();
 
             // Compare original objects to new ones
             for (int i = 0; i < list.Count; i++) {
@@ -108,7 +109,7 @@ namespace CSVTestSuite
             string csv = CSV.Serialize<TestClassTwo>(list, CSVSettings.CSV_PERMIT_NULL);
 
             // Deserialize back from a CSV string - should not throw any errors!
-            List<TestClassTwo> newlist = CSV.Deserialize<TestClassTwo>(csv, CSVSettings.CSV_PERMIT_NULL);
+            List<TestClassTwo> newlist = CSV.Deserialize<TestClassTwo>(csv, CSVSettings.CSV_PERMIT_NULL).ToList();
 
             // Compare original objects to new ones
             for (int i = 0; i < list.Count; i++)
@@ -135,7 +136,7 @@ namespace CSVTestSuite
                 "NULL,7,Fourth";
 
             // Deserialize back from a CSV string - should not throw any errors!
-            List<TestClassTwo> newlist = CSV.Deserialize<TestClassTwo>(csv, CSVSettings.CSV_PERMIT_NULL);
+            List<TestClassTwo> newlist = CSV.Deserialize<TestClassTwo>(csv, CSVSettings.CSV_PERMIT_NULL).ToList();
 
             // Compare original objects to new ones
             for (int i = 0; i < list.Count; i++)
@@ -161,7 +162,7 @@ namespace CSVTestSuite
             };
 
             // Deserialize back from a CSV string - should not throw any errors!
-            var list = CSV.Deserialize<TestClassTwo>(csv, settings);
+            var list = CSV.Deserialize<TestClassTwo>(csv, settings).ToList();
             Assert.AreEqual(null, list[0].FirstColumn);
             Assert.AreEqual(0, list[0].SecondColumn);
             Assert.AreEqual(null, list[0].ThirdColumn);
@@ -183,7 +184,7 @@ namespace CSVTestSuite
             };
 
             // Deserialize back from a CSV string - should not throw any errors!
-            var list = CSV.Deserialize<TestClassTwo>(csv, settings);
+            var list = CSV.Deserialize<TestClassTwo>(csv, settings).ToList();
             Assert.AreEqual(null, list[0].FirstColumn);
             Assert.AreEqual(0, list[0].SecondColumn);
             Assert.AreEqual(null, list[0].ThirdColumn);

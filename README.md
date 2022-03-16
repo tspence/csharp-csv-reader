@@ -63,7 +63,9 @@ var list = new List<MyClass>();
 string csv = CSV.Serialize<MyClass>(list);
 
 // Deserialize a CSV back into an array of objects
-var newlist = await CSV.Deserialize<MyClass>(csv);
+foreach (var myObject in CSV.Deserialize<MyClass>(csv)) {
+    // Use the objects
+}
 ```
 
 ## Data Table Support (for older DotNet frameworks)

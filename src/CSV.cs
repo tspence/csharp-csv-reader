@@ -462,16 +462,9 @@ namespace CSVFile
         /// <param name="settings">The CSV settings to use when parsing the source (Default: CSV)</param>
         /// <param name="source">The source CSV to deserialize</param>
         /// <returns></returns>
-        public static List<T> Deserialize<T>(string source, CSVSettings settings = null) where T : class, new()
+        public static IEnumerable<T> Deserialize<T>(string source, CSVSettings settings = null) where T : class, new()
         {
-            var byteArray = Encoding.UTF8.GetBytes(source);
-            using (var stream = new MemoryStream(byteArray))
-            {
-                using (var cr = new CSVReader(new StreamReader(stream), settings))
-                {
-                    return cr.Deserialize<T>();
-                }
-            }
+            return CSVReader.FromString(source, settings).Deserialize<T>();
         }
 
 #if NET50
@@ -482,12 +475,9 @@ namespace CSVFile
         /// <param name="settings">The CSV settings to use when parsing the source (Default: CSV)</param>
         /// <param name="source">The source CSV to deserialize</param>
         /// <returns></returns>
-        public static async Task<List<T>> DeserializeAsync<T>(string source, CSVSettings settings = null) where T : class, new()
+        public static IAsyncEnumerable<T> DeserializeAsync<T>(string source, CSVSettings settings = null) where T : class, new()
         {
-            using (var cr = CSVReader.FromString(source, settings))
-            {
-                return await cr.DeserializeAsync<T>();
-            }
+            return CSVReader.FromString(source, settings).DeserializeAsync<T>();
         }
 #endif
 

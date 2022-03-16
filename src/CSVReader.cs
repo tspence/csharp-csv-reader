@@ -167,13 +167,15 @@ namespace CSVFile
         {
             return CSV.ParseStreamAsync(_stream, _settings).GetAsyncEnumerator(cancellationToken);
         }
-        
+
         /// <summary>
         /// Deserialize the CSV reader into a generic list
         /// </summary>
-        public async Task<List<T>> DeserializeAsync<T>() where T : class, new()
+        /// <typeparam name="T">The type of data to deserialize</typeparam>
+        /// <returns>A streaming collection of records from the CSV source</returns>
+        /// <exception cref="Exception">If the CSV source cannot be parsed into the type, throws exceptions</exception>
+        public async IAsyncEnumerable<T> DeserializeAsync<T>() where T : class, new()
         {
-            var result = new List<T>();
             var return_type = typeof(T);
 
             // Read in the first line - we have to have headers!
@@ -288,12 +290,9 @@ namespace CSVFile
                 }
 
                 // Keep track of where we are in the file
-                result.Add(obj);
+                yield return obj;
                 row_num++;
             }
-
-            // Here's your array!
-            return result;
         }
 #endif
 
@@ -369,9 +368,11 @@ namespace CSVFile
         /// <summary>
         /// Deserialize the CSV reader into a generic list
         /// </summary>
-        public List<T> Deserialize<T>() where T : class, new()
+        /// <typeparam name="T">The type to deserialize</typeparam>
+        /// <returns>A streaming collection of objects as they are read from the source</returns>
+        /// <exception cref="Exception">If the CSV formatting does not match the object, throw errors</exception>
+        public IEnumerable<T> Deserialize<T>() where T : class, new()
         {
-            var result = new List<T>();
             var return_type = typeof(T);
 
             // Read in the first line - we have to have headers!
@@ -473,7 +474,7 @@ namespace CSVFile
                     }
                     else if (!_settings.IgnoreHeaderErrors)
                     {
-                        throw new Exception(String.Format("The value '{0}' cannot be converted to the type {1}.", line[i], column_types[i]));
+                        throw new Exception($"The value '{line[i]}' cannot be converted to the type {column_types[i]}.");
                     }
 
                     // Can we set this value to the object as a property?
@@ -496,12 +497,9 @@ namespace CSVFile
                 }
 
                 // Keep track of where we are in the file
-                result.Add(obj);
+                yield return obj;
                 row_num++;
             }
-
-            // Here's your array!
-            return result;
         }
 
         /// <summary>

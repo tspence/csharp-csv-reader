@@ -72,13 +72,13 @@ namespace CSVTestSuite
             Assert.AreEqual(3, files.Length);
 
             // Read in each file and verify that each one has one line
-            var f1 = CSV.Deserialize<SimpleChopClass>(File.ReadAllText(files[0]));
+            var f1 = CSV.Deserialize<SimpleChopClass>(File.ReadAllText(files[0])).ToList();
             Assert.AreEqual(5000, f1.Count);
 
-            var f2 = CSV.Deserialize<SimpleChopClass>(File.ReadAllText(files[1]));
+            var f2 = CSV.Deserialize<SimpleChopClass>(File.ReadAllText(files[1])).ToList();
             Assert.AreEqual(5000, f2.Count);
 
-            var f3 = CSV.Deserialize<SimpleChopClass>(File.ReadAllText(files[2]));
+            var f3 = CSV.Deserialize<SimpleChopClass>(File.ReadAllText(files[2])).ToList();
             Assert.AreEqual(5000, f3.Count);
 
             // Merge and verify
