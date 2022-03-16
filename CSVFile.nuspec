@@ -28,6 +28,7 @@
 			<group targetFramework=".NETFramework4.0"/>
 			<group targetFramework=".NETFramework4.5"/>
 			<group targetFramework=".NETStandard2.0"/>
+			<group targetFramework="net5.0"/>
 		</dependencies>
 	</metadata>
 	<files>
@@ -38,5 +39,6 @@
 		<file src="src\net40\bin\release\net40\*" target="lib\net40" />
 		<file src="src\net45\bin\release\net45\*" target="lib\net45" />
 		<file src="src\netstandard20\bin\release\netstandard2.0\*" target="lib\netstandard20" />
+		<file src="src\net50\bin\release\net5.0\*" target="lib\net5.0" />
 	</files>
 </package>
