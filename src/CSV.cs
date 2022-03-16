@@ -11,6 +11,12 @@ using System.Text;
 using System.Threading.Tasks;
 #endif
 
+// These suggestions from Resharper apply because we don't want it to recommend fixing things needed for Net20:
+// ReSharper disable LoopCanBeConvertedToQuery
+// ReSharper disable ConvertIfStatementToNullCoalescingAssignment
+// ReSharper disable ReplaceSubstringWithRangeIndexer
+// ReSharper disable InvertIf
+
 namespace CSVFile
 {
 
@@ -73,8 +79,6 @@ namespace CSVFile
             var i = -1;
             var list = new List<string>();
             var work = new StringBuilder();
-
-            // ReSharper disable once ConvertIfStatementToNullCoalescingAssignment
             if (settings == null) {
                 settings = CSVSettings.CSV;
             }
@@ -88,10 +92,10 @@ namespace CSVFile
                     var newLine = inStream.ReadLine();
                     line += newLine + settings.LineSeparator;
                 }
-                char c = line[i];
+                var c = line[i];
 
                 // Are we at a line separator? If so, yield our work and begin again
-                if (String.Equals(line.Substring(i, settings.LineSeparator.Length), settings.LineSeparator)) {
+                if (string.Equals(line.Substring(i, settings.LineSeparator.Length), settings.LineSeparator)) {
                     list.Add(work.ToString());
                     yield return list.ToArray();
                     list.Clear();
@@ -117,7 +121,7 @@ namespace CSVFile
                 else if ((c == settings.TextQualifier) && (work.Length == 0))
                 {
                     // Our next task is to find the end of this qualified-text field
-                    int p2 = -1;
+                    var p2 = -1;
                     while (p2 < 0) {
 
                         // If we don't see an end in sight, read more from the stream
@@ -128,7 +132,7 @@ namespace CSVFile
                             work.Append(line.Substring(i + 1));
                             i = -1;
                             var newLine = inStream.ReadLine();
-                            if (String.IsNullOrEmpty(newLine) && inStream.EndOfStream)
+                            if (string.IsNullOrEmpty(newLine) && inStream.EndOfStream)
                             {
                                 break;
                             }
@@ -187,8 +191,6 @@ namespace CSVFile
             var i = -1;
             var list = new List<string>();
             var work = new StringBuilder();
-
-            // ReSharper disable once ConvertIfStatementToNullCoalescingAssignment
             if (settings == null)
             {
                 settings = CSVSettings.CSV;
@@ -295,14 +297,19 @@ namespace CSVFile
 #endif
 
         /// <summary>
-        /// Parse a line from a CSV file and return an array of fields, or null if 
+        /// Parse a line from a CSV file and return an array of fields, or null if it fails
         /// </summary>
         /// <param name="line">One line of text from a CSV file</param>
         /// <param name="settings">The CSV settings to use for this parsing operation (Default: CSV)</param>
+        /// <param name="throwOnFailure">If this value is true, throws an exception if parsing fails</param>
         /// <returns>An array containing all fields in the next row of data, or null if it could not be parsed.</returns>
-        public static string[] ParseLine(string line, CSVSettings settings = null)
+        public static string[] ParseLine(string line, CSVSettings settings = null, bool? throwOnFailure = null)
         {
-            TryParseLine(line, out string[] row, settings);
+            var success = TryParseLine(line, out var row, settings);
+            if (!success && throwOnFailure == true)
+            {
+                throw new Exception($"Malformed CSV structure");
+            }
             return row;
         }
 
@@ -315,7 +322,6 @@ namespace CSVFile
         /// <param name="row">The array of fields found in the line</param>
         public static bool TryParseLine(string line, out string[] row, CSVSettings settings = null)
         {
-            // ReSharper disable once ConvertIfStatementToNullCoalescingAssignment
             if (settings == null)
             {
                 settings = CSVSettings.CSV;
@@ -326,7 +332,7 @@ namespace CSVFile
             var work = new StringBuilder();
             for (var i = 0; i < line.Length; i++)
             {
-                char c = line[i];
+                var c = line[i];
 
                 // If we are starting a new field, is this field text qualified?
                 if ((c == settings.TextQualifier) && (work.Length == 0))
@@ -398,10 +404,10 @@ namespace CSVFile
         /// <param name="list">List.</param>
         /// <param name="work">Work.</param>
         /// <param name="settings">Settings.</param>
-        private static void AddToken(List<string> list, StringBuilder work, CSVSettings settings)
+        private static void AddToken(ICollection<string> list, StringBuilder work, CSVSettings settings)
         {
             var s = work.ToString();
-            if (settings.AllowNull && String.Equals(s, settings.NullToken, StringComparison.Ordinal))
+            if (settings.AllowNull && string.Equals(s, settings.NullToken, StringComparison.Ordinal))
             {
                 list.Add(null);
             }
@@ -421,10 +427,10 @@ namespace CSVFile
         /// <returns></returns>
         public static List<T> Deserialize<T>(string source, CSVSettings settings = null) where T : class, new()
         {
-            byte[] byteArray = Encoding.UTF8.GetBytes(source);
+            var byteArray = Encoding.UTF8.GetBytes(source);
             using (var stream = new MemoryStream(byteArray))
             {
-                using (CSVReader cr = new CSVReader(new StreamReader(stream), settings))
+                using (var cr = new CSVReader(new StreamReader(stream), settings))
                 {
                     return cr.Deserialize<T>();
                 }
@@ -441,7 +447,7 @@ namespace CSVFile
         /// <returns></returns>
         public static async Task<List<T>> DeserializeAsync<T>(string source, CSVSettings settings = null) where T : class, new()
         {
-            byte[] byteArray = Encoding.UTF8.GetBytes(source);
+            var byteArray = Encoding.UTF8.GetBytes(source);
             using (var stream = new MemoryStream(byteArray))
             {
                 using (var cr = await CSVAsyncReader.From(new StreamReader(stream), settings))
@@ -478,7 +484,6 @@ namespace CSVFile
         /// <returns>The completed CSV string representing one line per element in list</returns>
         public static string Serialize<T>(IEnumerable<T> list, CSVSettings settings = null) where T : class, new()
         {
-            // ReSharper disable once ConvertIfStatementToNullCoalescingAssignment
             if (settings == null)
             {
                 settings = CSVSettings.CSV;
@@ -510,7 +515,7 @@ namespace CSVFile
         public static void AppendCSVHeader<T>(this StringBuilder sb, CSVSettings settings = null)
 #endif
         {
-            // ReSharper disable once ConvertIfStatementToNullCoalescingAssignment
+            // ReSharper disable once 
             if (settings == null)
             {
                 settings = CSVSettings.CSV;
@@ -543,7 +548,6 @@ namespace CSVFile
         public static void AppendCSVLine<T>(this StringBuilder sb, T obj, CSVSettings settings = null) where T : class, new()
 #endif
         {
-            // ReSharper disable once ConvertIfStatementToNullCoalescingAssignment
             if (settings == null)
             {
                 settings = CSVSettings.CSV;
@@ -578,7 +582,6 @@ namespace CSVFile
         private static void AppendCSVRow(this StringBuilder sb, IEnumerable<object> row, CSVSettings settings = null)
 #endif
         {
-            // ReSharper disable once ConvertIfStatementToNullCoalescingAssignment
             if (settings == null)
             {
                 settings = CSVSettings.CSV;
