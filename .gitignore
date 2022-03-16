@@ -6,5 +6,5 @@ obj
 *project.lock.json
 .vs/
 packages/
-.idea/
+.idea
 testrunner/

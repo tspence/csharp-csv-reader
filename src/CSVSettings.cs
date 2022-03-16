@@ -115,5 +115,19 @@ namespace CSVFile
         public static readonly CSVSettings TSV = new CSVSettings() { 
             FieldDelimiter = '\t'
         };
+
+        /// <summary>
+        /// Clone the existing settings, but with a different field delimiter.
+        /// 
+        /// Used for parsing of "sep=" lines so that the original object is immutable.
+        /// </summary>
+        /// <param name="newDelimiter">The new delimiter for the cloned settings</param>
+        /// <returns>The newly cloned settings with the updated delimiter</returns>
+        public CSVSettings CloneWithNewDelimiter(char newDelimiter)
+        {
+            var newSettings = (CSVSettings)this.MemberwiseClone();
+            newSettings.FieldDelimiter = newDelimiter;
+            return newSettings;
+        }
     }
 }
