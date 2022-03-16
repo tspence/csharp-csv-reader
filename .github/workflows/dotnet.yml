@@ -15,10 +15,18 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 6.0.x
+        dotnet-version: |
+          5.0.x
+          6.0.x
     - name: Restore (NetStandard2.0)
       run: dotnet restore ./src/netstandard20/src.netstandard20.csproj
     - name: Build (NetStandard2.0)
       run: dotnet build ./src/netstandard20/src.netstandard20.csproj
     - name: Test (NetStandard2.0)
       run: dotnet test ./tests/netstandard20/tests.netstandard20.csproj
+    - name: Restore (Net50)
+      run: dotnet restore ./src/net50/src.net50.csproj
+    - name: Build (Net50)
+      run: dotnet build ./src/net50/src.net50.csproj
+    - name: Test (Net50)
+      run: dotnet test ./tests/net50/tests.net50.csproj
