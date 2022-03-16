@@ -35,6 +35,14 @@ namespace CSVFile
         /// If the first row in the file is a header row, this will be populated
         /// </summary>
         public readonly string[] Headers = null;
+        
+        /// <summary>
+        /// Returns the settings currently in use for this reader
+        /// </summary>
+        public CSVSettings Settings
+        {
+            get { return _settings; }
+        }
 
         /// <summary>
         /// Convenience function to read from a string
@@ -95,7 +103,8 @@ namespace CSVFile
                     var newDelimiter = CSV.ParseSepLine(line);
                     if (newDelimiter != null)
                     {
-                        _settings.FieldDelimiter = newDelimiter.Value;
+                        // We don't want to change the original settings, since they may be a singleton
+                        _settings = _settings.CloneWithNewDelimiter(newDelimiter.Value);
                         line = source.ReadLine();
                     }
                 }

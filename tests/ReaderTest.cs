@@ -212,6 +212,9 @@ namespace CSVTestSuite
             var settings = new CSVSettings() { HeaderRowIncluded = true, FieldDelimiter = '\t', AllowSepLine = true };
             using (var cr = CSVReader.FromString(source, settings))
             {
+                // The field delimiter should have been changed, but the original object should remain the same
+                Assert.AreEqual('\t', settings.FieldDelimiter);
+                Assert.AreEqual('|', cr.Settings.FieldDelimiter);
                 Assert.AreEqual(cr.Headers[0], "Name");
                 Assert.AreEqual(cr.Headers[1], "Title");
                 Assert.AreEqual(cr.Headers[2], "Phone");
