@@ -17,7 +17,6 @@
 
   <ItemGroup>
     <Compile Include="..\CSV.cs" Link="CSV.cs" />
-    <Compile Include="..\CSVAsyncReader.cs" Link="CSVAsyncReader.cs" />
     <Compile Include="..\CSVDataTable.cs" Link="CSVDataTable.cs" />
     <Compile Include="..\CSVReader.cs" Link="CSVReader.cs" />
     <Compile Include="..\CSVSettings.cs" Link="CSVSettings.cs" />

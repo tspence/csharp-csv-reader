@@ -14,6 +14,9 @@ using System.Reflection;
 using System.ComponentModel;
 using System.Text;
 using System.Threading;
+#if NET50
+using System.Threading.Tasks;
+#endif
 
 // These suggestions from Resharper apply because we don't want it to recommend fixing things needed for Net20:
 // ReSharper disable LoopCanBeConvertedToQuery
@@ -27,7 +30,12 @@ namespace CSVFile
     /// <summary>
     /// A reader that reads from a stream and emits CSV records
     /// </summary>
-    public class CSVReader : IDisposable
+#if NET50
+    public class CSVReader : IAsyncEnumerable<string[]>, IEnumerable<string[]>, IDisposable
+#else
+    public class CSVReader : IEnumerable<string[]>, IDisposable
+#endif
+    
     {
         private readonly CSVSettings _settings;
         private readonly StreamReader _stream;
@@ -127,6 +135,20 @@ namespace CSVFile
             return CSV.ParseStream(_stream, _settings);
         }
 
+        /// <summary>
+        /// Iterate through all lines in this CSV file
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerator<string[]> GetEnumerator()
+        {
+            return CSV.ParseStream(_stream, _settings).GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
+        
 #if NET50
         /// <summary>
         /// Iterate through all lines in this CSV file using async
@@ -135,6 +157,143 @@ namespace CSVFile
         public IAsyncEnumerable<string[]> LinesAsync()
         {
             return CSV.ParseStreamAsync(_stream, _settings);
+        }
+
+        /// <summary>
+        /// Iterate through all lines in this CSV file using async
+        /// </summary>
+        /// <returns>An array of all data columns in the line</returns>
+        public IAsyncEnumerator<string[]> GetAsyncEnumerator(CancellationToken cancellationToken = new CancellationToken())
+        {
+            return CSV.ParseStreamAsync(_stream, _settings).GetAsyncEnumerator(cancellationToken);
+        }
+        
+        /// <summary>
+        /// Deserialize the CSV reader into a generic list
+        /// </summary>
+        public async Task<List<T>> DeserializeAsync<T>() where T : class, new()
+        {
+            var result = new List<T>();
+            var return_type = typeof(T);
+
+            // Read in the first line - we have to have headers!
+            if (Headers == null) throw new Exception("CSV must have headers to be deserialized");
+            var num_columns = Headers.Length;
+
+            // Determine how to handle each column in the file - check properties, fields, and methods
+            var column_types = new Type[num_columns];
+            var column_convert = new TypeConverter[num_columns];
+            var prop_handlers = new PropertyInfo[num_columns];
+            var field_handlers = new FieldInfo[num_columns];
+            var method_handlers = new MethodInfo[num_columns];
+            for (var i = 0; i < num_columns; i++)
+            {
+                prop_handlers[i] = return_type.GetProperty(Headers[i]);
+
+                // If we failed to get a property handler, let's try a field handler
+                if (prop_handlers[i] == null)
+                {
+                    field_handlers[i] = return_type.GetField(Headers[i]);
+
+                    // If we failed to get a field handler, let's try a method
+                    if (field_handlers[i] == null)
+                    {
+
+                        // Methods must be treated differently - we have to ensure that the method has a single parameter
+                        var mi = return_type.GetMethod(Headers[i]);
+                        if (mi != null)
+                        {
+                            if (mi.GetParameters().Length == 1)
+                            {
+                                method_handlers[i] = mi;
+                                column_types[i] = mi.GetParameters()[0].ParameterType;
+                            }
+                            else if (!_settings.IgnoreHeaderErrors)
+                            {
+                                throw new Exception($"The column header '{Headers[i]}' matched a method with more than one parameter.");
+                            }
+
+                            // Does the caller want us to throw an error on bad columns?
+                        }
+                        else if (!_settings.IgnoreHeaderErrors)
+                        {
+                            throw new Exception($"The column header '{Headers[i]}' was not found in the class '{return_type.FullName}'.");
+                        }
+                    }
+                    else
+                    {
+                        column_types[i] = field_handlers[i].FieldType;
+                    }
+                }
+                else
+                {
+                    column_types[i] = prop_handlers[i].PropertyType;
+                }
+
+                // Retrieve a converter
+                if (column_types[i] != null)
+                {
+                    column_convert[i] = TypeDescriptor.GetConverter(column_types[i]);
+                    if ((column_convert[i] == null) && !_settings.IgnoreHeaderErrors)
+                    {
+                        throw new Exception($"The column {Headers[i]} (type {column_types[i]}) does not have a type converter.");
+                    }
+                }
+            }
+
+            // Alright, let's retrieve CSV lines and parse each one!
+            var row_num = 1;
+            await foreach (var line in this)
+            {
+
+                // Does this line match the length of the first line?  Does the caller want us to complain?
+                if ((line.Length != num_columns) && !_settings.IgnoreHeaderErrors)
+                {
+                    throw new Exception($"Line #{row_num} contains {line.Length} columns; expected {num_columns}");
+                }
+
+                // Construct a new object and execute each column on it
+                var obj = new T();
+                for (var i = 0; i < Math.Min(line.Length, num_columns); i++)
+                {
+
+                    // Attempt to convert this to the specified type
+                    object value = null;
+                    if (column_convert[i] != null && column_convert[i].IsValid(line[i]))
+                    {
+                        value = column_convert[i].ConvertFromString(line[i]);
+                    }
+                    else if (!_settings.IgnoreHeaderErrors)
+                    {
+                        throw new Exception($"The value '{line[i]}' cannot be converted to the type {column_types[i]}.");
+                    }
+                     
+                    // Can we set this value to the object as a property?
+                    if (prop_handlers[i] != null)
+                    {
+                        prop_handlers[i].SetValue(obj, value, null);
+
+                        // Can we set this value to the object as a property?
+                    }
+                    else if (field_handlers[i] != null)
+                    {
+                        field_handlers[i].SetValue(obj, value);
+
+                        // Can we set this value to the object as a property?
+                    }
+                    else if (method_handlers[i] != null)
+                    {
+                        method_handlers[i].Invoke(obj, new[] { value });
+                    }
+                }
+
+                // Keep track of where we are in the file
+                result.Add(obj);
+                row_num++;
+            }
+
+            // Here's your array!
+            return result;
         }
 #endif
 

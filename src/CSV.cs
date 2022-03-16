@@ -484,13 +484,9 @@ namespace CSVFile
         /// <returns></returns>
         public static async Task<List<T>> DeserializeAsync<T>(string source, CSVSettings settings = null) where T : class, new()
         {
-            var byteArray = Encoding.UTF8.GetBytes(source);
-            using (var stream = new MemoryStream(byteArray))
+            using (var cr = CSVReader.FromString(source, settings))
             {
-                using (var cr = await CSVAsyncReader.From(new StreamReader(stream), settings))
-                {
-                    return await cr.Deserialize<T>();
-                }
+                return await cr.DeserializeAsync<T>();
             }
         }
 #endif

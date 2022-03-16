@@ -4,6 +4,8 @@
  * Home page: https://github.com/tspence/csharp-csv-reader
  */
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using NUnit.Framework;
 using CSVFile;
 #if NET50
@@ -34,7 +36,7 @@ namespace CSVTestSuite
             using (var cr = CSVReader.FromString(source, settings))
             {
                 var i = 0;
-                foreach (var line in cr.Lines())
+                foreach (var line in cr)
                 {
                     Assert.AreEqual(3, line.Length);
                     switch (i)
@@ -95,7 +97,7 @@ namespace CSVTestSuite
             using (var cr = CSVReader.FromString(source, settings))
             {
                 var i = 0;
-                foreach (var line in cr.Lines())
+                foreach (var line in cr)
                 {
                     Assert.AreEqual(4, line.Length);
                     switch (i)
@@ -163,7 +165,7 @@ namespace CSVTestSuite
                 Assert.AreEqual(cr.Headers[1], "Title");
                 Assert.AreEqual(cr.Headers[2], "Phone");
                 var i = 1;
-                foreach (var line in cr.Lines())
+                foreach (var line in cr)
                 {
                     switch (i)
                     {
@@ -219,7 +221,7 @@ namespace CSVTestSuite
                 Assert.AreEqual(cr.Headers[1], "Title");
                 Assert.AreEqual(cr.Headers[2], "Phone");
                 var i = 1;
-                foreach (var line in cr.Lines())
+                foreach (var line in cr)
                 {
                     switch (i)
                     {
@@ -275,7 +277,7 @@ namespace CSVTestSuite
                 Assert.AreEqual(cr.Headers[1], "Title");
                 Assert.AreEqual(cr.Headers[2], "Phone");
                 var i = 1;
-                await foreach (var line in cr.LinesAsync())
+                await foreach (var line in cr)
                 {
                     switch (i)
                     {
@@ -306,5 +308,29 @@ namespace CSVTestSuite
             }
         }
 #endif
+        [Test]
+        public void TestEnumThing()
+        {
+            var te = new TestEnumerable();
+            foreach (var list in te)
+            {
+                
+            }
+        }
+    }
+    
+    public class TestEnumerable : IEnumerable<string[]>
+    {
+        public IEnumerator<string[]> GetEnumerator()
+        {
+            yield return new string[] { "", "" };
+            yield return new string[] { "", "" };
+            yield return new string[] { "", "" };
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
     }
 }

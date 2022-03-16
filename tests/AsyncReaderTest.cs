@@ -19,53 +19,58 @@ namespace CSVTestSuite
         [Test]
         public async Task TestBasicReader()
         {
-            string source = "Name,Title,Phone\n" +
+            var source = "Name,Title,Phone\n" +
                 "JD,Doctor,x234\n" +
                 "Janitor,Janitor,x235\n" +
                 "\"Dr. Reed, " + Environment.NewLine + "Eliot\",\"Private \"\"Practice\"\"\",x236\n" +
                 "Dr. Kelso,Chief of Medicine,x100";
 
             // Skip header row
-            CSVSettings settings = new CSVSettings()
+            var settings = new CSVSettings()
             {
                 HeaderRowIncluded = false
             };
 
             // Convert into stream
-            byte[] byteArray = Encoding.UTF8.GetBytes(source);
-            MemoryStream stream = new MemoryStream(byteArray);
-            using (var sr = new StreamReader(stream)) {
-                using (var cr = await CSVAsyncReader.From(sr, settings))
+            using (var cr = CSVReader.FromString(source, settings))
+            {
+                var i = 0;
+                await foreach (var line in cr)
                 {
-                    int i = 0;
-                    await foreach (string[] line in cr) {
-                        Assert.AreEqual(3, line.Length);
-                        if (i == 0) {
+                    Assert.AreEqual(3, line.Length);
+                    switch (i)
+                    {
+                        case 0:
                             Assert.AreEqual(line[0], "Name");
                             Assert.AreEqual(line[1], "Title");
                             Assert.AreEqual(line[2], "Phone");
-                        } else if (i == 1) {
+                            break;
+                        case 1:
                             Assert.AreEqual(line[0], "JD");
                             Assert.AreEqual(line[1], "Doctor");
                             Assert.AreEqual(line[2], "x234");
-                        } else if (i == 2) {
+                            break;
+                        case 2:
                             Assert.AreEqual(line[0], "Janitor");
                             Assert.AreEqual(line[1], "Janitor");
                             Assert.AreEqual(line[2], "x235");
-                        } else if (i == 3) {
+                            break;
+                        case 3:
                             Assert.AreEqual(line[0], "Dr. Reed, " + Environment.NewLine + "Eliot");
                             Assert.AreEqual(line[1], "Private \"Practice\"");
                             Assert.AreEqual(line[2], "x236");
-                        } else if (i == 4) {
+                            break;
+                        case 4:
                             Assert.AreEqual(line[0], "Dr. Kelso");
                             Assert.AreEqual(line[1], "Chief of Medicine");
                             Assert.AreEqual(line[2], "x100");
-                        } else
-                        {
+                            break;
+                        default:
                             Assert.IsTrue(false, "Should not get here");
-                        }
-                        i++;
+                            break;
                     }
+
+                    i++;
                 }
             }
         }
@@ -74,7 +79,7 @@ namespace CSVTestSuite
         [Test]
         public async Task TestDanglingFields()
         {
-            string source = "Name,Title,Phone,Dangle\n" +
+            var source = "Name,Title,Phone,Dangle\n" +
                 "JD,Doctor,x234,\n" +
                 "Janitor,Janitor,x235,\n" +
                 "\"Dr. Reed, " + Environment.NewLine + "Eliot\",\"Private \"\"Practice\"\"\",x236,\n" +
@@ -82,56 +87,62 @@ namespace CSVTestSuite
                 ",,,";
 
             // Skip header row
-            CSVSettings settings = new CSVSettings()
+            var settings = new CSVSettings()
             {
                 HeaderRowIncluded = false
             };
 
             // Convert into stream
-            byte[] byteArray = Encoding.UTF8.GetBytes(source);
-            MemoryStream stream = new MemoryStream(byteArray);
-            using (StreamReader sr = new StreamReader(stream)) {
-                using (var cr = await CSVAsyncReader.From(sr, settings))
+            using (var cr = CSVReader.FromString(source, settings))
+            {
+                var i = 0;
+                await foreach (var line in cr)
                 {
-                    int i = 0;
-                    await foreach (string[] line in cr) {
-                        Assert.AreEqual(4, line.Length);
-                        if (i == 0) {
+                    Assert.AreEqual(4, line.Length);
+                    switch (i)
+                    {
+                        case 0:
                             Assert.AreEqual(line[0], "Name");
                             Assert.AreEqual(line[1], "Title");
                             Assert.AreEqual(line[2], "Phone");
                             Assert.AreEqual(line[3], "Dangle");
-                        } else if (i == 1) {
+                            break;
+                        case 1:
                             Assert.AreEqual(line[0], "JD");
                             Assert.AreEqual(line[1], "Doctor");
                             Assert.AreEqual(line[2], "x234");
                             Assert.AreEqual(line[3], "");
-                        } else if (i == 2) {
+                            break;
+                        case 2:
                             Assert.AreEqual(line[0], "Janitor");
                             Assert.AreEqual(line[1], "Janitor");
                             Assert.AreEqual(line[2], "x235");
                             Assert.AreEqual(line[3], "");
-                        } else if (i == 3) {
+                            break;
+                        case 3:
                             Assert.AreEqual(line[0], "Dr. Reed, " + Environment.NewLine + "Eliot");
                             Assert.AreEqual(line[1], "Private \"Practice\"");
                             Assert.AreEqual(line[2], "x236");
                             Assert.AreEqual(line[3], "");
-                        } else if (i == 4) {
+                            break;
+                        case 4:
                             Assert.AreEqual(line[0], "Dr. Kelso");
                             Assert.AreEqual(line[1], "Chief of Medicine");
                             Assert.AreEqual(line[2], "x100");
                             Assert.AreEqual(line[3], "");
-                        } else if (i == 5) {
+                            break;
+                        case 5:
                             Assert.AreEqual(line[0], "");
                             Assert.AreEqual(line[1], "");
                             Assert.AreEqual(line[2], "");
                             Assert.AreEqual(line[3], "");
-                        } else
-                        {
+                            break;
+                        default:
                             Assert.IsTrue(false, "Should not get here");
-                        }
-                        i++;
+                            break;
                     }
+
+                    i++;
                 }
             }
         }
@@ -139,42 +150,47 @@ namespace CSVTestSuite
         [Test]
         public async Task TestAlternateDelimiterQualifiers()
         {
-            string source = "Name\tTitle\tPhone\n" +
-                "JD\tDoctor\tx234\n" +
-                "Janitor\tJanitor\tx235\n" +
-                "\"Dr. Reed, " + Environment.NewLine + "Eliot\"\t\"Private \"\"Practice\"\"\"\tx236\n" +
-                "Dr. Kelso\tChief of Medicine\tx100";
+            var source = "Name\tTitle\tPhone\n" +
+                         "JD\tDoctor\tx234\n" +
+                         "Janitor\tJanitor\tx235\n" +
+                         "\"Dr. Reed, " + Environment.NewLine + "Eliot\"\t\"Private \"\"Practice\"\"\"\tx236\n" +
+                         "Dr. Kelso\tChief of Medicine\tx100";
 
             // Convert into stream
-            byte[] byteArray = Encoding.UTF8.GetBytes(source);
-            MemoryStream stream = new MemoryStream(byteArray);
-            using (StreamReader sr = new StreamReader(stream)) {
-                using (var cr = await CSVAsyncReader.From(sr, new CSVSettings() { HeaderRowIncluded = true, FieldDelimiter = '\t' }))
+            var settings = new CSVSettings() { HeaderRowIncluded = true, FieldDelimiter = '\t' };
+            using (var cr = CSVReader.FromString(source, settings))
+            {
+                Assert.AreEqual(cr.Headers[0], "Name");
+                Assert.AreEqual(cr.Headers[1], "Title");
+                Assert.AreEqual(cr.Headers[2], "Phone");
+                var i = 1;
+                await foreach (var line in cr)
                 {
-                    Assert.AreEqual(cr.Headers[0], "Name");
-                    Assert.AreEqual(cr.Headers[1], "Title");
-                    Assert.AreEqual(cr.Headers[2], "Phone");
-                    int i = 1;
-                    await foreach (string[] line in cr) {
-                        if (i == 1) {
+                    switch (i)
+                    {
+                        case 1:
                             Assert.AreEqual(line[0], "JD");
                             Assert.AreEqual(line[1], "Doctor");
                             Assert.AreEqual(line[2], "x234");
-                        } else if (i == 2) {
+                            break;
+                        case 2:
                             Assert.AreEqual(line[0], "Janitor");
                             Assert.AreEqual(line[1], "Janitor");
                             Assert.AreEqual(line[2], "x235");
-                        } else if (i == 3) {
+                            break;
+                        case 3:
                             Assert.AreEqual(line[0], "Dr. Reed, " + Environment.NewLine + "Eliot");
                             Assert.AreEqual(line[1], "Private \"Practice\"");
                             Assert.AreEqual(line[2], "x236");
-                        } else if (i == 4) {
+                            break;
+                        case 4:
                             Assert.AreEqual(line[0], "Dr. Kelso");
                             Assert.AreEqual(line[1], "Chief of Medicine");
                             Assert.AreEqual(line[2], "x100");
-                        }
-                        i++;
+                            break;
                     }
+
+                    i++;
                 }
             }
         }

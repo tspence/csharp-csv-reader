@@ -32,7 +32,7 @@ s = array.ToCSVString(settings);
 The latest asynchronous I/O frameworks allow you to stream CSV data off disk without blocking.  Here's how to use the asynchronous I/O features of Dot Net 5.0:
 
 ```csharp
-using (var cr = await CSVAsyncReader.from(stream, settings)) {
+using (var cr = CSVReader.FromFile(filename, settings)) {
     await foreach (string[] line in cr) {
         // Do whatever you want with this one line - the buffer will
         // only hold a small amount of memory at once, so you can 
