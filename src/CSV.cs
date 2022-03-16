@@ -32,9 +32,9 @@ namespace CSVFile
         public const string VERSION = "NET50";
 #elif NET60
         public const string VERSION = "NET60";
-#elif NETSTANDARD10
+#elif NETSTANDARD1_0
         public const string VERSION = "NETSTANDARD10";
-#elif NETSTANDARD20
+#elif NETSTANDARD2_0
         public const string VERSION = "NETSTANDARD20";
 #else
         public const string VERSION = "UNKNOWN";
