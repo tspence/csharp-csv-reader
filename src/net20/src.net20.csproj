@@ -29,6 +29,7 @@
     <DefineConstants>TRACE;NET20;HAS_DATATABLE;HAS_SMTPCLIENT</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Release\net20\src.net20.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />

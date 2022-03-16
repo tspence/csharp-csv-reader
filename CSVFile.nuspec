@@ -2,7 +2,7 @@
 <package >
 	<metadata>
 		<id>CSVFile</id>
-		<version>3.0.6</version>
+		<version>3.0.7</version>
 		<title>CSVFile</title>
 		<authors>Ted Spence</authors>
 		<owners>Ted Spence</owners>
@@ -11,9 +11,13 @@
 		<requireLicenseAcceptance>false</requireLicenseAcceptance>
 		<summary>Tiny and fast CSV and TSV parsing library (40KB) with zero dependencies.  Compatible with most dot net versions.</summary>
 		<description>Tiny and fast CSV and TSV parsing library (40KB) with zero dependencies.  Compatible with most dot net versions.</description>
+		<icon>docs/icons8-spreadsheet-96.png</icon>
 		<releaseNotes>
-			Add back in compatibility with DotNet 2.0!
-			* Extension functions are available, but without `this` keyword
+			March 15, 2022
+			
+			* Added icon to NuGet package
+			* Switched all builds to Release mode
+			* Based on performance tests, removed unnecessary NetCoreApp31, Net50, and Net60 binaries in favor of NetStandard20
 		</releaseNotes>
 		<readme>docs/README.md</readme>
 		<copyright>Copyright 2006 - 2022</copyright>
@@ -24,20 +28,15 @@
 			<group targetFramework=".NETFramework4.0"/>
 			<group targetFramework=".NETFramework4.5"/>
 			<group targetFramework=".NETStandard2.0"/>
-			<group targetFramework="netcoreapp3.1"/>
-			<group targetFramework="net5.0"/>
-			<group targetFramework="net6.0"/>
 		</dependencies>
 	</metadata>
 	<files>
 		<file src=".\LICENSE" target="docs/LICENSE"/>
 		<file src=".\README.md" target="docs/README.md"/>
-		<file src="src\net20\bin\debug\net20\*" target="lib\net20" />
-		<file src="src\net40\bin\debug\net40\*" target="lib\net40" />
-		<file src="src\net45\bin\debug\net45\*" target="lib\net45" />
-		<file src="src\net50\bin\debug\net5.0\*" target="lib\net5.0" />
-		<file src="src\net50\bin\debug\net6.0\*" target="lib\net6.0" />
-		<file src="src\net50\bin\Debug\netcoreapp3.1\*" target="lib\netcoreapp3.1" />
-		<file src="src\netstandard20\bin\debug\netstandard2.0\*" target="lib\netstandard20" />
+		<file src=".\icons8-spreadsheet-96.png" target="docs/icons8-spreadsheet-96.png"/>
+		<file src="src\net20\bin\release\net20\*" target="lib\net20" />
+		<file src="src\net40\bin\release\net40\*" target="lib\net40" />
+		<file src="src\net45\bin\release\net45\*" target="lib\net45" />
+		<file src="src\netstandard20\bin\release\netstandard2.0\*" target="lib\netstandard20" />
 	</files>
 </package>
