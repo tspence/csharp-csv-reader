@@ -16,6 +16,8 @@ using System.Threading.Tasks;
 // ReSharper disable ConvertIfStatementToNullCoalescingAssignment
 // ReSharper disable ReplaceSubstringWithRangeIndexer
 // ReSharper disable InvertIf
+// ReSharper disable ConvertIfStatementToSwitchExpression
+// ReSharper disable ConvertIfStatementToSwitchStatement
 
 namespace CSVFile
 {
@@ -83,6 +85,10 @@ namespace CSVFile
                 settings = CSVSettings.CSV;
             }
 
+            // Allow "sep=" lines to exist
+            var delimiter = settings.FieldDelimiter;
+            var allowSepLine = settings.AllowSepLine;
+
             // Begin reading from the stream
             while (i < line.Length || !inStream.EndOfStream)
             {
@@ -90,6 +96,18 @@ namespace CSVFile
                 i++;
                 if (i >= line.Length) {
                     var newLine = inStream.ReadLine();
+                    
+                    // Check for the presence of a "sep=" line
+                    if (allowSepLine)
+                    {
+                        var newDelimiter = ParseSepLine(newLine);
+                        if (newDelimiter != null)
+                        {
+                            delimiter = newDelimiter.Value;
+                            newLine = inStream.ReadLine();
+                        }
+                        allowSepLine = false;
+                    }
                     line += newLine + settings.LineSeparator;
                 }
                 var c = line[i];
@@ -155,7 +173,7 @@ namespace CSVFile
 
                     // Does this start a new field?
                 }
-                else if (c == settings.FieldDelimiter)
+                else if (c == delimiter)
                 {
                     // Is this a null token, and do we permit null tokens?
                     AddToken(list, work, settings);
@@ -196,6 +214,10 @@ namespace CSVFile
                 settings = CSVSettings.CSV;
             }
 
+            // Allow "sep=" lines to exist
+            var delimiter = settings.FieldDelimiter;
+            var allowSepLine = settings.AllowSepLine;
+
             // Begin reading from the stream
             while (i < line.Length || !inStream.EndOfStream)
             {
@@ -204,12 +226,24 @@ namespace CSVFile
                 if (i >= line.Length)
                 {
                     var newLine = await inStream.ReadLineAsync();
+                    
+                    // Check for the presence of a "sep=" line
+                    if (allowSepLine)
+                    {
+                        var newDelimiter = CSV.ParseSepLine(newLine);
+                        if (newDelimiter != null)
+                        {
+                            delimiter = newDelimiter.Value;
+                            newLine = await inStream.ReadLineAsync();
+                        }
+                        allowSepLine = false;
+                    }
                     line += newLine + settings.LineSeparator;
                 }
-                char c = line[i];
+                var c = line[i];
 
                 // Are we at a line separator? If so, yield our work and begin again
-                if (String.Equals(line.Substring(i, settings.LineSeparator.Length), settings.LineSeparator))
+                if (string.Equals(line.Substring(i, settings.LineSeparator.Length), settings.LineSeparator))
                 {
                     list.Add(work.ToString());
                     yield return list.ToArray();
@@ -236,7 +270,7 @@ namespace CSVFile
                 else if ((c == settings.TextQualifier) && (work.Length == 0))
                 {
                     // Our next task is to find the end of this qualified-text field
-                    int p2 = -1;
+                    var p2 = -1;
                     while (p2 < 0)
                     {
 
@@ -249,7 +283,7 @@ namespace CSVFile
                             work.Append(line.Substring(i + 1));
                             i = -1;
                             var newLine = await inStream.ReadLineAsync();
-                            if (String.IsNullOrEmpty(newLine) && inStream.EndOfStream)
+                            if (string.IsNullOrEmpty(newLine) && inStream.EndOfStream)
                             {
                                 break;
                             }
@@ -272,7 +306,7 @@ namespace CSVFile
 
                     // Does this start a new field?
                 }
-                else if (c == settings.FieldDelimiter)
+                else if (c == delimiter)
                 {
                     // Is this a null token, and do we permit null tokens?
                     AddToken(list, work, settings);
@@ -315,6 +349,9 @@ namespace CSVFile
 
         /// <summary>
         /// Try to parse a line of CSV data.  Can only return false if an unterminated text qualifier is encountered.
+        ///
+        /// This function cannot recognize 'sep=' lines because it does not know whether it is parsing the first line
+        /// in the overall CSV stream.
         /// </summary>
         /// <returns>False if there was an unterminated text qualifier in the <paramref name="line"/></returns>
         /// <param name="line">The line of text to parse</param>
@@ -633,6 +670,35 @@ namespace CSVFile
 
             // Subtract the trailing delimiter so we don't inadvertently add an empty column at the end
             sb.Length -= 1;
+        }
+
+        /// <summary>
+        /// Parse a separator line and determine
+        /// </summary>
+        /// <param name="line"></param>
+        /// <returns>The separator</returns>
+        public static char? ParseSepLine(string line)
+        {
+            if (line.StartsWith("sep", StringComparison.OrdinalIgnoreCase))
+            {
+                var equals = line.Substring(3).Trim();
+                if (equals.StartsWith("="))
+                {
+                    var separator = equals.Substring(1).Trim();
+                    if (separator.Length > 1)
+                    {
+                        throw new Exception("Separator in 'sep=' line must be a single character");
+                    }
+
+                    if (separator.Length == 1)
+                    {
+                        return separator[0];
+                    }
+                }
+            }
+
+            // This wasn't a sep line
+            return null;
         }
     }
 }

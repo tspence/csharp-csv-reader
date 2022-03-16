@@ -11,6 +11,15 @@ using System.Data;
 #endif
 using System.Reflection;
 using System.ComponentModel;
+using System.Net.Mime;
+using System.Text;
+
+// These suggestions from Resharper apply because we don't want it to recommend fixing things needed for Net20:
+// ReSharper disable LoopCanBeConvertedToQuery
+// ReSharper disable ConvertIfStatementToNullCoalescingAssignment
+// ReSharper disable ReplaceSubstringWithRangeIndexer
+// ReSharper disable InvertIf
+// ReSharper disable ConvertIfStatementToNullCoalescingExpression
 
 namespace CSVFile
 {
@@ -28,15 +37,50 @@ namespace CSVFile
         public readonly string[] Headers = null;
 
         /// <summary>
+        /// Convenience function to read from a string
+        /// </summary>
+        /// <param name="source">The string to read</param>
+        /// <param name="settings">The CSV settings to use for this reader (Default: CSV)</param>
+        /// <param name="encoding">The string encoding to use for the reader (Default: UTF8)</param>
+        /// <returns></returns>
+        public static CSVReader FromString(string source, CSVSettings settings = null, Encoding encoding = null)
+        {
+            if (encoding == null)
+            {
+                encoding = Encoding.UTF8;
+            }
+            var byteArray = encoding.GetBytes(source);
+            var stream = new MemoryStream(byteArray);
+            var sr = new StreamReader(stream);
+            return new CSVReader(sr, settings);
+        }
+
+        /// <summary>
+        /// Convenience function to read from a file on disk
+        /// </summary>
+        /// <param name="filename">The file to read</param>
+        /// <param name="settings">The CSV settings to use for this reader (Default: CSV)</param>
+        /// <param name="encoding">The string encoding to use for the reader (Default: UTF8)</param>
+        /// <returns></returns>
+        public static CSVReader FromFile(string filename, CSVSettings settings = null, Encoding encoding = null)
+        {
+            if (encoding == null)
+            {
+                encoding = Encoding.UTF8;
+            }
+            var sr = new StreamReader(filename, encoding);
+            return new CSVReader(sr, settings);
+        }
+        
+        /// <summary>
         /// Construct a new CSV reader off a streamed source
         /// </summary>
-        /// <param name="source">The stream source</param>
+        /// <param name="source">The stream source. Note that when disposed, the CSV Reader will dispose the stream reader.</param>
         /// <param name="settings">The CSV settings to use for this reader (Default: CSV)</param>
         public CSVReader(StreamReader source, CSVSettings settings = null)
         {
             _stream = source;
             _settings = settings;
-            // ReSharper disable once ConvertIfStatementToNullCoalescingExpression
             if (_settings == null)
             {
                 _settings = CSVSettings.CSV;
@@ -46,6 +90,16 @@ namespace CSVFile
             if (_settings.HeaderRowIncluded)
             {
                 var line = source.ReadLine();
+                if (_settings.AllowSepLine)
+                {
+                    var newDelimiter = CSV.ParseSepLine(line);
+                    if (newDelimiter != null)
+                    {
+                        _settings.FieldDelimiter = newDelimiter.Value;
+                        line = source.ReadLine();
+                    }
+                }
+
                 Headers = CSV.ParseLine(line, _settings);
             }
             else
@@ -88,7 +142,7 @@ namespace CSVFile
         /// <returns></returns>
         public DataTable ReadAsDataTable()
         {
-            DataTable dt = new DataTable();
+            var dt = new DataTable();
             string[] firstLine = null;
 
             // File contains column names - so name each column properly
@@ -97,20 +151,20 @@ namespace CSVFile
                 var rawLine = _stream.ReadLine();
                 firstLine = CSV.ParseLine(rawLine, _settings);
                 var list = new List<string>();
-                for (int i = 0; i < firstLine.Length; i++) {
+                for (var i = 0; i < firstLine.Length; i++) {
                     list.Add($"Column{i}");
                 }
             }
 
             // Add headers
-            int numColumns = Headers.Length;
-            for (int i = 0; i < Headers.Length; i++)
+            var numColumns = Headers.Length;
+            foreach (var t in Headers)
             {
-                dt.Columns.Add(new DataColumn(Headers[i], typeof(string)));
+                dt.Columns.Add(new DataColumn(t, typeof(string)));
             }
 
             // If we had to read the first line to get dimensions, add it
-            int row_num = 1;
+            var row_num = 1;
             if (firstLine != null)
             {
                 dt.Rows.Add(firstLine);
@@ -127,7 +181,7 @@ namespace CSVFile
                     } else {
 
                         // Add as best we can - construct a new line and make it fit
-                        List<string> list = new List<string>();
+                        var list = new List<string>();
                         list.AddRange(line);
                         while (list.Count < numColumns) {
                             list.Add("");
@@ -152,12 +206,12 @@ namespace CSVFile
         /// </summary>
         public List<T> Deserialize<T>() where T : class, new()
         {
-            List<T> result = new List<T>();
-            Type return_type = typeof(T);
+            var result = new List<T>();
+            var return_type = typeof(T);
 
             // Read in the first line - we have to have headers!
             if (Headers == null) throw new Exception("CSV must have headers to be deserialized");
-            int num_columns = Headers.Length;
+            var num_columns = Headers.Length;
 
             // Set binding flags correctly
             var bindings = BindingFlags.Public | BindingFlags.Instance;
@@ -167,12 +221,12 @@ namespace CSVFile
             }
 
             // Determine how to handle each column in the file - check properties, fields, and methods
-            Type[] column_types = new Type[num_columns];
-            TypeConverter[] column_convert = new TypeConverter[num_columns];
-            PropertyInfo[] prop_handlers = new PropertyInfo[num_columns];
-            FieldInfo[] field_handlers = new FieldInfo[num_columns];
-            MethodInfo[] method_handlers = new MethodInfo[num_columns];
-            for (int i = 0; i < num_columns; i++)
+            var column_types = new Type[num_columns];
+            var column_convert = new TypeConverter[num_columns];
+            var prop_handlers = new PropertyInfo[num_columns];
+            var field_handlers = new FieldInfo[num_columns];
+            var method_handlers = new MethodInfo[num_columns];
+            for (var i = 0; i < num_columns; i++)
             {
                 prop_handlers[i] = return_type.GetProperty(Headers[i], bindings);
 
@@ -186,7 +240,7 @@ namespace CSVFile
                     {
 
                         // Methods must be treated differently - we have to ensure that the method has a single parameter
-                        MethodInfo mi = return_type.GetMethod(Headers[i], bindings);
+                        var mi = return_type.GetMethod(Headers[i], bindings);
                         if (mi != null)
                         {
                             if (mi.GetParameters().Length == 1)
@@ -228,8 +282,8 @@ namespace CSVFile
             }
 
             // Alright, let's retrieve CSV lines and parse each one!
-            int row_num = 1;
-            foreach (string[] line in Lines())
+            var row_num = 1;
+            foreach (var line in Lines())
             {
 
                 // Does this line match the length of the first line?  Does the caller want us to complain?
@@ -238,8 +292,8 @@ namespace CSVFile
                 }
 
                 // Construct a new object and execute each column on it
-                T obj = new T();
-                for (int i = 0; i < Math.Min(line.Length, num_columns); i++)
+                var obj = new T();
+                for (var i = 0; i < Math.Min(line.Length, num_columns); i++)
                 {
 
                     // Attempt to convert this to the specified type
@@ -307,27 +361,27 @@ namespace CSVFile
             if (settings == null) settings = CSVSettings.CSV;
 
             // Let's begin parsing
-            int file_id = 1;
-            int line_count = 0;
-            string file_prefix = Path.GetFileNameWithoutExtension(filename);
-            string ext = Path.GetExtension(filename);
+            var file_id = 1;
+            var line_count = 0;
+            var file_prefix = Path.GetFileNameWithoutExtension(filename);
+            var ext = Path.GetExtension(filename);
             CSVWriter cw = null;
             StreamWriter sw = null;
 
             // Read in lines from the file
             using (var sr = new StreamReader(filename))
             {
-                using (CSVReader cr = new CSVReader(sr, settings))
+                using (var cr = new CSVReader(sr, settings))
                 {
 
                     // Okay, let's do the real work
-                    foreach (string[] line in cr.Lines())
+                    foreach (var line in cr.Lines())
                     {
 
                         // Do we need to create a file for writing?
                         if (cw == null)
                         {
-                            string fn = Path.Combine(out_folder, file_prefix + file_id.ToString() + ext);
+                            var fn = Path.Combine(out_folder, file_prefix + file_id.ToString() + ext);
                             sw = new StreamWriter(fn);
                             cw = new CSVWriter(sw, settings);
                             if (settings.HeaderRowIncluded)
@@ -352,7 +406,7 @@ namespace CSVFile
                 }
             }
 
-            // Ensore the final CSVWriter is closed properly
+            // Ensure the final CSVWriter is closed properly
             if (cw != null)
             {
                 cw.Dispose();
