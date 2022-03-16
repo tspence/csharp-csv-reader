@@ -17,6 +17,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{E92F982D
 		LICENSE = LICENSE
 		README.md = README.md
 		icons8-spreadsheet-96.png = icons8-spreadsheet-96.png
+		.github\workflows\dotnet.yml = .github\workflows\dotnet.yml
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "dot net framework", "dot net framework", "{3D301792-0A39-4D02-927E-B7EFFAC43E30}"
