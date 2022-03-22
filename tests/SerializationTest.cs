@@ -242,7 +242,7 @@ namespace CSVTestSuite
         
 #if HAS_ASYNC
         [Test]
-        public void DeserializeLastColumnNullableSingleAsync()
+        public async Task DeserializeLastColumnNullableSingleAsync()
         {
             var csv = "TestString,IntProperty,NullableSingle\n" +
                       "Test String,57,12.35\n" +
@@ -257,28 +257,8 @@ namespace CSVTestSuite
             settings.NullToken = string.Empty;
             settings.IgnoreEmptyLineForDeserialization = true;
 
-            // Deserialize back from a CSV string - should not throw any errors!
-            var list = CSV.Deserialize<TestClassLastColumnNullableSingle>(csv, settings).ToList();
-            Assert.AreEqual(4, list.Count);
-
-            Assert.AreEqual("Test String", list[0].TestString);
-            Assert.AreEqual(57, list[0].IntProperty);
-            Assert.AreEqual(12.35f, list[0].NullableSingle);
-            
-            Assert.AreEqual("Test String", list[1].TestString);
-            Assert.AreEqual(57, list[1].IntProperty);
-            Assert.IsNull(list[1].NullableSingle);
-            
-            Assert.AreEqual("Test String", list[2].TestString);
-            Assert.AreEqual(57, list[2].IntProperty);
-            Assert.AreEqual(56.19f, list[2].NullableSingle);
-
-            Assert.AreEqual("Test String", list[3].TestString);
-            Assert.AreEqual(57, list[3].IntProperty);
-            Assert.IsNull(list[3].NullableSingle);
-        
-            // Try again, this time with async
-            list = await CSV.DeserializeAsync<TestClassLastColumnNullableSingle>(csv, settings).ToList();
+            // Try deserializing using the async version
+            var list = await CSV.DeserializeAsync<TestClassLastColumnNullableSingle>(csv, settings).ToListAsync();
             Assert.AreEqual(4, list.Count);
 
             Assert.AreEqual("Test String", list[0].TestString);

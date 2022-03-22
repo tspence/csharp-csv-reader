@@ -11,6 +11,10 @@
     <DefineConstants>TRACE;NET50;HAS_DATATABLE;HAS_ASYNC;</DefineConstants>
   </PropertyGroup>
 
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <DefineConstants>TRACE;HAS_ASYNC;</DefineConstants>
+  </PropertyGroup>
+
   <ItemGroup>
     <Compile Include="..\AsyncReaderTest.cs" Link="AsyncReaderTest.cs" />
     <Compile Include="..\BasicParseTests.cs" Link="BasicParseTests.cs" />
@@ -25,6 +29,7 @@
     <PackageReference Include="NUnit" Version="3.12.0" />
     <PackageReference Include="NUnit3TestAdapter" Version="3.16.1" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.5.0" />
+    <PackageReference Include="System.Linq.Async" Version="6.0.1" />
   </ItemGroup>
 
   <ItemGroup>

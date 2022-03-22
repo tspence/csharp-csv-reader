@@ -248,7 +248,7 @@ namespace CSVFile
             await foreach (var line in this)
             {
                 // If this line is completely empty, do our settings permit us to ignore the empty line?
-                if (line.Length == 0 || (line.Length == 1 && line[0] == String.Empty) && _settings.IgnoreEmptyLineForDeserialization)
+                if (line.Length == 0 || (line.Length == 1 && line[0] == string.Empty) && _settings.IgnoreEmptyLineForDeserialization)
                 {
                     continue;
                 }
@@ -263,10 +263,13 @@ namespace CSVFile
                 var obj = new T();
                 for (var i = 0; i < Math.Min(line.Length, num_columns); i++)
                 {
-
                     // Attempt to convert this to the specified type
                     object value = null;
-                    if (column_convert[i] != null && column_convert[i].IsValid(line[i]))
+                    if (_settings.AllowNull && (line[i] == null || line[i] == _settings.NullToken))
+                    {
+                        value = null;
+                    } 
+                    else if (column_convert[i] != null && column_convert[i].IsValid(line[i]))
                     {
                         value = column_convert[i].ConvertFromString(line[i]);
                     }
@@ -274,7 +277,7 @@ namespace CSVFile
                     {
                         throw new Exception($"The value '{line[i]}' cannot be converted to the type {column_types[i]}.");
                     }
-                     
+
                     // Can we set this value to the object as a property?
                     if (prop_handlers[i] != null)
                     {
@@ -290,7 +293,7 @@ namespace CSVFile
                     }
                     else if (method_handlers[i] != null)
                     {
-                        method_handlers[i].Invoke(obj, new[] { value });
+                        method_handlers[i].Invoke(obj, new object[] { value });
                     }
                 }
 
