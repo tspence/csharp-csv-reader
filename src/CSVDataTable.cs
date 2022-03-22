@@ -69,6 +69,8 @@ namespace CSVFile
         /// <param name="to_address"></param>
         /// <param name="subject"></param>
         /// <param name="body"></param>
+        /// <param name="smtp_host"></param>
+        /// <param name="attachment_filename"></param>
 #if NET20
         public static void SendCsvAttachment(DataTable dt, string from_address, string to_address, string subject, string body, string smtp_host, string attachment_filename)
 #else

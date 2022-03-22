@@ -247,6 +247,11 @@ namespace CSVFile
             var row_num = 1;
             await foreach (var line in this)
             {
+                // If this line is completely empty, do our settings permit us to ignore the empty line?
+                if (line.Length == 0 || (line.Length == 1 && line[0] == String.Empty) && _settings.IgnoreEmptyLineForDeserialization)
+                {
+                    continue;
+                }
 
                 // Does this line match the length of the first line?  Does the caller want us to complain?
                 if ((line.Length != num_columns) && !_settings.IgnoreHeaderErrors)
@@ -451,9 +456,14 @@ namespace CSVFile
             var row_num = 1;
             foreach (var line in CSV.ParseStream(_stream, _settings))
             {
+                // If this line is completely empty, do our settings permit us to ignore the empty line?
+                if (line.Length == 0 || (line.Length == 1 && line[0] == String.Empty) && _settings.IgnoreEmptyLineForDeserialization)
+                {
+                    continue;
+                }
 
                 // Does this line match the length of the first line?  Does the caller want us to complain?
-                if ((line.Length != num_columns) && !_settings.IgnoreHeaderErrors) {
+                if (line.Length != num_columns && !_settings.IgnoreHeaderErrors) {
                     throw new Exception($"Line #{row_num} contains {line.Length} columns; expected {num_columns}");
                 }
 
