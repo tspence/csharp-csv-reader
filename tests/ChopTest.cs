@@ -26,8 +26,8 @@ namespace CSVTestSuite
         [Test]
         public void DataTableChopTest()
         {
-            List<SimpleChopClass> list = new List<SimpleChopClass>();
-            for (int i = 0; i < 5000; i++)
+            var list = new List<SimpleChopClass>();
+            for (var i = 0; i < 5000; i++)
             {
                 list.Add(new SimpleChopClass()
                 {
@@ -36,7 +36,7 @@ namespace CSVTestSuite
                     email = $"bob.smith.{i}@example.com"
                 });
             }
-            for (int i = 5000; i < 10000; i++)
+            for (var i = 5000; i < 10000; i++)
             {
                 list.Add(new SimpleChopClass()
                 {
@@ -45,7 +45,7 @@ namespace CSVTestSuite
                     email = $"alice.jones.{i}@example.com"
                 });
             }
-            for (int i = 10000; i < 15000; i++)
+            for (var i = 10000; i < 15000; i++)
             {
                 list.Add(new SimpleChopClass()
                 {
@@ -56,67 +56,78 @@ namespace CSVTestSuite
             }
 
             // Save this string to a test file
-            string singlefile = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString() + ".csv");
-            var rawcsv = CSV.Serialize<SimpleChopClass>(list);
-            File.WriteAllText(singlefile, rawcsv);
-
-            // Create an empty test folder
-            string dirname = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
-            Directory.CreateDirectory(dirname);
-
-            // Chop this file into one-line chunks
-            CSVReader.ChopFile(singlefile, dirname, 5000);
-
-            // Verify that we got three files
-            string[] files = Directory.GetFiles(dirname).OrderBy(f => f).ToArray();
-            Assert.AreEqual(3, files.Length);
-
-            // Read in each file and verify that each one has one line
-            var f1 = CSV.Deserialize<SimpleChopClass>(File.ReadAllText(files[0])).ToList();
-            Assert.AreEqual(5000, f1.Count);
-
-            var f2 = CSV.Deserialize<SimpleChopClass>(File.ReadAllText(files[1])).ToList();
-            Assert.AreEqual(5000, f2.Count);
-
-            var f3 = CSV.Deserialize<SimpleChopClass>(File.ReadAllText(files[2])).ToList();
-            Assert.AreEqual(5000, f3.Count);
-
-            // Merge and verify
-            var results = new List<SimpleChopClass>();
-            results.AddRange(f1);
-            results.AddRange(f2);
-            results.AddRange(f3);
-            for (int i = 0; i < list.Count; i++)
+            var singleFile = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString() + ".csv");
+            var dirname = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+            try
             {
-                Assert.AreEqual(list[i].id, results[i].id);
-                Assert.AreEqual(list[i].name, results[i].name);
-                Assert.AreEqual(list[i].email, results[i].email);
-            }
+                var rawString = CSV.Serialize<SimpleChopClass>(list);
+                File.WriteAllText(singleFile, rawString);
 
+                // Create an empty test folder
+                Directory.CreateDirectory(dirname);
+
+                // Chop this file into one-line chunks
+                CSVReader.ChopFile(singleFile, dirname, 5000);
+
+                // Verify that we got three files
+                var files = Directory.GetFiles(dirname).OrderBy(f => f).ToArray();
+                Assert.AreEqual(3, files.Length);
+
+                // Read in each file and verify that each one has one line
+                var f1 = CSV.Deserialize<SimpleChopClass>(File.ReadAllText(files[0])).ToList();
+                Assert.AreEqual(5000, f1.Count);
+
+                var f2 = CSV.Deserialize<SimpleChopClass>(File.ReadAllText(files[1])).ToList();
+                Assert.AreEqual(5000, f2.Count);
+
+                var f3 = CSV.Deserialize<SimpleChopClass>(File.ReadAllText(files[2])).ToList();
+                Assert.AreEqual(5000, f3.Count);
+
+                // Merge and verify
+                var results = new List<SimpleChopClass>();
+                results.AddRange(f1);
+                results.AddRange(f2);
+                results.AddRange(f3);
+                for (var i = 0; i < list.Count; i++)
+                {
+                    Assert.AreEqual(list[i].id, results[i].id);
+                    Assert.AreEqual(list[i].name, results[i].name);
+                    Assert.AreEqual(list[i].email, results[i].email);
+                }
+            }
             // Clean up
-            Directory.Delete(dirname, true);
-            File.Delete(singlefile);
+            finally
+            {
+                if (Directory.Exists(dirname))
+                {
+                    Directory.Delete(dirname, true);
+                }
+                if (File.Exists(singleFile))
+                {
+                    File.Delete(singleFile);
+                }
+            }
         }
 
         [Test]
         public void DataTableChoppingFiles()
         {
-            string source = @"timestamp,TestString,SetComment,PropertyString,IntField,IntProperty
-2012-05-01,test1,""Hi there, I said!"",Bob,57,0
-2011-04-01,test2,""What's up, buttercup?"",Ralph,1,-999
-1975-06-03,test3,""Bye and bye, dragonfly!"",Jimmy's The Bomb,12,13";
+            const string source = "timestamp,TestString,SetComment,PropertyString,IntField,IntProperty\r\n" +
+                "2012-05-01,test1,\"Hi there, I said!\",Bob,57,0\r\n" +
+                "2011-04-01,test2,\"What's up, buttercup?\",Ralph,1,-999\r\n" +
+                "1975-06-03,test3,\"Bye and bye, dragonfly!\",Jimmy's The Bomb,12,13";
             var dt = CSVDataTable.FromString(source);
             Assert.AreEqual("2012-05-01", dt.Rows[0].ItemArray[0]);
             Assert.AreEqual("2011-04-01", dt.Rows[1].ItemArray[0]);
             Assert.AreEqual("1975-06-03", dt.Rows[2].ItemArray[0]);
 
             // Save this string to a test file
-            string test_rootfn = Guid.NewGuid().ToString();
-            string outfile = test_rootfn + ".csv";
+            var fileGroupName = Guid.NewGuid().ToString();
+            var outfile = fileGroupName + ".csv";
             CSVDataTable.WriteToFile(dt, outfile);
 
             // Create an empty test folder
-            string dirname = Guid.NewGuid().ToString();
+            var dirname = Guid.NewGuid().ToString();
             Directory.CreateDirectory(dirname);
 
             // Chop this file into one-line chunks

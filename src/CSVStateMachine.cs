@@ -78,9 +78,26 @@ namespace CSVFile
             // We are ready for work
             State = CSVState.CanKeepGoing;
         }
+
+        /// <summary>
+        /// Parse a single line when read from a stream.
+        ///
+        /// Call this function when you are using the "ReadLine" or "ReadLineAsync" functions so that
+        /// each line will obey the CSV Settings rules for line separators.
+        /// </summary>
+        /// <param name="line"></param>
+        /// <param name="reachedEnd"></param>
+        /// <returns></returns>
+        public string[] ParseLine(string line, bool reachedEnd)
+        {
+            return ParseChunk(line + _settings.LineSeparator, reachedEnd);
+        }
         
         /// <summary>
-        /// Parse a new chunk of text
+        /// Parse a new chunk of text retrieved via some other means than a stream.
+        ///
+        /// Call this function when you are retrieving your own text and when each chunk may or may not
+        /// include line separators, and your stream does not consume line separators on its own.
         /// </summary>
         /// <param name="chunk">The new data to process</param>
         /// <param name="reachedEnd">Set this value to true </param>
@@ -88,10 +105,6 @@ namespace CSVFile
         public string[] ParseChunk(string chunk, bool reachedEnd)
         {
             // Add this chunk to the current processing logic
-            if (_line != string.Empty)
-            {
-                _line += _settings.LineSeparator;
-            }
             _line += chunk;
             
             // Check for the presence of a "sep=" line once at the beginning of a stream

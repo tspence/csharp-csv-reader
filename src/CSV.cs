@@ -62,12 +62,12 @@ namespace CSVFile
             while (machine.State == CSVState.CanKeepGoing)
             {
                 var line = string.Empty;
-                if (inStream.EndOfStream)
+                if (!inStream.EndOfStream)
                 {
                     line = inStream.ReadLine();
                 }
 
-                var row = machine.ParseChunk(line, inStream.EndOfStream);
+                var row = machine.ParseLine(line, inStream.EndOfStream);
 
                 // Did we get a row?
                 if (row != null)
@@ -92,12 +92,12 @@ namespace CSVFile
             while (machine.State == CSVState.CanKeepGoing)
             {
                 var line = string.Empty;
-                if (inStream.EndOfStream)
+                if (!inStream.EndOfStream)
                 {
                     line = await inStream.ReadLineAsync();
                 }
 
-                var row = machine.ParseChunk(line, inStream.EndOfStream);
+                var row = machine.ParseLine(line, inStream.EndOfStream);
 
                 // Did we get a row?
                 if (row != null)
