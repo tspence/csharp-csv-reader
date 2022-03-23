@@ -18,7 +18,7 @@ namespace CSVTestSuite
         public void ParseBasicCSV()
         {
             // Simplest test
-            string[] line = CSV.ParseLine("1,2,3,4,5");
+            var line = CSV.ParseLine("1,2,3,4,5");
             Assert.AreEqual(line.Length, 5);
             Assert.AreEqual(line[2], "3");
             Assert.AreEqual(line[4], "5");

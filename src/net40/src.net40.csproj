@@ -56,6 +56,9 @@
     <Compile Include="..\CSVDataTable.cs">
       <Link>CSVDataTable.cs</Link>
     </Compile>
+    <Compile Include="..\CSVStateMachine.cs">
+      <Link>CSVStateMachine.cs</Link>
+    </Compile>
     <Compile Include="..\CSVWriter.cs">
       <Link>CSVWriter.cs</Link>
     </Compile>
