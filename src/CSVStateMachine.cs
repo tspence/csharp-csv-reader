@@ -161,6 +161,10 @@ namespace CSVFile
                 // Are we currently processing a text block (which may optionally span multiple lines)?
                 if (_inTextQualifier || (!_inTextQualifier && c == _settings.TextQualifier && _work.Length == 0))
                 {
+                    if (_inTextQualifier)
+                    {
+                        _work.Append(c);
+                    }
                     _inTextQualifier = true;
                     
                     // Our next task is to find the end of this qualified-text field
