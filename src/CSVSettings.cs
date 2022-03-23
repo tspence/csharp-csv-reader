@@ -94,6 +94,12 @@ namespace CSVFile
         /// Expect headers to be case sensitive during deserialization
         /// </summary>
         public bool HeadersCaseSensitive { get; set; }
+        
+        /// <summary>
+        /// Some CSV files contain an empty line at the end. If you set this flag to true, deserialization will
+        /// not throw an error for empty lines and will instead ignore it.
+        /// </summary>
+        public bool IgnoreEmptyLineForDeserialization { get; set; }
 
         /// <summary>
         /// Standard comma-separated value (CSV) file settings

@@ -69,6 +69,8 @@ namespace CSVFile
         /// <param name="to_address"></param>
         /// <param name="subject"></param>
         /// <param name="body"></param>
+        /// <param name="smtp_host"></param>
+        /// <param name="attachment_filename"></param>
 #if NET20
         public static void SendCsvAttachment(DataTable dt, string from_address, string to_address, string subject, string body, string smtp_host, string attachment_filename)
 #else
@@ -113,7 +115,7 @@ namespace CSVFile
         public static void WriteToFile(this DataTable dt, string filename, CSVSettings settings = null)
 #endif
         {
-            using (StreamWriter sw = new StreamWriter(filename))
+            using (var sw = new StreamWriter(filename))
             {
                 WriteToStream(dt, sw, settings);
             }
@@ -131,7 +133,7 @@ namespace CSVFile
         public static void WriteToStream(this DataTable dt, StreamWriter sw, CSVSettings settings = null)
 #endif
         {
-            using (CSVWriter cw = new CSVWriter(sw, settings))
+            using (var cw = new CSVWriter(sw, settings))
             {
                 cw.Write(dt);
             }

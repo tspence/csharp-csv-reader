@@ -195,5 +195,88 @@ namespace CSVTestSuite
             // Did an empty field get imported as an empty string?
             Assert.AreEqual("", list[4].FirstColumn);
         }
+
+        public class TestClassLastColumnNullableSingle
+        {
+            public string TestString;
+            public int IntProperty { get; set; }
+            public float? NullableSingle { get; set; }
+        }
+        
+        [Test]
+        public void DeserializeLastColumnNullableSingle()
+        {
+            var csv = "TestString,IntProperty,NullableSingle\n" +
+                      "Test String,57,12.35\n" +
+                      "Test String,57,\n" +
+                      "Test String,57,56.19\n" + 
+                      "Test String,57,\n" +
+                      "\n";
+            
+            // Let's specifically allow null
+            var settings = new CSVSettings();
+            settings.AllowNull = true;
+            settings.NullToken = string.Empty;
+            settings.IgnoreEmptyLineForDeserialization = true;
+
+            // Deserialize back from a CSV string - should not throw any errors!
+            var list = CSV.Deserialize<TestClassLastColumnNullableSingle>(csv, settings).ToList();
+            Assert.AreEqual(4, list.Count);
+
+            Assert.AreEqual("Test String", list[0].TestString);
+            Assert.AreEqual(57, list[0].IntProperty);
+            Assert.AreEqual(12.35f, list[0].NullableSingle);
+            
+            Assert.AreEqual("Test String", list[1].TestString);
+            Assert.AreEqual(57, list[1].IntProperty);
+            Assert.IsNull(list[1].NullableSingle);
+            
+            Assert.AreEqual("Test String", list[2].TestString);
+            Assert.AreEqual(57, list[2].IntProperty);
+            Assert.AreEqual(56.19f, list[2].NullableSingle);
+
+            Assert.AreEqual("Test String", list[3].TestString);
+            Assert.AreEqual(57, list[3].IntProperty);
+            Assert.IsNull(list[3].NullableSingle);
+        }
+        
+#if HAS_ASYNC
+        [Test]
+        public async Task DeserializeLastColumnNullableSingleAsync()
+        {
+            var csv = "TestString,IntProperty,NullableSingle\n" +
+                      "Test String,57,12.35\n" +
+                      "Test String,57,\n" +
+                      "Test String,57,56.19\n" + 
+                      "Test String,57,\n" +
+                      "\n";
+            
+            // Let's specifically allow null
+            var settings = new CSVSettings();
+            settings.AllowNull = true;
+            settings.NullToken = string.Empty;
+            settings.IgnoreEmptyLineForDeserialization = true;
+
+            // Try deserializing using the async version
+            var list = await CSV.DeserializeAsync<TestClassLastColumnNullableSingle>(csv, settings).ToListAsync();
+            Assert.AreEqual(4, list.Count);
+
+            Assert.AreEqual("Test String", list[0].TestString);
+            Assert.AreEqual(57, list[0].IntProperty);
+            Assert.AreEqual(12.35f, list[0].NullableSingle);
+            
+            Assert.AreEqual("Test String", list[1].TestString);
+            Assert.AreEqual(57, list[1].IntProperty);
+            Assert.IsNull(list[1].NullableSingle);
+            
+            Assert.AreEqual("Test String", list[2].TestString);
+            Assert.AreEqual(57, list[2].IntProperty);
+            Assert.AreEqual(56.19f, list[2].NullableSingle);
+
+            Assert.AreEqual("Test String", list[3].TestString);
+            Assert.AreEqual(57, list[3].IntProperty);
+            Assert.IsNull(list[3].NullableSingle);
+        }
+#endif
     }
 }
