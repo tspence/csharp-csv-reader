@@ -60,7 +60,6 @@ namespace CSVFile
             }
         }
 
-#if HAS_SMTPCLIENT
         /// <summary>
         /// Quick shortcut to send a datatable as an attachment via SMTP
         /// </summary>
@@ -71,7 +70,7 @@ namespace CSVFile
         /// <param name="body"></param>
         /// <param name="smtp_host"></param>
         /// <param name="attachment_filename"></param>
-#if NET20
+#if NET2_0
         public static void SendCsvAttachment(DataTable dt, string from_address, string to_address, string subject, string body, string smtp_host, string attachment_filename)
 #else
         public static void SendCsvAttachment(this DataTable dt, string from_address, string to_address, string subject, string body, string smtp_host, string attachment_filename)
@@ -90,7 +89,7 @@ namespace CSVFile
             a.Name = attachment_filename;
             message.Attachments.Add(a);
 
-#if NET20
+#if NET2_0
             // In DotNet 2.0, SmtpClient isn't disposable
             var smtp = new System.Net.Mail.SmtpClient(smtp_host);
             smtp.Send(message);
@@ -101,7 +100,6 @@ namespace CSVFile
             }
 #endif
         }
-#endif
 
         /// <summary>
         /// Write a data table to disk at the designated file name in CSV format
@@ -109,7 +107,7 @@ namespace CSVFile
         /// <param name="dt"></param>
         /// <param name="filename"></param>
         /// <param name="settings">The CSV settings to use when exporting this DataTable (Default: CSV)</param>
-#if NET20
+#if NET2_0
         public static void WriteToFile(DataTable dt, string filename, CSVSettings settings = null)
 #else
         public static void WriteToFile(this DataTable dt, string filename, CSVSettings settings = null)
@@ -127,7 +125,7 @@ namespace CSVFile
         /// <param name="dt">The data table to write</param>
         /// <param name="sw">The stream where the CSV text will be written</param>
         /// <param name="settings">The CSV settings to use when exporting this DataTable (Default: CSV)</param>
-#if NET20
+#if NET2_0
         public static void WriteToStream(DataTable dt, StreamWriter sw, CSVSettings settings = null)
 #else
         public static void WriteToStream(this DataTable dt, StreamWriter sw, CSVSettings settings = null)
@@ -145,7 +143,7 @@ namespace CSVFile
         /// <param name="dt">The datatable to write</param>
         /// <param name="settings">The CSV settings to use when exporting this DataTable (Default: CSV)</param>
         /// <returns>The CSV string representing the object array.</returns>
-#if NET20
+#if NET2_0
         public static string WriteToString(DataTable dt, CSVSettings settings = null)
 #else
         public static string WriteToString(this DataTable dt, CSVSettings settings = null)

@@ -19,14 +19,14 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\net45\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;NET45;HAS_DATATABLE;HAS_ASYNC;</DefineConstants>
+    <DefineConstants>DEBUG;NET4_5;HAS_ASYNC;</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\net45\</OutputPath>
-    <DefineConstants>TRACE;NET45;HAS_DATATABLE;HAS_ASYNC;</DefineConstants>
+    <DefineConstants>NET4_5;HAS_ASYNC;</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>bin\Release\net45\src.net45.xml</DocumentationFile>

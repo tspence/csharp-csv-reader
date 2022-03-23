@@ -7,7 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-#if NET50
+#if HAS_ASYNC
 using System.Threading.Tasks;
 #endif
 
@@ -30,15 +30,15 @@ namespace CSVFile
         /// <summary>
         /// Use this to determine what version of DotNet was used to build this library
         /// </summary>
-#if NET20
+#if NET2_0
         public const string VERSION = "NET20";
-#elif NET40
+#elif NET4_0
         public const string VERSION = "NET40";
-#elif NET45
+#elif NET4_5
         public const string VERSION = "NET45";
-#elif NET50
+#elif NET5_0
         public const string VERSION = "NET50";
-#elif NET60
+#elif NET6_0
         public const string VERSION = "NET60";
 #elif NETSTANDARD1_0
         public const string VERSION = "NETSTANDARD10";
@@ -196,7 +196,7 @@ namespace CSVFile
             }
         }
 
-#if NET50
+#if HAS_ASYNC_IENUM
         /// <summary>
         /// Parse a CSV stream into <![CDATA[ IEnumerable<string[]> ]]> asynchronously, while permitting embedded newlines
         /// </summary>
@@ -467,7 +467,7 @@ namespace CSVFile
             return CSVReader.FromString(source, settings).Deserialize<T>();
         }
 
-#if NET50
+#if HAS_ASYNC_IENUM
         /// <summary>
         /// Deserialize a CSV string into a list of typed objects
         /// </summary>
@@ -487,7 +487,7 @@ namespace CSVFile
         /// <returns>A single line of CSV encoded data containing these values</returns>
         /// <param name="row">A list or array of objects to serialize</param>
         /// <param name="settings">The field delimiter character (Default: comma)</param>
-#if NET20
+#if NET2_0
         public static string ToCSVString(IEnumerable<object> row, CSVSettings settings = null)
 #else
         public static string ToCSVString(this IEnumerable<object> row, CSVSettings settings = null)
@@ -532,7 +532,7 @@ namespace CSVFile
         /// </summary>
         /// <param name="sb">The StringBuilder to append data</param>
         /// <param name="settings">The CSV settings to use when exporting this array (Default: CSV)</param>
-#if NET20
+#if NET2_0
         public static void AppendCSVHeader<T>(StringBuilder sb, CSVSettings settings = null)
 #else
         public static void AppendCSVHeader<T>(this StringBuilder sb, CSVSettings settings = null)
@@ -565,7 +565,7 @@ namespace CSVFile
         /// <param name="obj">The single object to append in CSV-line format</param>
         /// <param name="settings">The CSV settings to use when exporting this array (Default: CSV)</param>
         /// <typeparam name="T">The 1st type parameter.</typeparam>
-#if NET20
+#if NET2_0
         public static void AppendCSVLine<T>(StringBuilder sb, T obj, CSVSettings settings = null) where T : class, new()
 #else
         public static void AppendCSVLine<T>(this StringBuilder sb, T obj, CSVSettings settings = null) where T : class, new()
@@ -599,7 +599,7 @@ namespace CSVFile
         /// <param name="sb">The StringBuilder to append</param>
         /// <param name="row">The list of objects to append</param>
         /// <param name="settings">The CSV settings to use when exporting this array (Default: CSV)</param>
-#if NET20
+#if NET2_0
         private static void AppendCSVRow(StringBuilder sb, IEnumerable<object> row, CSVSettings settings = null)
 #else
         private static void AppendCSVRow(this StringBuilder sb, IEnumerable<object> row, CSVSettings settings = null)

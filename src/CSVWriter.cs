@@ -7,9 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
-#if HAS_DATATABLE
 using System.Data;
-#endif
 using System.Reflection;
 
 namespace CSVFile
@@ -46,7 +44,6 @@ namespace CSVFile
             _stream.WriteLine(CSV.ToCSVString(line, _settings));
         }
 
-#if HAS_DATATABLE
         /// <summary>
         /// Write the data table to a stream in CSV format
         /// </summary>
@@ -70,7 +67,6 @@ namespace CSVFile
             // Flush the stream
             _stream.Flush();
         }
-#endif
 
         /// <summary>
         /// Serialize a list of objects to CSV using this writer

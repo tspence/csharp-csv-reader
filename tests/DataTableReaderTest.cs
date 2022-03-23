@@ -14,7 +14,6 @@ using System.Linq;
 
 namespace CSVTestSuite
 {
-#if HAS_DATATABLE
     [TestFixture]
     public class DataTableReaderTest
     {
@@ -178,5 +177,4 @@ namespace CSVTestSuite
             File.Delete(outfile);
         }
     }
-#endif
 }

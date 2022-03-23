@@ -98,7 +98,6 @@ namespace CSVTestSuite
             File.Delete(singlefile);
         }
 
-#if HAS_DATATABLE
         [Test]
         public void DataTableChoppingFiles()
         {
@@ -151,6 +150,5 @@ namespace CSVTestSuite
             Directory.Delete(dirname, true);
             File.Delete(outfile);
         }
-#endif
     }
 }

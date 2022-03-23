@@ -19,14 +19,14 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\net20\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;NET20;HAS_DATATABLE;HAS_SMTPCLIENT</DefineConstants>
+    <DefineConstants>DEBUG;NET2_0</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\net20\</OutputPath>
-    <DefineConstants>TRACE;NET20;HAS_DATATABLE;HAS_SMTPCLIENT</DefineConstants>
+    <DefineConstants>NET2_0</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>bin\Release\net20\src.net20.xml</DocumentationFile>
