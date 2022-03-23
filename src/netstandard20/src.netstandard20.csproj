@@ -29,8 +29,5 @@
     <Compile Include="..\CSVSettings.cs">
       <Link>CSVSettings.cs</Link>
     </Compile>
-    <Compile Include="..\CSVStream.cs">
-      <Link>CSVStream.cs</Link>
-    </Compile>
   </ItemGroup>
 </Project>
