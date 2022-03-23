@@ -177,6 +177,10 @@ namespace CSVFile
                             _work.Append(_line.Substring(_position + 1));
                             _line = string.Empty;
                             _position = -1;
+                            if (reachedEnd)
+                            {
+                                State = CSVState.MissingTrailingQualifier;
+                            }
                             return null;
                         }
 
