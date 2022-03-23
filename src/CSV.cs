@@ -49,27 +49,6 @@ namespace CSVFile
 #endif
 
         /// <summary>
-        /// The default CSV field delimiter.
-        /// </summary>
-        public const char DEFAULT_CSV_DELIMITER = ',';
-
-        /// <summary>
-        /// The default CSV text qualifier.  This is used to encode strings that contain the field delimiter.
-        /// </summary>
-        public const char DEFAULT_CSV_QUALIFIER = '"';
-
-        /// <summary>
-        /// The default TSV (tab delimited file) field delimiter.
-        /// </summary>
-        public const char DEFAULT_TSV_DELIMITER = '\t';
-
-        /// <summary>
-        /// The default TSV (tab delimited file) text qualifier.  This is used to encode strings that contain the field delimiter.
-        /// </summary>
-        public const char DEFAULT_TSV_QUALIFIER = '"';
-
-
-        /// <summary>
         /// Parse a CSV stream into <![CDATA[ IEnumerable<string[]> ]]>, while permitting embedded newlines
         /// </summary>
         /// <param name="inStream">The stream to read</param>
@@ -77,121 +56,18 @@ namespace CSVFile
         /// <returns>An enumerable object that can be examined to retrieve rows from the stream.</returns>
         public static IEnumerable<string[]> ParseStream(StreamReader inStream, CSVSettings settings = null)
         {
-            var line = "";
-            var i = -1;
-            var list = new List<string>();
-            var work = new StringBuilder();
-            if (settings == null) {
-                settings = CSVSettings.CSV;
-            }
-
-            // Allow "sep=" lines to exist
-            var delimiter = settings.FieldDelimiter;
-            var allowSepLine = settings.AllowSepLine;
-
-            // Begin reading from the stream
-            while (i < line.Length || !inStream.EndOfStream)
+            var machine = new CSVStateMachine(settings);
+            while (machine.State == CSVState.CanKeepGoing)
             {
-                // Consume the next character of data
-                i++;
-                if (i >= line.Length) {
-                    var newLine = inStream.ReadLine();
-                    
-                    // Check for the presence of a "sep=" line
-                    if (allowSepLine)
-                    {
-                        var newDelimiter = ParseSepLine(newLine);
-                        if (newDelimiter != null)
-                        {
-                            delimiter = newDelimiter.Value;
-                            newLine = inStream.ReadLine();
-                        }
-                        allowSepLine = false;
-                    }
-                    line += newLine + settings.LineSeparator;
-                }
-                var c = line[i];
-
-                // Are we at a line separator? If so, yield our work and begin again
-                if (string.Equals(line.Substring(i, settings.LineSeparator.Length), settings.LineSeparator)) {
-                    list.Add(work.ToString());
-                    yield return list.ToArray();
-                    list.Clear();
-                    work.Length = 0;
-                    if (inStream.EndOfStream)
-                    {
-                        break;
-                    }
-
-                    // Read in next line
-                    if (i + settings.LineSeparator.Length >= line.Length)
-                    {
-                        line = inStream.ReadLine() + settings.LineSeparator;
-                    }
-                    else
-                    {
-                        line = line.Substring(i + settings.LineSeparator.Length);
-                    }
-                    i = -1;
-
-                    // While starting a field, do we detect a text qualifier?
-                }
-                else if ((c == settings.TextQualifier) && (work.Length == 0))
+                var line = string.Empty;
+                if (!inStream.EndOfStream)
                 {
-                    // Our next task is to find the end of this qualified-text field
-                    var p2 = -1;
-                    while (p2 < 0) {
-
-                        // If we don't see an end in sight, read more from the stream
-                        p2 = line.IndexOf(settings.TextQualifier, i + 1);
-                        if (p2 < 0) {
-
-                            // No text qualifiers yet? Let's read more from the stream and continue
-                            work.Append(line.Substring(i + 1));
-                            i = -1;
-                            var newLine = inStream.ReadLine();
-                            if (string.IsNullOrEmpty(newLine) && inStream.EndOfStream)
-                            {
-                                break;
-                            }
-                            line = newLine + settings.LineSeparator;
-                            continue;
-                        }
-
-                        // Append the text between the qualifiers
-                        work.Append(line.Substring(i + 1, p2 - i - 1));
-                        i = p2;
-                        
-                        // If the user put in a doubled-up qualifier, e.g. `""`, insert a single one and continue
-                        if (((p2 + 1) < line.Length) && (line[p2 + 1] == settings.TextQualifier))
-                        {
-                            work.Append(settings.TextQualifier);
-                            i++;
-                            p2 = -1;
-                        }
-                    }
-
-                    // Does this start a new field?
+                    line = inStream.ReadLine();
                 }
-                else if (c == delimiter)
+                var row = machine.ParseLine(line, inStream.EndOfStream);
+                if (row != null)
                 {
-                    // Is this a null token, and do we permit null tokens?
-                    AddToken(list, work, settings);
-
-                    // Test for special case: when the user has written a casual comma, space, and text qualifier, skip the space
-                    // Checks if the second parameter of the if statement will pass through successfully
-                    // e.g. `"bob", "mary", "bill"`
-                    if (i + 2 <= line.Length - 1)
-                    {
-                        if (line[i + 1].Equals(' ') && line[i + 2].Equals(settings.TextQualifier))
-                        {
-                            i++;
-                        }
-                    }
-                }
-                else
-                {
-                    work.Append(c);
+                    yield return row;
                 }
             }
         }
@@ -205,126 +81,18 @@ namespace CSVFile
         /// <returns>An enumerable object that can be examined to retrieve rows from the stream.</returns>
         public static async IAsyncEnumerable<string[]> ParseStreamAsync(StreamReader inStream, CSVSettings settings = null)
         {
-            var line = "";
-            var i = -1;
-            var list = new List<string>();
-            var work = new StringBuilder();
-            if (settings == null)
+            var machine = new CSVStateMachine(settings);
+            while (machine.State == CSVState.CanKeepGoing)
             {
-                settings = CSVSettings.CSV;
-            }
-
-            // Allow "sep=" lines to exist
-            var delimiter = settings.FieldDelimiter;
-            var allowSepLine = settings.AllowSepLine;
-
-            // Begin reading from the stream
-            while (i < line.Length || !inStream.EndOfStream)
-            {
-                // Consume the next character of data
-                i++;
-                if (i >= line.Length)
+                var line = string.Empty;
+                if (!inStream.EndOfStream)
                 {
-                    var newLine = await inStream.ReadLineAsync();
-                    
-                    // Check for the presence of a "sep=" line
-                    if (allowSepLine)
-                    {
-                        var newDelimiter = CSV.ParseSepLine(newLine);
-                        if (newDelimiter != null)
-                        {
-                            delimiter = newDelimiter.Value;
-                            newLine = await inStream.ReadLineAsync();
-                        }
-                        allowSepLine = false;
-                    }
-                    line += newLine + settings.LineSeparator;
+                    line = await inStream.ReadLineAsync();
                 }
-                var c = line[i];
-
-                // Are we at a line separator? If so, yield our work and begin again
-                if (string.Equals(line.Substring(i, settings.LineSeparator.Length), settings.LineSeparator))
+                var row = machine.ParseLine(line, inStream.EndOfStream);
+                if (row != null)
                 {
-                    list.Add(work.ToString());
-                    yield return list.ToArray();
-                    list.Clear();
-                    work.Clear();
-                    if (inStream.EndOfStream)
-                    {
-                        break;
-                    }
-
-                    // Read in next line
-                    if (i + settings.LineSeparator.Length >= line.Length)
-                    {
-                        line = (await inStream.ReadLineAsync()) + settings.LineSeparator;
-                    }
-                    else
-                    {
-                        line = line.Substring(i + settings.LineSeparator.Length);
-                    }
-                    i = -1;
-
-                    // While starting a field, do we detect a text qualifier?
-                }
-                else if ((c == settings.TextQualifier) && (work.Length == 0))
-                {
-                    // Our next task is to find the end of this qualified-text field
-                    var p2 = -1;
-                    while (p2 < 0)
-                    {
-
-                        // If we don't see an end in sight, read more from the stream
-                        p2 = line.IndexOf(settings.TextQualifier, i + 1);
-                        if (p2 < 0)
-                        {
-
-                            // No text qualifiers yet? Let's read more from the stream and continue
-                            work.Append(line.Substring(i + 1));
-                            i = -1;
-                            var newLine = await inStream.ReadLineAsync();
-                            if (string.IsNullOrEmpty(newLine) && inStream.EndOfStream)
-                            {
-                                break;
-                            }
-                            line = newLine + settings.LineSeparator;
-                            continue;
-                        }
-
-                        // Append the text between the qualifiers
-                        work.Append(line.Substring(i + 1, p2 - i - 1));
-                        i = p2;
-
-                        // If the user put in a doubled-up qualifier, e.g. `""`, insert a single one and continue
-                        if (((p2 + 1) < line.Length) && (line[p2 + 1] == settings.TextQualifier))
-                        {
-                            work.Append(settings.TextQualifier);
-                            i++;
-                            p2 = -1;
-                        }
-                    }
-
-                    // Does this start a new field?
-                }
-                else if (c == delimiter)
-                {
-                    // Is this a null token, and do we permit null tokens?
-                    AddToken(list, work, settings);
-
-                    // Test for special case: when the user has written a casual comma, space, and text qualifier, skip the space
-                    // Checks if the second parameter of the if statement will pass through successfully
-                    // e.g. `"bob", "mary", "bill"`
-                    if (i + 2 <= line.Length - 1)
-                    {
-                        if (line[i + 1].Equals(' ') && line[i + 2].Equals(settings.TextQualifier))
-                        {
-                            i++;
-                        }
-                    }
-                }
-                else
-                {
-                    work.Append(c);
+                    yield return row;
                 }
             }
         }
@@ -339,10 +107,18 @@ namespace CSVFile
         /// <returns>An array containing all fields in the next row of data, or null if it could not be parsed.</returns>
         public static string[] ParseLine(string line, CSVSettings settings = null, bool? throwOnFailure = null)
         {
-            var success = TryParseLine(line, out var row, settings);
-            if (!success && throwOnFailure == true)
+            string[] row = null;
+            var machine = new CSVStateMachine(settings);
+            while (machine.State == CSVState.CanKeepGoing)
             {
-                throw new Exception($"Malformed CSV structure");
+                row = machine.ParseChunk(line, true);
+                line = string.Empty;
+            }
+
+            // Anything other than success throws an error here
+            if (machine.State != CSVState.Done)
+            {
+                throw new Exception($"Malformed CSV structure: {machine.State}");
             }
             return row;
         }
@@ -359,100 +135,14 @@ namespace CSVFile
         /// <param name="row">The array of fields found in the line</param>
         public static bool TryParseLine(string line, out string[] row, CSVSettings settings = null)
         {
-            if (settings == null)
+            row = null;
+            var machine = new CSVStateMachine(settings);
+            while (machine.State == CSVState.CanKeepGoing)
             {
-                settings = CSVSettings.CSV;
+                row = machine.ParseChunk(line, true);
+                line = string.Empty;
             }
-
-            // Okay, let's begin parsing
-            var list = new List<string>();
-            var work = new StringBuilder();
-            for (var i = 0; i < line.Length; i++)
-            {
-                var c = line[i];
-
-                // If we are starting a new field, is this field text qualified?
-                if ((c == settings.TextQualifier) && (work.Length == 0))
-                {
-                    while (true)
-                    {
-                        var p2 = line.IndexOf(settings.TextQualifier, i + 1);
-
-                        // If no closing qualifier is found, this string is broken; return failure.
-                        if (p2 < 0)
-                        {
-                            work.Append(line.Substring(i + 1));
-                            list.Add(work.ToString());
-                            row = list.ToArray();
-                            return false;
-                        }
-
-                        // Append this qualified string
-                        work.Append(line.Substring(i + 1, p2 - i - 1));
-                        i = p2;
-
-                        // If this is a double quote, keep going!
-                        if (((p2 + 1) < line.Length) && (line[p2 + 1] == settings.TextQualifier))
-                        {
-                            work.Append(settings.TextQualifier);
-                            i++;
-
-                            // otherwise, this is a single qualifier, we're done
-                        }
-                        else
-                        {
-                            break;
-                        }
-                    }
-
-                    // Does this start a new field?
-                }
-                else if (c == settings.FieldDelimiter)
-                {
-                    // Is this a null token, and do we permit null tokens?
-                    AddToken(list, work, settings);
-
-                    // Test for special case: when the user has written a casual comma, space, and text qualifier, skip the space
-                    // Checks if the second parameter of the if statement will pass through successfully
-                    // e.g. "bob", "mary", "bill"
-                    if (i + 2 <= line.Length - 1)
-                    {
-                        if (line[i + 1].Equals(' ') && line[i + 2].Equals(settings.TextQualifier))
-                        {
-                            i++;
-                        }
-                    }
-                }
-                else
-                {
-                    work.Append(c);
-                }
-            }
-
-            // We always add the last work as an element.  That means `alice,bob,charlie,` will be four items long.
-            AddToken(list, work, settings);
-            row = list.ToArray();
-            return true;
-        }
-
-        /// <summary>
-        /// Add a single token to the list
-        /// </summary>
-        /// <param name="list">List.</param>
-        /// <param name="work">Work.</param>
-        /// <param name="settings">Settings.</param>
-        private static void AddToken(ICollection<string> list, StringBuilder work, CSVSettings settings)
-        {
-            var s = work.ToString();
-            if (settings.AllowNull && string.Equals(s, settings.NullToken, StringComparison.Ordinal))
-            {
-                list.Add(null);
-            }
-            else
-            {
-                list.Add(s);
-            }
-            work.Length = 0;
+            return machine.State == CSVState.Done;
         }
 
         /// <summary>

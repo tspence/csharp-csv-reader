@@ -55,18 +55,18 @@ namespace CSVTestSuite
             var dt = CSVDataTable.FromString(source_embedded_newlines);
             Assert.AreEqual(dt.Columns.Count, 3);
             Assert.AreEqual(dt.Rows.Count, 4);
-            Assert.AreEqual(dt.Rows[0].ItemArray[0], "JD");
-            Assert.AreEqual(dt.Rows[1].ItemArray[0], "Janitor");
-            Assert.AreEqual(dt.Rows[2].ItemArray[0], "Dr. Reed, " + Environment.NewLine + "Eliot");
-            Assert.AreEqual(dt.Rows[3].ItemArray[0], "Dr. Kelso");
-            Assert.AreEqual(dt.Rows[0].ItemArray[1], "Doctor");
-            Assert.AreEqual(dt.Rows[1].ItemArray[1], "Janitor");
-            Assert.AreEqual(dt.Rows[2].ItemArray[1], "Private \"Practice\"");
-            Assert.AreEqual(dt.Rows[3].ItemArray[1], "Chief of Medicine");
-            Assert.AreEqual(dt.Rows[0].ItemArray[2], "x234");
-            Assert.AreEqual(dt.Rows[1].ItemArray[2], "x235");
-            Assert.AreEqual(dt.Rows[2].ItemArray[2], "x236");
-            Assert.AreEqual(dt.Rows[3].ItemArray[2], "x100");
+            Assert.AreEqual("JD", dt.Rows[0].ItemArray[0]);
+            Assert.AreEqual("Janitor", dt.Rows[1].ItemArray[0]);
+            Assert.AreEqual("Dr. Reed, " + Environment.NewLine + "Eliot", dt.Rows[2].ItemArray[0]);
+            Assert.AreEqual("Dr. Kelso", dt.Rows[3].ItemArray[0]);
+            Assert.AreEqual("Doctor", dt.Rows[0].ItemArray[1]);
+            Assert.AreEqual("Janitor", dt.Rows[1].ItemArray[1]);
+            Assert.AreEqual("Private \"Practice\"", dt.Rows[2].ItemArray[1]);
+            Assert.AreEqual("Chief of Medicine", dt.Rows[3].ItemArray[1]);
+            Assert.AreEqual("x234", dt.Rows[0].ItemArray[2]);
+            Assert.AreEqual("x235", dt.Rows[1].ItemArray[2]);
+            Assert.AreEqual("x236", dt.Rows[2].ItemArray[2]);
+            Assert.AreEqual("x100", dt.Rows[3].ItemArray[2]);
         }
 
         [Test]

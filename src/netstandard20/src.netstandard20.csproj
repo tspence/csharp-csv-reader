@@ -23,14 +23,14 @@
     <Compile Include="..\CSVReader.cs">
       <Link>CSVReader.cs</Link>
     </Compile>
+    <Compile Include="..\CSVStateMachine.cs">
+      <Link>CSVStateMachine.cs</Link>
+    </Compile>
     <Compile Include="..\CSVWriter.cs">
       <Link>CSVWriter.cs</Link>
     </Compile>
     <Compile Include="..\CSVSettings.cs">
       <Link>CSVSettings.cs</Link>
-    </Compile>
-    <Compile Include="..\CSVStream.cs">
-      <Link>CSVStream.cs</Link>
     </Compile>
   </ItemGroup>
 </Project>
