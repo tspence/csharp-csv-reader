@@ -28,6 +28,13 @@ namespace CSVFile
         /// We don't need more text at the moment
         /// </summary>
         CanKeepGoing,
+        
+        /// <summary>
+        /// The CSV reached the end, but there was a missing (unpaired) text qualifier.
+        /// For example:
+        ///     `1,2,3,"test`
+        /// </summary>
+        MissingTrailingQualifier
     }
     
     /// <summary>
@@ -46,7 +53,8 @@ namespace CSVFile
         private int _position;
         private char _delimiter;
         private bool _allowSepLine;
-        
+        private bool _inTextQualifier;
+
         /// <summary>
         /// Whether the state machine has concluded or can continue processing
         /// </summary>
@@ -102,37 +110,33 @@ namespace CSVFile
             while (_position < _line.Length || !reachedEnd)
             {
                 _position++;
+                
+                // Have we reached the end of the stream?
                 if (_position >= _line.Length)
                 {
                     if (reachedEnd)
                     {
+                        // If we reached the end while still in a text qualifier, the CSV is broken
+                        if (_inTextQualifier)
+                        {
+                            State = CSVState.MissingTrailingQualifier;
+                            return null;
+                        }
+
                         // We always add the final work item here because trailing empty strings are valid
-                        _list.Add(_work.ToString());
                         State = CSVState.Done;
+                        _list.Add(_work.ToString());
                         return _list.ToArray();
                     }
                     return null;
                 }
                 var c = _line[_position];
 
-                // Are we at a line separator? Let's do a quick test first
-                if (c == _settings.LineSeparator[0] && _position + _settings.LineSeparator.Length <= _line.Length)
+                // Are we currently processing a text block (which may optionally span multiple lines)?
+                if (_inTextQualifier || (!_inTextQualifier && c == _settings.TextQualifier && _work.Length == 0))
                 {
-                    if (string.Equals(_line.Substring(_position, _settings.LineSeparator.Length),
-                            _settings.LineSeparator))
-                    {
-                        _line = _line.Substring(_position + _settings.LineSeparator.Length);
-                        _list.Add(_work.ToString());
-                        var row = _list.ToArray();
-                        _list.Clear();
-                        _work.Length = 0;
-                        return row;
-                    }
-                }
-                
-                // While starting a field, do we detect a text qualifier?
-                if (c == _settings.TextQualifier && _work.Length == 0)
-                {
+                    _inTextQualifier = true;
+                    
                     // Our next task is to find the end of this qualified-text field
                     var p2 = -1;
                     while (p2 < 0)
@@ -162,7 +166,23 @@ namespace CSVFile
                             p2 = -1;
                         }
                     }
-
+                    
+                    // We're done parsing this text qualifier
+                    _inTextQualifier = false;
+                }
+                // Are we at a line separator? Let's do a quick test first
+                else if (c == _settings.LineSeparator[0] && _position + _settings.LineSeparator.Length <= _line.Length)
+                {
+                    if (string.Equals(_line.Substring(_position, _settings.LineSeparator.Length),
+                            _settings.LineSeparator))
+                    {
+                        _line = _line.Substring(_position + _settings.LineSeparator.Length);
+                        _list.Add(_work.ToString());
+                        var row = _list.ToArray();
+                        _list.Clear();
+                        _work.Length = 0;
+                        return row;
+                    }
                 }
                 // Does this start a new field?
                 else if (c == _delimiter)
@@ -190,6 +210,7 @@ namespace CSVFile
                         }
                     }
                 }
+                // Regular character
                 else
                 {
                     _work.Append(c);

@@ -117,10 +117,18 @@ namespace CSVFile
         /// <returns>An array containing all fields in the next row of data, or null if it could not be parsed.</returns>
         public static string[] ParseLine(string line, CSVSettings settings = null, bool? throwOnFailure = null)
         {
-            var success = TryParseLine(line, out var row, settings);
-            if (!success && throwOnFailure == true)
+            string[] row = null;
+            var machine = new CSVStateMachine(settings);
+            while (machine.State == CSVState.CanKeepGoing)
             {
-                throw new Exception($"Malformed CSV structure");
+                row = machine.ParseChunk(line, true);
+                line = string.Empty;
+            }
+
+            // Anything other than success throws an error here
+            if (machine.State != CSVState.Done)
+            {
+                throw new Exception($"Malformed CSV structure: {machine.State}");
             }
             return row;
         }
@@ -137,23 +145,14 @@ namespace CSVFile
         /// <param name="row">The array of fields found in the line</param>
         public static bool TryParseLine(string line, out string[] row, CSVSettings settings = null)
         {
+            row = null;
             var machine = new CSVStateMachine(settings);
-
-            // Begin reading from the stream
             while (machine.State == CSVState.CanKeepGoing)
             {
                 row = machine.ParseChunk(line, true);
-                if (row != null)
-                {
-                    return true;
-                }
-
                 line = string.Empty;
             }
-
-            // We couldn't parse a valid line out of this - probably a text qualifier that wasn't closed
-            row = null;
-            return false;
+            return machine.State == CSVState.Done;
         }
 
         /// <summary>
