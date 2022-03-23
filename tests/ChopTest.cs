@@ -120,46 +120,57 @@ namespace CSVTestSuite
             Assert.AreEqual("2012-05-01", dt.Rows[0].ItemArray[0]);
             Assert.AreEqual("2011-04-01", dt.Rows[1].ItemArray[0]);
             Assert.AreEqual("1975-06-03", dt.Rows[2].ItemArray[0]);
+            Assert.AreEqual(3, dt.Rows.Count);
 
             // Save this string to a test file
             var fileGroupName = Guid.NewGuid().ToString();
             var outfile = fileGroupName + ".csv";
-            CSVDataTable.WriteToFile(dt, outfile);
-
-            // Create an empty test folder
             var dirname = Guid.NewGuid().ToString();
-            Directory.CreateDirectory(dirname);
+            try
+            {
+                CSVDataTable.WriteToFile(dt, outfile);
 
-            // Chop this file into one-line chunks
-            CSVReader.ChopFile(outfile, dirname, 1);
+                // Create an empty test folder
+                Directory.CreateDirectory(dirname);
 
-            // Verify that we got three files
-            var files = Directory.GetFiles(dirname).ToList();
-            files.Sort();
-            Assert.IsTrue(files[0].EndsWith("1.csv"));
-            Assert.IsTrue(files[1].EndsWith("2.csv"));
-            Assert.IsTrue(files[2].EndsWith("3.csv"));
-            Assert.AreEqual(3, files.Count);
+                // Chop this file into one-line chunks
+                CSVReader.ChopFile(outfile, dirname, 1);
 
-            // Read in each file and verify that each one has one line
-            dt = CSVDataTable.FromFile(files[0]);
-            Assert.AreEqual(1, dt.Rows.Count);
-            Assert.AreEqual("2012-05-01", dt.Rows[0].ItemArray[0]);
-            Assert.AreEqual("test1", dt.Rows[0].ItemArray[1]);
+                // Verify that we got three files
+                var files = Directory.GetFiles(dirname).ToList();
+                files.Sort();
+                Assert.IsTrue(files[0].EndsWith("1.csv"));
+                Assert.IsTrue(files[1].EndsWith("2.csv"));
+                Assert.IsTrue(files[2].EndsWith("3.csv"));
+                Assert.AreEqual(3, files.Count);
 
-            dt = CSVDataTable.FromFile(files[1]);
-            Assert.AreEqual(1, dt.Rows.Count);
-            Assert.AreEqual("2011-04-01", dt.Rows[0].ItemArray[0]);
-            Assert.AreEqual("test2", dt.Rows[0].ItemArray[1]);
+                // Read in each file and verify that each one has one line
+                dt = CSVDataTable.FromFile(files[0]);
+                Assert.AreEqual(1, dt.Rows.Count);
+                Assert.AreEqual("2012-05-01", dt.Rows[0].ItemArray[0]);
+                Assert.AreEqual("test1", dt.Rows[0].ItemArray[1]);
 
-            dt = CSVDataTable.FromFile(files[2]);
-            Assert.AreEqual(1, dt.Rows.Count);
-            Assert.AreEqual("1975-06-03", dt.Rows[0].ItemArray[0]);
-            Assert.AreEqual("test3", dt.Rows[0].ItemArray[1]);
+                dt = CSVDataTable.FromFile(files[1]);
+                Assert.AreEqual(1, dt.Rows.Count);
+                Assert.AreEqual("2011-04-01", dt.Rows[0].ItemArray[0]);
+                Assert.AreEqual("test2", dt.Rows[0].ItemArray[1]);
 
-            // Clean up
-            Directory.Delete(dirname, true);
-            File.Delete(outfile);
+                dt = CSVDataTable.FromFile(files[2]);
+                Assert.AreEqual(1, dt.Rows.Count);
+                Assert.AreEqual("1975-06-03", dt.Rows[0].ItemArray[0]);
+                Assert.AreEqual("test3", dt.Rows[0].ItemArray[1]);
+            }
+            finally
+            {
+                if (Directory.Exists(dirname))
+                {
+                    Directory.Delete(dirname, true);
+                }
+                if (File.Exists(outfile))
+                {
+                    File.Delete(outfile);
+                }
+            }
         }
     }
 }

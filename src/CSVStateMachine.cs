@@ -90,7 +90,11 @@ namespace CSVFile
         /// <returns></returns>
         public string[] ParseLine(string line, bool reachedEnd)
         {
-            return ParseChunk(line + _settings.LineSeparator, reachedEnd);
+            if (!string.IsNullOrEmpty(line))
+            {
+                line += _settings.LineSeparator;
+            }
+            return ParseChunk(line, reachedEnd);
         }
         
         /// <summary>
@@ -104,6 +108,13 @@ namespace CSVFile
         /// <returns>If this parsing operation produces a valid row, this will be non-null</returns>
         public string[] ParseChunk(string chunk, bool reachedEnd)
         {
+            // Detect end of stream
+            if (reachedEnd && string.IsNullOrEmpty(chunk) && _position == -1)
+            {
+                State = CSVState.Done;
+                return null;
+            }
+            
             // Add this chunk to the current processing logic
             _line += chunk;
             
@@ -139,6 +150,8 @@ namespace CSVFile
                         // We always add the final work item here because trailing empty strings are valid
                         State = CSVState.Done;
                         _list.Add(_work.ToString());
+                        _line = string.Empty;
+                        _position = -1;
                         return _list.ToArray();
                     }
                     return null;
@@ -190,6 +203,7 @@ namespace CSVFile
                             _settings.LineSeparator))
                     {
                         _line = _line.Substring(_position + _settings.LineSeparator.Length);
+                        _position = -1;
                         _list.Add(_work.ToString());
                         var row = _list.ToArray();
                         _list.Clear();

@@ -57,8 +57,6 @@ namespace CSVFile
         public static IEnumerable<string[]> ParseStream(StreamReader inStream, CSVSettings settings = null)
         {
             var machine = new CSVStateMachine(settings);
-
-            // Begin reading from the stream
             while (machine.State == CSVState.CanKeepGoing)
             {
                 var line = string.Empty;
@@ -66,10 +64,7 @@ namespace CSVFile
                 {
                     line = inStream.ReadLine();
                 }
-
                 var row = machine.ParseLine(line, inStream.EndOfStream);
-
-                // Did we get a row?
                 if (row != null)
                 {
                     yield return row;
@@ -87,8 +82,6 @@ namespace CSVFile
         public static async IAsyncEnumerable<string[]> ParseStreamAsync(StreamReader inStream, CSVSettings settings = null)
         {
             var machine = new CSVStateMachine(settings);
-
-            // Begin reading from the stream
             while (machine.State == CSVState.CanKeepGoing)
             {
                 var line = string.Empty;
@@ -96,10 +89,7 @@ namespace CSVFile
                 {
                     line = await inStream.ReadLineAsync();
                 }
-
                 var row = machine.ParseLine(line, inStream.EndOfStream);
-
-                // Did we get a row?
                 if (row != null)
                 {
                     yield return row;
