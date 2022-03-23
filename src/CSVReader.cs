@@ -7,9 +7,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-#if HAS_DATATABLE
 using System.Data;
-#endif
 using System.Reflection;
 using System.ComponentModel;
 using System.Text;
@@ -193,7 +191,6 @@ namespace CSVFile
 #endif
 
 
-#if HAS_DATATABLE
         /// <summary>
         /// Read this file into a data table in memory
         /// </summary>
@@ -259,7 +256,6 @@ namespace CSVFile
             // Here's your data table
             return dt;
         }
-#endif
 
         /// <summary>
         /// Deserialize the CSV reader into a generic list

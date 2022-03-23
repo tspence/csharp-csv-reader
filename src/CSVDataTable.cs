@@ -60,7 +60,6 @@ namespace CSVFile
             }
         }
 
-#if HAS_SMTPCLIENT
         /// <summary>
         /// Quick shortcut to send a datatable as an attachment via SMTP
         /// </summary>
@@ -101,7 +100,6 @@ namespace CSVFile
             }
 #endif
         }
-#endif
 
         /// <summary>
         /// Write a data table to disk at the designated file name in CSV format

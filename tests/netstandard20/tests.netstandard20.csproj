@@ -19,7 +19,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;NETSTANDARD2_0;HAS_DATATABLE;HAS_ASYNC;</DefineConstants>
+    <DefineConstants>DEBUG;NETSTANDARD2_0;HAS_ASYNC;</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -27,7 +27,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>NETSTANDARD2_0;HAS_DATATABLE;HAS_ASYNC;</DefineConstants>
+    <DefineConstants>NETSTANDARD2_0;HAS_ASYNC;</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
