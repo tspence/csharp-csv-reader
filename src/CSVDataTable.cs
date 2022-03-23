@@ -50,10 +50,10 @@ namespace CSVFile
         /// <returns></returns>
         public static DataTable FromString(string source, CSVSettings settings = null)
         {
-            byte[] byteArray = Encoding.UTF8.GetBytes(source);
-            using (MemoryStream stream = new MemoryStream(byteArray))
+            var byteArray = Encoding.UTF8.GetBytes(source);
+            using (var stream = new MemoryStream(byteArray))
             {
-                using (CSVReader cr = new CSVReader(new StreamReader(stream), settings))
+                using (var cr = new CSVReader(new StreamReader(stream), settings))
                 {
                     return cr.ReadAsDataTable();
                 }

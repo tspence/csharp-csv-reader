@@ -18,7 +18,7 @@ namespace CSVTestSuite
         public void ParseBasicCSV()
         {
             // Simplest test
-            string[] line = CSV.ParseLine("1,2,3,4,5");
+            var line = CSV.ParseLine("1,2,3,4,5");
             Assert.AreEqual(line.Length, 5);
             Assert.AreEqual(line[2], "3");
             Assert.AreEqual(line[4], "5");
@@ -116,15 +116,22 @@ namespace CSVTestSuite
         {
             string[] line = null;
 
-            // Use a basic parse that will do its best but fail to recognize the problem
-            line = CSV.ParseLine("1,\"two\",3,\"four, \"\"five");
-            Assert.AreEqual(line.Length, 4);
-            Assert.AreEqual(line[0], "1");
-            Assert.AreEqual(line[1], "two");
-            Assert.AreEqual(line[2], "3");
-            Assert.AreEqual(line[3], "four, \"five");
+            // Test a good line
+            line = CSV.ParseLine("1,\"two\",3,\"four, \"\"five\"");
+            Assert.AreEqual(4, line.Length);
+            Assert.AreEqual("1", line[0]);
+            Assert.AreEqual("two", line[1] );
+            Assert.AreEqual("3", line[2]);
+            Assert.AreEqual("four, \"five", line[3]);
 
-            // Confirm that the more advanced parse will fail
+            // Assert that a missing text qualifier  throws an exception
+            var ex = Assert.Throws<Exception>(() =>
+            {
+                CSV.ParseLine("1,\"two\",3,\"four, \"\"five");
+            });
+            Assert.AreEqual("Malformed CSV structure: MissingTrailingQualifier", ex.Message);
+
+            // Confirm that the more advanced parse reports failure to parse when there is no ending qualifier
             Assert.IsFalse(CSV.TryParseLine("1,\"two\",3,\"four, \"\"five", out line));
         }
 
