@@ -8,10 +8,10 @@
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DefineConstants>TRACE20;HAS_ASYNC;HAS_DATATABLE;</DefineConstants>
+    <DefineConstants>HAS_ASYNC;HAS_DATATABLE;</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DefineConstants>TRACE20;HAS_ASYNC;HAS_DATATABLE;</DefineConstants>
+    <DefineConstants>HAS_ASYNC;HAS_DATATABLE;</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="..\CSV.cs">

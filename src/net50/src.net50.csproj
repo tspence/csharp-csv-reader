@@ -8,11 +8,11 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DefineConstants>TRACE;NET50;HAS_DATATABLE;HAS_ASYNC;</DefineConstants>
+    <DefineConstants>HAS_DATATABLE;HAS_ASYNC;HAS_ASYNC_IENUM;</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DefineConstants>TRACE;NET50;HAS_DATATABLE;HAS_ASYNC;</DefineConstants>
+    <DefineConstants>HAS_DATATABLE;HAS_ASYNC;HAS_ASYNC_IENUM;</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>

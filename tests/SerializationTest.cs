@@ -240,7 +240,7 @@ namespace CSVTestSuite
             Assert.IsNull(list[3].NullableSingle);
         }
         
-#if HAS_ASYNC
+#if HAS_ASYNC_IENUM
         [Test]
         public async Task DeserializeLastColumnNullableSingleAsync()
         {

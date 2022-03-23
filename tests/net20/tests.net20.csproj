@@ -14,7 +14,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug</OutputPath>
-    <DefineConstants>DEBUG;NET20;HAS_DATATABLE;HAS_SMTPCLIENT</DefineConstants>
+    <DefineConstants>DEBUG;NET2_0;HAS_DATATABLE;HAS_SMTPCLIENT</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
@@ -25,6 +25,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
+    <DefineConstants>NET2_0;HAS_DATATABLE;HAS_SMTPCLIENT</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />

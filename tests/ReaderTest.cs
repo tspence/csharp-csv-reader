@@ -8,7 +8,7 @@ using System.Collections;
 using System.Collections.Generic;
 using NUnit.Framework;
 using CSVFile;
-#if NET50
+#if HAS_ASYNC
 using System.Threading.Tasks;
 #endif
 
@@ -252,7 +252,7 @@ namespace CSVTestSuite
             }
         }
         
-#if NET50
+#if HAS_ASYNC_IENUM
         [Test]
         public async Task TestAsyncReader()
         {

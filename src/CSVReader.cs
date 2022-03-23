@@ -14,7 +14,7 @@ using System.Reflection;
 using System.ComponentModel;
 using System.Text;
 using System.Threading;
-#if NET50
+#if HAS_ASYNC
 using System.Threading.Tasks;
 #endif
 
@@ -30,7 +30,7 @@ namespace CSVFile
     /// <summary>
     /// A reader that reads from a stream and emits CSV records
     /// </summary>
-#if NET50
+#if HAS_ASYNC_IENUM
     public class CSVReader : IAsyncEnumerable<string[]>, IEnumerable<string[]>, IDisposable
 #else
     public class CSVReader : IEnumerable<string[]>, IDisposable
@@ -149,7 +149,7 @@ namespace CSVFile
             return GetEnumerator();
         }
         
-#if NET50
+#if HAS_ASYNC_IENUM
         /// <summary>
         /// Iterate through all lines in this CSV file using async
         /// </summary>
