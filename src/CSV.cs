@@ -203,6 +203,7 @@ namespace CSVFile
             }
 
             // Okay, let's add headers (if desired) and objects
+            var excluded = new ExcludedColumnHelper(settings);
             var sb = new StringBuilder();
             if (settings.HeaderRowIncluded)
             {
@@ -236,13 +237,20 @@ namespace CSVFile
 
             var type = typeof(T);
             var headers = new List<object>();
+            var excluded = new ExcludedColumnHelper(settings);
             foreach (var field in type.GetFields())
             {
-                headers.Add(field.Name);
+                if (!excluded.IsExcluded(field.Name))
+                {
+                    headers.Add(field.Name);
+                }
             }
             foreach (var prop in type.GetProperties())
             {
-                headers.Add(prop.Name);
+                if (!excluded.IsExcluded(prop.Name))
+                {
+                    headers.Add(prop.Name);
+                }
             }
             AppendCSVRow(sb, headers, settings);
             sb.Append(settings.LineSeparator);
@@ -269,13 +277,21 @@ namespace CSVFile
             // Retrieve reflection information
             var type = typeof(T);
             var values = new List<object>();
+            var excluded = new ExcludedColumnHelper(settings);
             foreach (var field in type.GetFields())
             {
-                values.Add(field.GetValue(obj));
+                if (!excluded.IsExcluded(field.Name))
+                {
+                    values.Add(field.GetValue(obj));
+                }
             }
+
             foreach (var prop in type.GetProperties())
             {
-                values.Add(prop.GetValue(obj, null));
+                if (!excluded.IsExcluded(prop.Name))
+                {
+                    values.Add(prop.GetValue(obj, null));
+                }
             }
 
             // Output all the CSV items
@@ -346,6 +362,74 @@ namespace CSVFile
 
             // Subtract the trailing delimiter so we don't inadvertently add an empty column at the end
             sb.Length -= 1;
+        }
+        
+        /// <summary>
+        /// Internal method to convert a list of things into a CSV line using the specified settings object
+        /// 
+        /// This function assumes:
+        ///  * That the list of items is not null, but it may contain nulls
+        ///  * That settings is not null
+        ///  * That RiskyChars and ForceQualifierTypes have been set up correctly to match the CSV settings
+        /// </summary>
+        /// <param name="items"></param>
+        /// <param name="settings"></param>
+        /// <param name="riskyChars"></param>
+        /// <param name="forceQualifierTypes"></param>
+        /// <returns></returns>
+        internal static string ItemsToCsv(IEnumerable<object> items, CSVSettings settings, char[] riskyChars, Dictionary<Type, int> forceQualifierTypes)
+        {
+            var sb = new StringBuilder();
+            foreach (var item in items)
+            {
+                // If this is null, check our settings for what they want us to do
+                if (item == null)
+                {
+                    if (settings.AllowNull)
+                    {
+                        sb.Append(settings.NullToken);
+                    }
+                    sb.Append(settings.FieldDelimiter);
+                    continue;
+                }
+                
+                // Check if this item requires qualifiers
+                var s = item.ToString();
+                var requiresQualifiers = settings.ForceQualifiers || s.IndexOfAny(riskyChars) >= 0 || (forceQualifierTypes != null && forceQualifierTypes.ContainsKey(item.GetType()));
+
+                // Okay, let's handle this value normally
+                if (requiresQualifiers) sb.Append(settings.TextQualifier);
+                if (!string.IsNullOrEmpty(s))
+                {
+                    // Only go character-by-character if necessary
+                    if (s.IndexOf(settings.TextQualifier) >= 0)
+                    {
+                        foreach (var c in s.ToCharArray())
+                        {
+                            // Double up text qualifiers
+                            if (c == settings.TextQualifier)
+                            {
+                                sb.Append(c);
+                            }
+
+                            sb.Append(c);
+                        }
+                    }
+                    else
+                    {
+                        sb.Append(item);
+                    }
+                }
+
+                // Move to the next cell
+                if (requiresQualifiers) sb.Append(settings.TextQualifier);
+                sb.Append(settings.FieldDelimiter);
+            }
+
+            // Subtract the trailing delimiter so we don't inadvertently add an empty column at the end
+            sb.Length -= 1;
+            sb.Append(settings.LineSeparator);
+            return sb.ToString();
         }
 
         /// <summary>

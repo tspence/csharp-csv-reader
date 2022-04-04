@@ -99,6 +99,16 @@ namespace CSVFile
         /// Expect headers to be case sensitive during deserialization
         /// </summary>
         public bool HeadersCaseSensitive { get; set; }
+
+        /// <summary>
+        /// Exclude these columns during serialization and deserialization
+        /// </summary>
+        public string[] ExcludedColumns { get; set; }
+        
+        /// <summary>
+        /// A list of data types that require text qualifiers during serialization.
+        /// </summary>
+        public Type[] ForceQualifierTypes { get; set; }
         
         /// <summary>
         /// Some CSV files contain an empty line at the end. If you set this flag to true, deserialization will
@@ -139,6 +149,44 @@ namespace CSVFile
             var newSettings = (CSVSettings)this.MemberwiseClone();
             newSettings.FieldDelimiter = newDelimiter;
             return newSettings;
+        }
+
+        /// <summary>
+        /// Retrieve the list of risky characters according to this settings definition
+        /// </summary>
+        /// <returns></returns>
+        public char[] GetRiskyChars()
+        {
+            var riskyChars = new List<char>();
+            riskyChars.Add(FieldDelimiter);
+            riskyChars.Add(TextQualifier);
+            foreach (var c in LineSeparator.ToCharArray())
+            {
+                riskyChars.Add(c);
+            }
+
+            // CRLF is always considered risky
+            riskyChars.Add('\n');
+            riskyChars.Add('\r');
+            return riskyChars.ToArray();
+        }
+
+        /// <summary>
+        /// Retrieve a hashset containing the list of types that require text qualifiers, or null if this
+        /// feature is not used in this settings definition
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
+        public Dictionary<Type, int> GetForceQualifierTypes()
+        {
+            if (ForceQualifierTypes == null) return null;
+            var hashSet = new Dictionary<Type, int>();
+            foreach (var type in ForceQualifierTypes)
+            {
+                hashSet.Add(type, 1);
+            }
+
+            return hashSet;
         }
     }
 }

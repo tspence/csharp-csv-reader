@@ -11,8 +11,8 @@ using System.Data;
 using System.Reflection;
 using System.ComponentModel;
 using System.Text;
-using System.Threading;
 #if HAS_ASYNC
+using System.Threading;
 using System.Threading.Tasks;
 #endif
 
@@ -25,6 +25,237 @@ using System.Threading.Tasks;
 
 namespace CSVFile
 {
+    /// <summary>
+    /// Keeps track of which columns are excluded from CSV serialization / deserialization
+    /// </summary>
+    public class ExcludedColumnHelper
+    {
+        /// <summary>
+        /// Note that Dot Net Framework 2.0 does not support HashSet, but it does support Dictionary.
+        /// </summary>
+        private readonly Dictionary<string, int> _excluded;
+        private readonly CSVSettings _settings;
+        
+        /// <summary>
+        /// Construct a helper object to track which columns are excluded from serialization
+        /// </summary>
+        /// <param name="settings"></param>
+        public ExcludedColumnHelper(CSVSettings settings)
+        {
+            if (settings?.ExcludedColumns == null || settings.ExcludedColumns.Length == 0)
+            {
+                _excluded = null;
+            }
+            else
+            {
+                _settings = settings;
+                _excluded = new Dictionary<string, int>();
+                foreach (var name in _settings.ExcludedColumns)
+                {
+                    var excludedColumnName = name;
+                    if (!_settings.HeadersCaseSensitive)
+                    {
+                        excludedColumnName = excludedColumnName.ToUpperInvariant();
+                    }
+
+                    _excluded.Add(excludedColumnName, 1);
+                }
+            }
+        }
+
+        /// <summary>
+        /// True if this column should be excluded
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public bool IsExcluded(string name)
+        {
+            if (_excluded == null) return false;
+            var excludedColumnName = name;
+            if (!_settings.HeadersCaseSensitive)
+            {
+                excludedColumnName = excludedColumnName.ToUpperInvariant();
+            }
+
+            return _excluded.ContainsKey(excludedColumnName);
+        }
+    }
+    
+    /// <summary>
+    /// A helper object to deserialize a class based on CSV strings
+    /// </summary>
+    public class DeserializationHelper<T> where T: class, new()
+    {
+        private readonly int _numColumns;
+        private readonly Type[] _columnTypes;
+        private readonly TypeConverter[] _converters;
+        private readonly PropertyInfo[] _properties;
+        private readonly FieldInfo[] _fields;
+        private readonly MethodInfo[] _methods;
+
+        /// <summary>
+        /// Construct a new deserialization helper for a specific class containing all the information necessary
+        /// for optimized deserialization
+        /// </summary>
+        /// <param name="settings"></param>
+        /// <param name="headers"></param>
+        public DeserializationHelper(CSVSettings settings, string[] headers)
+        {
+            var settings1 = settings;
+            if (settings1 == null)
+            {
+                settings1 = CSVSettings.TSV;
+            }
+            if (headers == null) throw new Exception("CSV must have headers to be deserialized");
+            var return_type = typeof(T);
+            _numColumns = headers.Length;
+
+            // Set binding flags correctly
+            var bindings = BindingFlags.Public | BindingFlags.Instance;
+            if (!settings1.HeadersCaseSensitive)
+            {
+                bindings |= BindingFlags.IgnoreCase;
+            }
+
+            // Set up the list of excluded columns
+            var excluded = new ExcludedColumnHelper(settings1);
+
+            // Determine how to handle each column in the file - check properties, fields, and methods
+            _columnTypes = new Type[_numColumns];
+            _converters = new TypeConverter[_numColumns];
+            _properties = new PropertyInfo[_numColumns];
+            _fields = new FieldInfo[_numColumns];
+            _methods = new MethodInfo[_numColumns];
+            for (var i = 0; i < _numColumns; i++)
+            {
+                // Is this column excluded?
+                if (excluded.IsExcluded(headers[i])) continue;
+                
+                // Check if this is a property
+                _properties[i] = return_type.GetProperty(headers[i], bindings);
+                if (_properties[i] != null && !_properties[i].CanWrite)
+                {
+                    if (settings1.IgnoreReadOnlyProperties && settings1.IgnoreHeaderErrors)
+                    {
+                        _properties[i] = null;
+                        continue;
+                    }
+                    throw new Exception($"The column header '{headers[i]}' matches a read-only property. To ignore this exception, enable IgnoreReadOnlyProperties and IgnoreHeaderErrors.");
+                }
+
+                // If we failed to get a property handler, let's try a field handler
+                if (_properties[i] == null)
+                {
+                    _fields[i] = return_type.GetField(headers[i], bindings);
+
+                    // If we failed to get a field handler, let's try a method
+                    if (_fields[i] == null)
+                    {
+                        // Methods must be treated differently - we have to ensure that the method has a single parameter
+                        var mi = return_type.GetMethod(headers[i], bindings);
+                        if (mi != null)
+                        {
+                            if (mi.GetParameters().Length == 1)
+                            {
+                                _methods[i] = mi;
+                                _columnTypes[i] = mi.GetParameters()[0].ParameterType;
+                            }
+                            else if (!settings1.IgnoreHeaderErrors)
+                            {
+                                throw new Exception(
+                                    $"The column header '{headers[i]}' matched a method with more than one parameter.");
+                            }
+                        }
+                        else if (!settings1.IgnoreHeaderErrors)
+                        {
+                            throw new Exception(
+                                $"The column header '{headers[i]}' was not found in the class '{return_type.FullName}'.");
+                        }
+                    }
+                    else
+                    {
+                        _columnTypes[i] = _fields[i].FieldType;
+                    }
+                }
+                else
+                {
+                    _columnTypes[i] = _properties[i].PropertyType;
+                }
+
+                if (_columnTypes[i] != null)
+                {
+                    _converters[i] = TypeDescriptor.GetConverter(_columnTypes[i]);
+                    if (_converters[i] == null && !settings1.IgnoreHeaderErrors)
+                    {
+                        throw new Exception(
+                            $"The column {headers[i]} (type {_columnTypes[i]}) does not have a type converter.");
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Deserialize a single row using precomputed converters
+        /// </summary>
+        /// <param name="line"></param>
+        /// <param name="row_num"></param>
+        /// <param name="settings"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        public T Deserialize(string[] line, int row_num, CSVSettings settings)
+        {
+            // If this line is completely empty, do our settings permit us to ignore the empty line?
+            if (line.Length == 0 || (line.Length == 1 && line[0] == string.Empty) && settings.IgnoreEmptyLineForDeserialization)
+            {
+                return null;
+            }
+
+            // Does this line match the length of the first line?  Does the caller want us to complain?
+            if (line.Length != _numColumns && !settings.IgnoreHeaderErrors) {
+                throw new Exception($"Line #{row_num} contains {line.Length} columns; expected {_numColumns}");
+            }
+
+            // Construct a new object and execute each column on it
+            var obj = new T();
+            for (var i = 0; i < Math.Min(line.Length, _numColumns); i++)
+            {
+                if (_converters[i] == null) continue;
+                
+                // Attempt to convert this to the specified type
+                object value = null;
+                if (settings.AllowNull && (line[i] == null || line[i] == settings.NullToken))
+                {
+                    value = null;
+                } 
+                else if (_converters[i].IsValid(line[i]))
+                {
+                    value = _converters[i].ConvertFromString(line[i]);
+                }
+                else if (!settings.IgnoreHeaderErrors)
+                {
+                    throw new Exception(
+                        $"The value '{line[i]}' cannot be converted to the type {_columnTypes[i]}.");
+                }
+
+                // Can we set this value to the object as a property?
+                if (_properties[i] != null)
+                {
+                    _properties[i].SetValue(obj, value, null);
+                }
+                else if (_fields[i] != null)
+                {
+                    _fields[i].SetValue(obj, value);
+                }
+                else if (_methods[i] != null)
+                {
+                    _methods[i].Invoke(obj, new object[] { value });
+                }
+            }
+
+            return obj;
+        }
+    }
+
     /// <summary>
     /// A reader that reads from a stream and emits CSV records
     /// </summary>
@@ -39,17 +270,17 @@ namespace CSVFile
         private readonly StreamReader _stream;
 
         /// <summary>
-        /// If the first row in the file is a header row, this will be populated
-        /// </summary>
-        public string[] Headers { get; private set; }
-        
-        /// <summary>
-        /// Returns the settings currently in use for this reader
+        /// The settings currently in use by this reader
         /// </summary>
         public CSVSettings Settings
         {
             get { return _settings; }
         }
+
+        /// <summary>
+        /// If the first row in the file is a header row, this will be populated
+        /// </summary>
+        public string[] Headers { get; private set; }
 
         /// <summary>
         /// Convenience function to read from a string
@@ -174,14 +405,14 @@ namespace CSVFile
         /// <exception cref="Exception">If the CSV source cannot be parsed into the type, throws exceptions</exception>
         public async IAsyncEnumerable<T> DeserializeAsync<T>() where T : class, new()
         {
-            var helper = SetupDeserializer<T>();
+            var helper = new DeserializationHelper<T>(_settings, Headers);
 
             // Alright, let's retrieve CSV lines and parse each one!
             var row_num = 0;
             await foreach (var line in this)
             {
                 row_num++;
-                var obj = helper.Deserialize<T>(line, row_num, _settings);
+                var obj = helper.Deserialize(line, row_num, _settings);
                 if (obj != null)
                 {
                     yield return obj;
@@ -265,182 +496,21 @@ namespace CSVFile
         /// <exception cref="Exception">If the CSV formatting does not match the object, throw errors</exception>
         public IEnumerable<T> Deserialize<T>() where T : class, new()
         {
-            var helper = SetupDeserializer<T>();
+            var helper = new DeserializationHelper<T>(_settings, Headers);
 
             // Alright, let's retrieve CSV lines and parse each one!
             var row_num = 0;
             foreach (var line in this)
             {
                 row_num++;
-                var obj = helper.Deserialize<T>(line, row_num, _settings);
+                var obj = helper.Deserialize(line, row_num, _settings);
                 if (obj != null)
                 {
                     yield return obj;
                 }
             }
         }
-
-        private class DeserializationHelper
-        {
-            public int NumColumns;
-            public Type[] ColumnTypes;
-            public TypeConverter[] Converters;
-            public PropertyInfo[] Properties;
-            public FieldInfo[] Fields;
-            public MethodInfo[] Methods;
-
-            /// <summary>
-            /// Deserialize a single row using precomputed converters
-            /// </summary>
-            /// <param name="line"></param>
-            /// <param name="row_num"></param>
-            /// <param name="settings"></param>
-            /// <typeparam name="T"></typeparam>
-            /// <returns></returns>
-            /// <exception cref="Exception"></exception>
-            public T Deserialize<T>(string[] line, int row_num, CSVSettings settings) where T : class, new()
-            {
-                // If this line is completely empty, do our settings permit us to ignore the empty line?
-                if (line.Length == 0 || (line.Length == 1 && line[0] == string.Empty) && settings.IgnoreEmptyLineForDeserialization)
-                {
-                    return null;
-                }
-
-                // Does this line match the length of the first line?  Does the caller want us to complain?
-                if (line.Length != NumColumns && !settings.IgnoreHeaderErrors) {
-                    throw new Exception($"Line #{row_num} contains {line.Length} columns; expected {NumColumns}");
-                }
-
-                // Construct a new object and execute each column on it
-                var obj = new T();
-                for (var i = 0; i < Math.Min(line.Length, NumColumns); i++)
-                {
-
-                    // Attempt to convert this to the specified type
-                    object value = null;
-                    if (settings.AllowNull && (line[i] == null || line[i] == settings.NullToken))
-                    {
-                        value = null;
-                    } 
-                    else if (Converters[i] != null && Converters[i].IsValid(line[i]))
-                    {
-                        value = Converters[i].ConvertFromString(line[i]);
-                    }
-                    else if (!settings.IgnoreHeaderErrors)
-                    {
-                        throw new Exception($"The value '{line[i]}' cannot be converted to the type {ColumnTypes[i]}.");
-                    }
-
-                    // Can we set this value to the object as a property?
-                    if (Properties[i] != null)
-                    {
-                        Properties[i].SetValue(obj, value, null);
-                    }
-                    else if (Fields[i] != null)
-                    {
-                        Fields[i].SetValue(obj, value);
-                    }
-                    else if (Methods[i] != null)
-                    {
-                        Methods[i].Invoke(obj, new object[] { value });
-                    }
-                }
-
-                return obj;
-            }
-        }
         
-        private DeserializationHelper SetupDeserializer<T>()
-            where T : class, new()
-        {
-            var helper = new DeserializationHelper();
-            var return_type = typeof(T);
-
-            // We have to have headers!
-            if (Headers == null) throw new Exception("CSV must have headers to be deserialized");
-            helper.NumColumns = Headers.Length;
-
-            // Set binding flags correctly
-            var bindings = BindingFlags.Public | BindingFlags.Instance;
-            if (!_settings.HeadersCaseSensitive)
-            {
-                bindings |= BindingFlags.IgnoreCase;
-            }
-
-            // Determine how to handle each column in the file - check properties, fields, and methods
-            helper.ColumnTypes = new Type[helper.NumColumns];
-            helper.Converters = new TypeConverter[helper.NumColumns];
-            helper.Properties = new PropertyInfo[helper.NumColumns];
-            helper.Fields = new FieldInfo[helper.NumColumns];
-            helper.Methods = new MethodInfo[helper.NumColumns];
-            for (var i = 0; i < helper.NumColumns; i++)
-            {
-                helper.Properties[i] = return_type.GetProperty(Headers[i], bindings);
-                
-                // Throw an easy-to-understand error for properties that lack a setter
-                if (helper.Properties[i] != null && !helper.Properties[i].CanWrite)
-                {
-                    if (_settings.IgnoreReadOnlyProperties && _settings.IgnoreHeaderErrors)
-                    {
-                        helper.Properties[i] = null;
-                        continue;
-                    }
-                    throw new Exception($"The column header '{Headers[i]}' matches a read-only property. To ignore this exception, enable IgnoreReadOnlyProperties and IgnoreHeaderErrors.");
-                }
-
-                // If we failed to get a property handler, let's try a field handler
-                if (helper.Properties[i] == null)
-                {
-                    helper.Fields[i] = return_type.GetField(Headers[i], bindings);
-
-                    // If we failed to get a field handler, let's try a method
-                    if (helper.Fields[i] == null)
-                    {
-                        // Methods must be treated differently - we have to ensure that the method has a single parameter
-                        var mi = return_type.GetMethod(Headers[i], bindings);
-                        if (mi != null)
-                        {
-                            if (mi.GetParameters().Length == 1)
-                            {
-                                helper.Methods[i] = mi;
-                                helper.ColumnTypes[i] = mi.GetParameters()[0].ParameterType;
-                            }
-                            else if (!_settings.IgnoreHeaderErrors)
-                            {
-                                throw new Exception(
-                                    $"The column header '{Headers[i]}' matched a method with more than one parameter.");
-                            }
-                        }
-                        else if (!_settings.IgnoreHeaderErrors)
-                        {
-                            throw new Exception(
-                                $"The column header '{Headers[i]}' was not found in the class '{return_type.FullName}'.");
-                        }
-                    }
-                    else
-                    {
-                        helper.ColumnTypes[i] = helper.Fields[i].FieldType;
-                    }
-                }
-                else
-                {
-                    helper.ColumnTypes[i] = helper.Properties[i].PropertyType;
-                }
-
-                if (helper.ColumnTypes[i] != null)
-                {
-                    helper.Converters[i] = TypeDescriptor.GetConverter(helper.ColumnTypes[i]);
-                    if ((helper.Converters[i] == null) && !_settings.IgnoreHeaderErrors)
-                    {
-                        throw new Exception(
-                            $"The column {Headers[i]} (type {helper.ColumnTypes[i]}) does not have a type converter.");
-                    }
-                }
-            }
-
-            return helper;
-        }
-
         /// <summary>
         /// Close our resources - specifically, the stream reader
         /// </summary>
@@ -477,7 +547,7 @@ namespace CSVFile
                 {
 
                     // Okay, let's do the real work
-                    foreach (string[] line in cr.Lines())
+                    foreach (var line in cr.Lines())
                     {
 
                         // Do we need to create a file for writing?

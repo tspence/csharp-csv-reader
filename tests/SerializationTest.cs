@@ -336,5 +336,53 @@ namespace CSVTestSuite
             Assert.IsNull(list[3].ReadOnlySingle);
         }
 
+        [Test]
+        public void DeserializeExcludeColumns()
+        {
+            var csv = "TestString,IntProperty,NullableSingle\n" +
+                      "Test String,57,12.35\n" +
+                      "Test String,57,\n" +
+                      "Test String,57,56.19\n" + 
+                      "Test String,57,\n" +
+                      "\n";
+            
+            // Let's specifically allow null
+            var settings = new CSVSettings
+            {
+                AllowNull = true,
+                NullToken = string.Empty,
+                IgnoreEmptyLineForDeserialization = true,
+                ExcludedColumns = new []{ "TestString" }
+            };
+
+            // Try deserializing - we should see nulls in the TestString column
+            var list = CSV.Deserialize<TestClassLastColumnNullableSingle>(csv, settings).ToList();
+            Assert.AreEqual(4, list.Count);
+
+            Assert.IsNull(list[0].TestString);
+            Assert.AreEqual(57, list[0].IntProperty);
+            Assert.AreEqual(12.35f, list[0].NullableSingle);
+            
+            Assert.IsNull(list[1].TestString);
+            Assert.AreEqual(57, list[1].IntProperty);
+            Assert.IsNull(list[1].NullableSingle);
+            
+            Assert.IsNull(list[2].TestString);
+            Assert.AreEqual(57, list[2].IntProperty);
+            Assert.AreEqual(56.19f, list[2].NullableSingle);
+
+            Assert.IsNull(list[3].TestString);
+            Assert.AreEqual(57, list[3].IntProperty);
+            Assert.IsNull(list[3].NullableSingle);
+            
+            // Try serializing - we should no longer see a TestString column
+            var backToCsv = CSV.Serialize(list, settings);
+            Assert.AreEqual("IntProperty,NullableSingle\n" +
+                            "57,12.35\n" +
+                            "57,\n" +
+                            "57,56.19\n" + 
+                            "57,\n" +
+                            "\n", backToCsv);
+        }
     }
 }
