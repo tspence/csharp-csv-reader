@@ -4,12 +4,14 @@
  * Home page: https://github.com/tspence/csharp-csv-reader
  */
 using System;
-using System.Text;
 using System.Collections.Generic;
 using NUnit.Framework;
 using System.IO;
 using CSVFile;
 using System.Linq;
+
+// ReSharper disable InvokeAsExtensionMethod
+// ReSharper disable MemberCanBePrivate.Global
 
 namespace CSVTestSuite
 {
@@ -56,11 +58,11 @@ namespace CSVTestSuite
             }
 
             // Save this string to a test file
-            var singleFile = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString() + ".csv");
+            var singleFile = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid()}.csv");
             var dirname = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
             try
             {
-                var rawString = CSV.Serialize<SimpleChopClass>(list);
+                var rawString = CSV.Serialize(list);
                 File.WriteAllText(singleFile, rawString);
 
                 // Create an empty test folder

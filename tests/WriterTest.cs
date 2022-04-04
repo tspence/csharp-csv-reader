@@ -5,10 +5,10 @@
  */
 using System;
 using System.Text;
-using System.Collections.Generic;
 using NUnit.Framework;
 using CSVFile;
 
+// ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable InvokeAsExtensionMethod
 
 namespace CSVTestSuite

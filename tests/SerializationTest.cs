@@ -10,8 +10,14 @@ using NUnit.Framework;
 using CSVFile;
 using System.IO;
 using System.Linq;
+#if HAS_ASYNC
 using System.Threading.Tasks;
+#endif
+
 // ReSharper disable ConvertToConstant.Local
+// ReSharper disable StringLiteralTypo
+// ReSharper disable UnassignedField.Global
+// ReSharper disable MemberCanBePrivate.Global
 
 namespace CSVTestSuite
 {
@@ -42,109 +48,107 @@ namespace CSVTestSuite
         public void TestObjectSerialization()
         {
             // Deserialize an array to a list of objects!
-            List<TestClassOne> list = null;
-            string source = @"timestamp,TestString,SetComment,PropertyString,IntField,IntProperty
+            var source = @"timestamp,TestString,SetComment,PropertyString,IntField,IntProperty
 2012-05-01,test1,""Hi there, I said!"",Bob,57,0
 2011-04-01,test2,""What's up, buttercup?"",Ralph,1,-999
 1975-06-03,test3,""Bye and bye, dragonfly!"",Jimmy's The Bomb,12,13";
-            byte[] byteArray = Encoding.UTF8.GetBytes(source);
-            MemoryStream stream = new MemoryStream(byteArray);
-            using (CSVReader cr = new CSVReader(new StreamReader(stream))) {
-                list = cr.Deserialize<TestClassOne>().ToList();
+            var byteArray = Encoding.UTF8.GetBytes(source);
+            var stream = new MemoryStream(byteArray);
+            using (var cr = new CSVReader(new StreamReader(stream))) {
+                var list = cr.Deserialize<TestClassOne>().ToList();
+                
+                Assert.AreEqual(3, list.Count);
+                Assert.AreEqual("test1", list[0].TestString);
+                Assert.AreEqual("Hi there, I said!", list[0].Comment);
+                Assert.AreEqual("Bob", list[0].PropertyString);
+                Assert.AreEqual(57, list[0].IntField);
+                Assert.AreEqual(0, list[0].IntProperty);
+                Assert.AreEqual(new DateTime(2012,5,1), list[0].timestamp);
+                Assert.AreEqual("test2", list[1].TestString);
+                Assert.AreEqual("What's up, buttercup?", list[1].Comment);
+                Assert.AreEqual("Ralph", list[1].PropertyString);
+                Assert.AreEqual(1, list[1].IntField);
+                Assert.AreEqual(-999, list[1].IntProperty);
+                Assert.AreEqual(new DateTime(2011, 4, 1), list[1].timestamp);
+                Assert.AreEqual("test3", list[2].TestString);
+                Assert.AreEqual("Bye and bye, dragonfly!", list[2].Comment);
+                Assert.AreEqual("Jimmy's The Bomb", list[2].PropertyString);
+                Assert.AreEqual(12, list[2].IntField);
+                Assert.AreEqual(13, list[2].IntProperty);
+                Assert.AreEqual(new DateTime(1975, 6, 3), list[2].timestamp);
             }
-
-            // Test the array
-            Assert.AreEqual(list.Count, 3);
-            Assert.AreEqual(list[0].TestString, "test1");
-            Assert.AreEqual(list[0].Comment, "Hi there, I said!");
-            Assert.AreEqual(list[0].PropertyString, "Bob");
-            Assert.AreEqual(list[0].IntField, 57);
-            Assert.AreEqual(list[0].IntProperty, 0);
-            Assert.AreEqual(list[0].timestamp, new DateTime(2012,5,1));
-            Assert.AreEqual(list[1].TestString, "test2");
-            Assert.AreEqual(list[1].Comment, "What's up, buttercup?");
-            Assert.AreEqual(list[1].PropertyString, "Ralph");
-            Assert.AreEqual(list[1].IntField, 1);
-            Assert.AreEqual(list[1].IntProperty, -999);
-            Assert.AreEqual(list[1].timestamp, new DateTime(2011, 4, 1));
-            Assert.AreEqual(list[2].TestString, "test3");
-            Assert.AreEqual(list[2].Comment, "Bye and bye, dragonfly!");
-            Assert.AreEqual(list[2].PropertyString, "Jimmy's The Bomb");
-            Assert.AreEqual(list[2].IntField, 12);
-            Assert.AreEqual(list[2].IntProperty, 13);
-            Assert.AreEqual(list[2].timestamp, new DateTime(1975, 6, 3));
         }
 
         [Test]
         public void TestStructSerialization()
         {
-            List<TestClassTwo> list = new List<TestClassTwo>();
+            var list = new List<TestClassTwo>();
             list.Add(new TestClassTwo() { FirstColumn = "hi1!", SecondColumn = 12, ThirdColumn = EnumTestType.First });
             list.Add(new TestClassTwo() { FirstColumn = "hi2, hi2, hi2!", SecondColumn = 34, ThirdColumn = EnumTestType.Second });
             list.Add(new TestClassTwo() { FirstColumn = @"hi3 says, ""Hi Three!""", SecondColumn = 56, ThirdColumn = EnumTestType.Third });
 
             // Serialize to a CSV string
-            string csv = CSV.Serialize<TestClassTwo>(list);
+            var csv = CSV.Serialize(list);
 
             // Deserialize back from a CSV string - should not throw any errors!
-            List<TestClassTwo> newlist = CSV.Deserialize<TestClassTwo>(csv).ToList();
+            var newList = CSV.Deserialize<TestClassTwo>(csv).ToList();
 
             // Compare original objects to new ones
-            for (int i = 0; i < list.Count; i++) {
-                Assert.AreEqual(list[i].FirstColumn, newlist[i].FirstColumn);
-                Assert.AreEqual(list[i].SecondColumn, newlist[i].SecondColumn);
-                Assert.AreEqual(list[i].ThirdColumn, newlist[i].ThirdColumn);
+            for (var i = 0; i < list.Count; i++) {
+                Assert.AreEqual(list[i].FirstColumn, newList[i].FirstColumn);
+                Assert.AreEqual(list[i].SecondColumn, newList[i].SecondColumn);
+                Assert.AreEqual(list[i].ThirdColumn, newList[i].ThirdColumn);
             }
         }
 
         [Test]
         public void TestNullSerialization()
         {
-            List<TestClassTwo> list = new List<TestClassTwo>();
+            var list = new List<TestClassTwo>();
             list.Add(new TestClassTwo() { FirstColumn = "hi1!", SecondColumn = 12, ThirdColumn = EnumTestType.First });
             list.Add(new TestClassTwo() { FirstColumn = "hi2, hi2, hi2!", SecondColumn = 34, ThirdColumn = EnumTestType.Second });
             list.Add(new TestClassTwo() { FirstColumn = @"hi3 says, ""Hi Three!""", SecondColumn = 56, ThirdColumn = EnumTestType.Third });
             list.Add(new TestClassTwo() { FirstColumn = null, SecondColumn = 7, ThirdColumn = EnumTestType.Fourth });
 
             // Serialize to a CSV string
-            string csv = CSV.Serialize<TestClassTwo>(list, CSVSettings.CSV_PERMIT_NULL);
+            var csv = CSV.Serialize(list, CSVSettings.CSV_PERMIT_NULL);
 
             // Deserialize back from a CSV string - should not throw any errors!
-            List<TestClassTwo> newlist = CSV.Deserialize<TestClassTwo>(csv, CSVSettings.CSV_PERMIT_NULL).ToList();
+            var newList = CSV.Deserialize<TestClassTwo>(csv, CSVSettings.CSV_PERMIT_NULL).ToList();
 
             // Compare original objects to new ones
-            for (int i = 0; i < list.Count; i++)
+            for (var i = 0; i < list.Count; i++)
             {
-                Assert.AreEqual(list[i].FirstColumn, newlist[i].FirstColumn);
-                Assert.AreEqual(list[i].SecondColumn, newlist[i].SecondColumn);
-                Assert.AreEqual(list[i].ThirdColumn, newlist[i].ThirdColumn);
+                Assert.AreEqual(list[i].FirstColumn, newList[i].FirstColumn);
+                Assert.AreEqual(list[i].SecondColumn, newList[i].SecondColumn);
+                Assert.AreEqual(list[i].ThirdColumn, newList[i].ThirdColumn);
             }
         }
 
         [Test]
         public void TestCaseInsensitiveDeserializer()
         {
-            List<TestClassTwo> list = new List<TestClassTwo>();
+            var list = new List<TestClassTwo>();
             list.Add(new TestClassTwo() { FirstColumn = "hi1!", SecondColumn = 12, ThirdColumn = EnumTestType.First });
             list.Add(new TestClassTwo() { FirstColumn = "hi2, hi2, hi2!", SecondColumn = 34, ThirdColumn = EnumTestType.Second });
             list.Add(new TestClassTwo() { FirstColumn = @"hi3 says, ""Hi Three!""", SecondColumn = 56, ThirdColumn = EnumTestType.Third });
             list.Add(new TestClassTwo() { FirstColumn = null, SecondColumn = 7, ThirdColumn = EnumTestType.Fourth });
 
-            string csv = "FIRSTCOLUMN,SECONDCOLUMN,THIRDCOLUMN\n" +
+            var csv = "FIRSTCOLUMN,SECONDCOLUMN,THIRDCOLUMN\n" +
                 "hi1!,12,First\n" +
                 "\"hi2, hi2, hi2!\",34,Second\n" +
                 "\"hi3 says, \"\"Hi Three!\"\"\",56,Third\n" +
                 "NULL,7,Fourth";
 
             // Deserialize back from a CSV string - should not throw any errors!
-            List<TestClassTwo> newlist = CSV.Deserialize<TestClassTwo>(csv, CSVSettings.CSV_PERMIT_NULL).ToList();
+            var newList = CSV.Deserialize<TestClassTwo>(csv, CSVSettings.CSV_PERMIT_NULL).ToList();
 
             // Compare original objects to new ones
-            for (int i = 0; i < list.Count; i++)
+            for (var i = 0; i < list.Count; i++)
             {
-                Assert.AreEqual(list[i].FirstColumn, newlist[i].FirstColumn);
-                Assert.AreEqual(list[i].SecondColumn, newlist[i].SecondColumn);
-                Assert.AreEqual(list[i].ThirdColumn, newlist[i].ThirdColumn);
+                Assert.AreEqual(list[i].FirstColumn, newList[i].FirstColumn);
+                Assert.AreEqual(list[i].SecondColumn, newList[i].SecondColumn);
+                Assert.AreEqual(list[i].ThirdColumn, newList[i].ThirdColumn);
             }
         }
         
