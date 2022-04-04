@@ -10,6 +10,9 @@ using System.IO;
 using CSVFile;
 using System.Linq;
 
+// ReSharper disable InvokeAsExtensionMethod
+// ReSharper disable MemberCanBePrivate.Global
+
 namespace CSVTestSuite
 {
     [TestFixture]
@@ -55,11 +58,11 @@ namespace CSVTestSuite
             }
 
             // Save this string to a test file
-            var singleFile = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString() + ".csv");
+            var singleFile = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid()}.csv");
             var dirname = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
             try
             {
-                var rawString = CSV.Serialize<SimpleChopClass>(list);
+                var rawString = CSV.Serialize(list);
                 File.WriteAllText(singleFile, rawString);
 
                 // Create an empty test folder

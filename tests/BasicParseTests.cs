@@ -17,105 +17,101 @@ namespace CSVTestSuite
         {
             // Simplest test
             var line = CSV.ParseLine("1,2,3,4,5");
-            Assert.AreEqual(line.Length, 5);
-            Assert.AreEqual(line[2], "3");
-            Assert.AreEqual(line[4], "5");
+            Assert.AreEqual(5, line.Length);
+            Assert.AreEqual("3", line[2]);
+            Assert.AreEqual("5", line[4]);
 
             // Test with a trailing blank item
             line = CSV.ParseLine("1,2,3,4,5,");
-            Assert.AreEqual(line.Length, 6);
-            Assert.AreEqual(line[0], "1");
-            Assert.AreEqual(line[5], "");
+            Assert.AreEqual(6, line.Length);
+            Assert.AreEqual("1", line[0]);
+            Assert.AreEqual("", line[5]);
 
             // Parse oddly formatted CSV from this page: http://stackoverflow.com/questions/11974341/using-filehelper-library-to-parse-csv-strings-but-need-to-ignore-newlines
             line = CSV.ParseLine(@"30: ""NY"", 41: ""JOHN S."", 36: ""HAMPTON"", 42: ""123 Road Street, NY"", 68: ""Y""");
-            Assert.AreEqual(line.Length, 6);
-            Assert.AreEqual(line[0], @"30: ""NY""");
-            Assert.AreEqual(line[1], @" 41: ""JOHN S.""");
-            Assert.AreEqual(line[2], @" 36: ""HAMPTON""");
-            Assert.AreEqual(line[3], @" 42: ""123 Road Street");
-            Assert.AreEqual(line[4], @" NY""");
-            Assert.AreEqual(line[5], @" 68: ""Y""");
+            Assert.AreEqual(6, line.Length);
+            Assert.AreEqual(@"30: ""NY""", line[0]);
+            Assert.AreEqual(@" 41: ""JOHN S.""", line[1]);
+            Assert.AreEqual(@" 36: ""HAMPTON""", line[2]);
+            Assert.AreEqual(@" 42: ""123 Road Street", line[3]);
+            Assert.AreEqual(@" NY""", line[4]);
+            Assert.AreEqual(@" 68: ""Y""", line[5]);
 
             line = CSV.ParseLine(@"123,""Sue said, """"Hi, this is a test!"""""",2012-08-15");
-            Assert.AreEqual(line.Length, 3);
-            Assert.AreEqual(line[0], @"123");
-            Assert.AreEqual(line[1], @"Sue said, ""Hi, this is a test!""");
-            Assert.AreEqual(line[2], @"2012-08-15");
+            Assert.AreEqual(3, line.Length);
+            Assert.AreEqual(@"123", line[0]);
+            Assert.AreEqual(@"Sue said, ""Hi, this is a test!""", line[1]);
+            Assert.AreEqual(@"2012-08-15", line[2]);
         }
 
         [Test]
         public void ParseTSV()
         {
             // Basic TSV test
-            string[] line = CSV.ParseLine("1\t2\t3\t4\t5", CSVSettings.TSV);
-            Assert.AreEqual(line.Length, 5);
-            Assert.AreEqual(line[3], "4");
-            Assert.AreEqual(line[1], "2");
+            var line = CSV.ParseLine("1\t2\t3\t4\t5", CSVSettings.TSV);
+            Assert.AreEqual(5, line.Length);
+            Assert.AreEqual("4", line[3]);
+            Assert.AreEqual("2", line[1]);
 
             // Test trailing blank item
             line = CSV.ParseLine("1\t2\t3\t4\t5\t", CSVSettings.TSV);
-            Assert.AreEqual(line.Length, 6);
-            Assert.AreEqual(line[5], "");
-            Assert.AreEqual(line[4], "5");
+            Assert.AreEqual(6, line.Length);
+            Assert.AreEqual("", line[5]);
+            Assert.AreEqual("5", line[4]);
         }
 
         [Test]
         public void ParseTextQualifiedCSV()
         {
-            string[] line = null;
-
-            line = CSV.ParseLine("1,\"two\",3,\"four\",five");
-            Assert.AreEqual(line[0], "1");
-            Assert.AreEqual(line[1], "two");
-            Assert.AreEqual(line[2], "3");
-            Assert.AreEqual(line[3], "four");
-            Assert.AreEqual(line[4], "five");
+            var line = CSV.ParseLine("1,\"two\",3,\"four\",five");
+            Assert.AreEqual("1", line[0]);
+            Assert.AreEqual("two", line[1]);
+            Assert.AreEqual("3", line[2]);
+            Assert.AreEqual("four", line[3]);
+            Assert.AreEqual("five", line[4]);
             line = CSV.ParseLine("1,\"two\",3,\"four five\",six");
-            Assert.AreEqual(line[0], "1");
-            Assert.AreEqual(line[1], "two");
-            Assert.AreEqual(line[2], "3");
-            Assert.AreEqual(line[3], "four five");
-            Assert.AreEqual(line[4], "six");
+            Assert.AreEqual("1", line[0]);
+            Assert.AreEqual("two", line[1]);
+            Assert.AreEqual("3", line[2]);
+            Assert.AreEqual("four five", line[3]);
+            Assert.AreEqual("six", line[4]);
             line = CSV.ParseLine("1,\"two\",3,\"four five 6\",six");
-            Assert.AreEqual(line[0], "1");
-            Assert.AreEqual(line[1], "two");
-            Assert.AreEqual(line[2], "3");
-            Assert.AreEqual(line[3], "four five 6");
-            Assert.AreEqual(line[4], "six");
+            Assert.AreEqual("1", line[0]);
+            Assert.AreEqual("two", line[1]);
+            Assert.AreEqual("3", line[2]);
+            Assert.AreEqual("four five 6", line[3]);
+            Assert.AreEqual("six", line[4]);
 
             // Test with embedded delimiters
             line = CSV.ParseLine("1,\"two\",3,\"four, five, and 6\",six");
-            Assert.AreEqual(line[0], "1");
-            Assert.AreEqual(line[1], "two");
-            Assert.AreEqual(line[2], "3");
-            Assert.AreEqual(line[3], "four, five, and 6");
-            Assert.AreEqual(line[4], "six");
+            Assert.AreEqual("1", line[0]);
+            Assert.AreEqual("two", line[1]);
+            Assert.AreEqual("3", line[2]);
+            Assert.AreEqual("four, five, and 6", line[3]);
+            Assert.AreEqual("six", line[4]);
 
             // Test with doubled up qualifiers
             line = CSV.ParseLine("1,\"two\",3,\"four, \"\"five\"\", and 6\",six");
-            Assert.AreEqual(line[0], "1");
-            Assert.AreEqual(line[1], "two");
-            Assert.AreEqual(line[2], "3");
-            Assert.AreEqual(line[3], "four, \"five\", and 6");
-            Assert.AreEqual(line[4], "six");
+            Assert.AreEqual("1", line[0]);
+            Assert.AreEqual("two", line[1]);
+            Assert.AreEqual("3", line[2]);
+            Assert.AreEqual("four, \"five\", and 6", line[3]);
+            Assert.AreEqual("six", line[4]);
 
             // Test with an embedded newline
             line = CSV.ParseLine("1,\"two\",3,\"four, \"\"five\n\"\", and 6\",six");
-            Assert.AreEqual(line[0], "1");
-            Assert.AreEqual(line[1], "two");
-            Assert.AreEqual(line[2], "3");
-            Assert.AreEqual(line[3], "four, \"five\n\", and 6");
-            Assert.AreEqual(line[4], "six");
+            Assert.AreEqual("1", line[0]);
+            Assert.AreEqual("two", line[1]);
+            Assert.AreEqual("3", line[2]);
+            Assert.AreEqual("four, \"five\n\", and 6", line[3]);
+            Assert.AreEqual("six", line[4]);
         }
 
         [Test]
         public void TestFailingCSVLine()
         {
-            string[] line = null;
-
             // Test a good line
-            line = CSV.ParseLine("1,\"two\",3,\"four, \"\"five\"");
+            var line = CSV.ParseLine("1,\"two\",3,\"four, \"\"five\"");
             Assert.AreEqual(4, line.Length);
             Assert.AreEqual("1", line[0]);
             Assert.AreEqual("two", line[1] );
@@ -141,43 +137,41 @@ namespace CSVTestSuite
         [Test]
         public void ParseTextQualifiedCSVWithSpacing()
         {
-            string[] line = null;
-
-            line = CSV.ParseLine("1, \"two\", 3, \"four\", five");
-            Assert.AreEqual(line.Length, 5);
-            Assert.AreEqual(line[0], "1");
-            Assert.AreEqual(line[1], "two");
-            Assert.AreEqual(line[2], " 3");
-            Assert.AreEqual(line[3], "four");
-            Assert.AreEqual(line[4], " five");
+            var line = CSV.ParseLine("1, \"two\", 3, \"four\", five");
+            Assert.AreEqual(5, line.Length);
+            Assert.AreEqual("1", line[0]);
+            Assert.AreEqual("two", line[1]);
+            Assert.AreEqual(" 3", line[2]);
+            Assert.AreEqual("four", line[3]);
+            Assert.AreEqual(" five", line[4]);
             line = CSV.ParseLine("1, \"two\", 3, \"four five\", six");
-            Assert.AreEqual(line.Length, 5);
-            Assert.AreEqual(line[0], "1");
-            Assert.AreEqual(line[1], "two");
-            Assert.AreEqual(line[2], " 3");
-            Assert.AreEqual(line[3], "four five");
-            Assert.AreEqual(line[4], " six"); 
+            Assert.AreEqual(5, line.Length);
+            Assert.AreEqual("1", line[0]);
+            Assert.AreEqual("two", line[1]);
+            Assert.AreEqual(" 3", line[2]);
+            Assert.AreEqual("four five", line[3]);
+            Assert.AreEqual(" six", line[4]);
             line = CSV.ParseLine("1, \"two\", 3, \"four five 6\", six");
-            Assert.AreEqual(line.Length, 5);
-            Assert.AreEqual(line[0], "1");
-            Assert.AreEqual(line[1], "two");
-            Assert.AreEqual(line[2], " 3");
-            Assert.AreEqual(line[3], "four five 6");
-            Assert.AreEqual(line[4], " six");
+            Assert.AreEqual(5, line.Length);
+            Assert.AreEqual("1", line[0]);
+            Assert.AreEqual("two", line[1]);
+            Assert.AreEqual(" 3", line[2]);
+            Assert.AreEqual("four five 6", line[3]);
+            Assert.AreEqual(" six", line[4]);
             line = CSV.ParseLine("1, \"two\", 3, \"four, five, and 6\", six");
-            Assert.AreEqual(line.Length, 5);
-            Assert.AreEqual(line[0], "1");
-            Assert.AreEqual(line[1], "two");
-            Assert.AreEqual(line[2], " 3");
-            Assert.AreEqual(line[3], "four, five, and 6");
-            Assert.AreEqual(line[4], " six");
+            Assert.AreEqual(5, line.Length);
+            Assert.AreEqual("1", line[0]);
+            Assert.AreEqual("two", line[1]);
+            Assert.AreEqual(" 3", line[2]);
+            Assert.AreEqual("four, five, and 6", line[3]);
+            Assert.AreEqual(" six", line[4]);
             line = CSV.ParseLine("1, \"two\", 3, \"four, \"\"five\"\", \nand 6\", six");
-            Assert.AreEqual(line.Length, 5);
-            Assert.AreEqual(line[0], "1");
-            Assert.AreEqual(line[1], "two");
-            Assert.AreEqual(line[2], " 3");
-            Assert.AreEqual(line[3], "four, \"five\", \nand 6");
-            Assert.AreEqual(line[4], " six");
+            Assert.AreEqual(5, line.Length);
+            Assert.AreEqual("1", line[0]);
+            Assert.AreEqual("two", line[1]);
+            Assert.AreEqual(" 3", line[2]);
+            Assert.AreEqual("four, \"five\", \nand 6", line[3]);
+            Assert.AreEqual(" six", line[4]);
         }
 
         [Test]

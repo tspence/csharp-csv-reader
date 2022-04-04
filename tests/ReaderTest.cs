@@ -4,8 +4,6 @@
  * Home page: https://github.com/tspence/csharp-csv-reader
  */
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using NUnit.Framework;
 using CSVFile;
 #if HAS_ASYNC
@@ -44,40 +42,38 @@ namespace CSVTestSuite
                     switch (i)
                     {
                         case 0:
-                            Assert.AreEqual(line[0], "Name");
-                            Assert.AreEqual(line[1], "Title");
-                            Assert.AreEqual(line[2], "Phone");
+                            Assert.AreEqual("Name", line[0]);
+                            Assert.AreEqual("Title", line[1]);
+                            Assert.AreEqual("Phone", line[2]);
                             break;
                         case 1:
-                            Assert.AreEqual(line[0], "JD");
-                            Assert.AreEqual(line[1], "Doctor");
-                            Assert.AreEqual(line[2], "x234");
+                            Assert.AreEqual("JD", line[0]);
+                            Assert.AreEqual("Doctor", line[1]);
+                            Assert.AreEqual("x234", line[2]);
                             break;
                         case 2:
-                            Assert.AreEqual(line[0], "Janitor");
-                            Assert.AreEqual(line[1], "Janitor");
-                            Assert.AreEqual(line[2], "x235");
+                            Assert.AreEqual("Janitor", line[0]);
+                            Assert.AreEqual("Janitor", line[1]);
+                            Assert.AreEqual("x235", line[2]);
                             break;
                         case 3:
-                            Assert.AreEqual(line[0], "Dr. Reed, " + Environment.NewLine + "Eliot");
-                            Assert.AreEqual(line[1], "Private \"Practice\"");
-                            Assert.AreEqual(line[2], "x236");
+                            Assert.AreEqual("Dr. Reed, " + Environment.NewLine + "Eliot", line[0]);
+                            Assert.AreEqual("Private \"Practice\"", line[1]);
+                            Assert.AreEqual("x236", line[2]);
                             break;
                         case 4:
-                            Assert.AreEqual(line[0], "Dr. Kelso");
-                            Assert.AreEqual(line[1], "Chief of Medicine");
-                            Assert.AreEqual(line[2], "x100");
+                            Assert.AreEqual("Dr. Kelso", line[0]);
+                            Assert.AreEqual("Chief of Medicine", line[1]);
+                            Assert.AreEqual("x100", line[2]);
                             break;
                         default:
                             Assert.IsTrue(false, "Should not get here");
                             break;
                     }
-
                     i++;
                 }
             }
         }
-
 
         [Test]
         public void TestDanglingFields()
@@ -105,40 +101,40 @@ namespace CSVTestSuite
                     switch (i)
                     {
                         case 0:
-                            Assert.AreEqual(line[0], "Name");
-                            Assert.AreEqual(line[1], "Title");
-                            Assert.AreEqual(line[2], "Phone");
-                            Assert.AreEqual(line[3], "Dangle");
+                            Assert.AreEqual("Name", line[0]);
+                            Assert.AreEqual("Title", line[1]);
+                            Assert.AreEqual("Phone", line[2]);
+                            Assert.AreEqual("Dangle", line[3]);
                             break;
                         case 1:
-                            Assert.AreEqual(line[0], "JD");
-                            Assert.AreEqual(line[1], "Doctor");
-                            Assert.AreEqual(line[2], "x234");
-                            Assert.AreEqual(line[3], "");
+                            Assert.AreEqual("JD", line[0]);
+                            Assert.AreEqual("Doctor", line[1]);
+                            Assert.AreEqual("x234", line[2]);
+                            Assert.AreEqual("", line[3]);
                             break;
                         case 2:
-                            Assert.AreEqual(line[0], "Janitor");
-                            Assert.AreEqual(line[1], "Janitor");
-                            Assert.AreEqual(line[2], "x235");
-                            Assert.AreEqual(line[3], "");
+                            Assert.AreEqual("Janitor", line[0]);
+                            Assert.AreEqual("Janitor", line[1]);
+                            Assert.AreEqual("x235", line[2]);
+                            Assert.AreEqual("", line[3]);
                             break;
                         case 3:
-                            Assert.AreEqual(line[0], "Dr. Reed, " + Environment.NewLine + "Eliot");
-                            Assert.AreEqual(line[1], "Private \"Practice\"");
-                            Assert.AreEqual(line[2], "x236");
-                            Assert.AreEqual(line[3], "");
+                            Assert.AreEqual("Dr. Reed, " + Environment.NewLine + "Eliot", line[0]);
+                            Assert.AreEqual("Private \"Practice\"", line[1]);
+                            Assert.AreEqual("x236", line[2]);
+                            Assert.AreEqual("", line[3]);
                             break;
                         case 4:
-                            Assert.AreEqual(line[0], "Dr. Kelso");
-                            Assert.AreEqual(line[1], "Chief of Medicine");
-                            Assert.AreEqual(line[2], "x100");
-                            Assert.AreEqual(line[3], "");
+                            Assert.AreEqual("Dr. Kelso", line[0]);
+                            Assert.AreEqual("Chief of Medicine", line[1]);
+                            Assert.AreEqual("x100", line[2]);
+                            Assert.AreEqual("", line[3]);
                             break;
                         case 5:
-                            Assert.AreEqual(line[0], "");
-                            Assert.AreEqual(line[1], "");
-                            Assert.AreEqual(line[2], "");
-                            Assert.AreEqual(line[3], "");
+                            Assert.AreEqual("", line[0]);
+                            Assert.AreEqual("", line[1]);
+                            Assert.AreEqual("", line[2]);
+                            Assert.AreEqual("", line[3]);
                             break;
                         default:
                             Assert.IsTrue(false, "Should not get here");
@@ -163,33 +159,34 @@ namespace CSVTestSuite
             var settings = new CSVSettings() { HeaderRowIncluded = true, FieldDelimiter = '\t' };
             using (var cr = CSVReader.FromString(source, settings))
             {
-                Assert.AreEqual(cr.Headers[0], "Name");
-                Assert.AreEqual(cr.Headers[1], "Title");
-                Assert.AreEqual(cr.Headers[2], "Phone");
+                Assert.AreEqual("Name", cr.Headers[0]);
+                Assert.AreEqual("Title", cr.Headers[1]);
+                Assert.AreEqual("Phone", cr.Headers[2]);
                 var i = 1;
                 foreach (var line in cr)
                 {
+                    Assert.AreEqual(3, line.Length);
                     switch (i)
                     {
                         case 1:
-                            Assert.AreEqual(line[0], "JD");
-                            Assert.AreEqual(line[1], "Doctor");
-                            Assert.AreEqual(line[2], "x234");
+                            Assert.AreEqual("JD", line[0]);
+                            Assert.AreEqual("Doctor", line[1]);
+                            Assert.AreEqual("x234", line[2]);
                             break;
                         case 2:
-                            Assert.AreEqual(line[0], "Janitor");
-                            Assert.AreEqual(line[1], "Janitor");
-                            Assert.AreEqual(line[2], "x235");
+                            Assert.AreEqual("Janitor", line[0]);
+                            Assert.AreEqual("Janitor", line[1]);
+                            Assert.AreEqual("x235", line[2]);
                             break;
                         case 3:
-                            Assert.AreEqual(line[0], "Dr. Reed, " + Environment.NewLine + "Eliot");
-                            Assert.AreEqual(line[1], "Private \"Practice\"");
-                            Assert.AreEqual(line[2], "x236");
+                            Assert.AreEqual("Dr. Reed, " + Environment.NewLine + "Eliot", line[0]);
+                            Assert.AreEqual("Private \"Practice\"", line[1]);
+                            Assert.AreEqual("x236", line[2]);
                             break;
                         case 4:
-                            Assert.AreEqual(line[0], "Dr. Kelso");
-                            Assert.AreEqual(line[1], "Chief of Medicine");
-                            Assert.AreEqual(line[2], "x100");
+                            Assert.AreEqual("Dr. Kelso", line[0]);
+                            Assert.AreEqual("Chief of Medicine", line[1]);
+                            Assert.AreEqual("x100", line[2]);
                             break;
                     }
 
@@ -219,33 +216,33 @@ namespace CSVTestSuite
                 // The field delimiter should have been changed, but the original object should remain the same
                 Assert.AreEqual('\t', settings.FieldDelimiter);
                 Assert.AreEqual('|', cr.Settings.FieldDelimiter);
-                Assert.AreEqual(cr.Headers[0], "Name");
-                Assert.AreEqual(cr.Headers[1], "Title");
-                Assert.AreEqual(cr.Headers[2], "Phone");
+                Assert.AreEqual("Name", cr.Headers[0]);
+                Assert.AreEqual("Title", cr.Headers[1]);
+                Assert.AreEqual("Phone", cr.Headers[2]);
                 var i = 1;
                 foreach (var line in cr)
                 {
                     switch (i)
                     {
                         case 1:
-                            Assert.AreEqual(line[0], "JD");
-                            Assert.AreEqual(line[1], "Doctor");
-                            Assert.AreEqual(line[2], "x234");
+                            Assert.AreEqual("JD", line[0]);
+                            Assert.AreEqual("Doctor", line[1]);
+                            Assert.AreEqual("x234", line[2]);
                             break;
                         case 2:
-                            Assert.AreEqual(line[0], "Janitor");
-                            Assert.AreEqual(line[1], "Janitor");
-                            Assert.AreEqual(line[2], "x235");
+                            Assert.AreEqual("Janitor", line[0]);
+                            Assert.AreEqual("Janitor", line[1]);
+                            Assert.AreEqual("x235", line[2]);
                             break;
                         case 3:
-                            Assert.AreEqual(line[0], "Dr. Reed, " + Environment.NewLine + "Eliot");
-                            Assert.AreEqual(line[1], "Private \"Practice\"");
-                            Assert.AreEqual(line[2], "x236");
+                            Assert.AreEqual("Dr. Reed, " + Environment.NewLine + "Eliot", line[0]);
+                            Assert.AreEqual("Private \"Practice\"", line[1]);
+                            Assert.AreEqual("x236", line[2]);
                             break;
                         case 4:
-                            Assert.AreEqual(line[0], "Dr. Kelso");
-                            Assert.AreEqual(line[1], "Chief of Medicine");
-                            Assert.AreEqual(line[2], "x100");
+                            Assert.AreEqual("Dr. Kelso", line[0]);
+                            Assert.AreEqual("Chief of Medicine", line[1]);
+                            Assert.AreEqual("x100", line[2]);
                             break;
                     }
 
@@ -275,33 +272,33 @@ namespace CSVTestSuite
                 // The field delimiter should have been changed, but the original object should remain the same
                 Assert.AreEqual('\t', settings.FieldDelimiter);
                 Assert.AreEqual('|', cr.Settings.FieldDelimiter);
-                Assert.AreEqual(cr.Headers[0], "Name");
-                Assert.AreEqual(cr.Headers[1], "Title");
-                Assert.AreEqual(cr.Headers[2], "Phone");
+                Assert.AreEqual("Name", cr.Headers[0]);
+                Assert.AreEqual("Title", cr.Headers[1]);
+                Assert.AreEqual("Phone", cr.Headers[2]);
                 var i = 1;
                 await foreach (var line in cr)
                 {
                     switch (i)
                     {
                         case 1:
-                            Assert.AreEqual(line[0], "JD");
-                            Assert.AreEqual(line[1], "Doctor");
-                            Assert.AreEqual(line[2], "x234");
+                            Assert.AreEqual("JD", line[0]);
+                            Assert.AreEqual("Doctor", line[1]);
+                            Assert.AreEqual("x234", line[2]);
                             break;
                         case 2:
-                            Assert.AreEqual(line[0], "Janitor");
-                            Assert.AreEqual(line[1], "Janitor");
-                            Assert.AreEqual(line[2], "x235");
+                            Assert.AreEqual("Janitor", line[0]);
+                            Assert.AreEqual("Janitor", line[1]);
+                            Assert.AreEqual("x235", line[2]);
                             break;
                         case 3:
-                            Assert.AreEqual(line[0], "Dr. Reed, " + Environment.NewLine + "Eliot");
-                            Assert.AreEqual(line[1], "Private \"Practice\"");
-                            Assert.AreEqual(line[2], "x236");
+                            Assert.AreEqual("Dr. Reed, " + Environment.NewLine + "Eliot", line[0]);
+                            Assert.AreEqual("Private \"Practice\"", line[1]);
+                            Assert.AreEqual("x236", line[2]);
                             break;
                         case 4:
-                            Assert.AreEqual(line[0], "Dr. Kelso");
-                            Assert.AreEqual(line[1], "Chief of Medicine");
-                            Assert.AreEqual(line[2], "x100");
+                            Assert.AreEqual("Dr. Kelso", line[0]);
+                            Assert.AreEqual("Chief of Medicine", line[1]);
+                            Assert.AreEqual("x100", line[2]);
                             break;
                     }
 
@@ -310,29 +307,5 @@ namespace CSVTestSuite
             }
         }
 #endif
-        [Test]
-        public void TestEnumThing()
-        {
-            var te = new TestEnumerable();
-            foreach (var list in te)
-            {
-                
-            }
-        }
-    }
-    
-    public class TestEnumerable : IEnumerable<string[]>
-    {
-        public IEnumerator<string[]> GetEnumerator()
-        {
-            yield return new string[] { "", "" };
-            yield return new string[] { "", "" };
-            yield return new string[] { "", "" };
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
-        }
     }
 }
