@@ -36,7 +36,7 @@ namespace CSVFile
         /// <returns>An data table of strings that were retrieved from the CSV file.</returns>
         public static DataTable FromStream(StreamReader stream, CSVSettings settings = null)
         {
-            using (CSVReader cr = new CSVReader(stream, settings))
+            using (var cr = new CSVReader(stream, settings))
             {
                 return cr.ReadAsDataTable();
             }
@@ -50,10 +50,14 @@ namespace CSVFile
         /// <returns></returns>
         public static DataTable FromString(string source, CSVSettings settings = null)
         {
-            var byteArray = Encoding.UTF8.GetBytes(source);
+            if (settings == null)
+            {
+                settings = CSVSettings.CSV;
+            }
+            var byteArray = settings.Encoding.GetBytes(source);
             using (var stream = new MemoryStream(byteArray))
             {
-                using (var cr = new CSVReader(new StreamReader(stream), settings))
+                using (var cr = new CSVReader(stream, settings))
                 {
                     return cr.ReadAsDataTable();
                 }

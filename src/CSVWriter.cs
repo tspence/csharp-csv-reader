@@ -114,7 +114,7 @@ namespace CSVFile
     public class CSVWriter : IDisposable
     {
         private readonly CSVSettings _settings;
-        private readonly StreamWriter _stream;
+        private readonly StreamWriter _writer;
         private readonly char[] _riskyChars;
         private readonly Dictionary<Type, int> _forceQualifierTypes;
 
@@ -125,12 +125,29 @@ namespace CSVFile
         /// <param name="settings">The CSV settings to use when writing to the stream (Default: CSV)</param>
         public CSVWriter(StreamWriter dest, CSVSettings settings = null)
         {
-            _stream = dest;
+            _writer = dest;
             _settings = settings;
             if (_settings == null)
             {
                 _settings = CSVSettings.CSV;
             }
+            _riskyChars = _settings.GetRiskyChars();
+            _forceQualifierTypes = _settings.GetForceQualifierTypes();
+        }
+        
+        /// <summary>
+        /// Construct a new CSV writer to produce output on the enclosed stream
+        /// </summary>
+        /// <param name="dest">The stream where this CSV will be outputted</param>
+        /// <param name="settings">The CSV settings to use when writing to the stream (Default: CSV)</param>
+        public CSVWriter(Stream dest, CSVSettings settings = null)
+        {
+            _settings = settings;
+            if (_settings == null)
+            {
+                _settings = CSVSettings.CSV;
+            }
+            _writer = new StreamWriter(dest, _settings.Encoding);
             _riskyChars = _settings.GetRiskyChars();
             _forceQualifierTypes = _settings.GetForceQualifierTypes();
         }
@@ -146,11 +163,11 @@ namespace CSVFile
                 foreach (DataColumn col in dt.Columns) {
                     headers.Add(col.ColumnName);
                 }
-                _stream.WriteLine(CSV.ItemsToCsv(headers, _settings, _riskyChars, _forceQualifierTypes));
+                _writer.WriteLine(CSV.ItemsToCsv(headers, _settings, _riskyChars, _forceQualifierTypes));
             }
 
             foreach (DataRow dr in dt.Rows) {
-                _stream.WriteLine(CSV.ItemsToCsv(dr.ItemArray, _settings, _riskyChars, _forceQualifierTypes));
+                _writer.WriteLine(CSV.ItemsToCsv(dr.ItemArray, _settings, _riskyChars, _forceQualifierTypes));
             }
         }
 
@@ -160,7 +177,7 @@ namespace CSVFile
         /// <param name="items"></param>
         public void WriteLine(IEnumerable<object> items)
         {
-            _stream.WriteLine(CSV.ItemsToCsv(items, _settings, _riskyChars, _forceQualifierTypes));
+            _writer.WriteLine(CSV.ItemsToCsv(items, _settings, _riskyChars, _forceQualifierTypes));
         }
         
 #if HAS_ASYNC
@@ -170,7 +187,7 @@ namespace CSVFile
         /// <param name="items"></param>
         public Task WriteLineAsync(IEnumerable<object> items)
         {
-            return _stream.WriteLineAsync(CSV.ItemsToCsv(items, _settings, _riskyChars, _forceQualifierTypes));
+            return _writer.WriteLineAsync(CSV.ItemsToCsv(items, _settings, _riskyChars, _forceQualifierTypes));
         }
         
         /// <summary>
@@ -184,11 +201,11 @@ namespace CSVFile
                 foreach (DataColumn col in dt.Columns) {
                     headers.Add(col.ColumnName);
                 }
-                await _stream.WriteLineAsync(CSV.ItemsToCsv(headers, _settings, _riskyChars, _forceQualifierTypes));
+                await _writer.WriteLineAsync(CSV.ItemsToCsv(headers, _settings, _riskyChars, _forceQualifierTypes));
             }
 
             foreach (DataRow dr in dt.Rows) {
-                await _stream.WriteLineAsync(CSV.ItemsToCsv(dr.ItemArray, _settings, _riskyChars, _forceQualifierTypes));
+                await _writer.WriteLineAsync(CSV.ItemsToCsv(dr.ItemArray, _settings, _riskyChars, _forceQualifierTypes));
             }
         }
 #endif
@@ -202,12 +219,12 @@ namespace CSVFile
             var serializer = new SerializationHelper<T>(_settings, _riskyChars, _forceQualifierTypes);
             if (_settings.HeaderRowIncluded)
             {
-                _stream.Write(serializer.SerializeHeader());
+                _writer.Write(serializer.SerializeHeader());
             }
 
             foreach (var row in list)
             {
-                _stream.Write(serializer.Serialize(row));
+                _writer.Write(serializer.Serialize(row));
             }
         }
         
@@ -221,12 +238,12 @@ namespace CSVFile
             var serializer = new SerializationHelper<T>(_settings, _riskyChars, _forceQualifierTypes);
             if (_settings.HeaderRowIncluded)
             {
-                await _stream.WriteAsync(serializer.SerializeHeader());
+                await _writer.WriteAsync(serializer.SerializeHeader());
             }
 
             foreach (var row in list)
             {
-                await _stream.WriteAsync(serializer.Serialize(row));
+                await _writer.WriteAsync(serializer.Serialize(row));
             }
         }
 #endif
@@ -241,12 +258,12 @@ namespace CSVFile
             var serializer = new SerializationHelper<T>(_settings, _riskyChars, _forceQualifierTypes);
             if (_settings.HeaderRowIncluded)
             {
-                await _stream.WriteAsync(serializer.SerializeHeader());
+                await _writer.WriteAsync(serializer.SerializeHeader());
             }
 
             await foreach (var row in list)
             {
-                await _stream.WriteAsync(serializer.Serialize(row));
+                await _writer.WriteAsync(serializer.Serialize(row));
             }
         }
 #endif
@@ -256,8 +273,8 @@ namespace CSVFile
         /// </summary>
         public void Dispose()
         {
-            _stream.Close();
-            _stream.Dispose();
+            _writer.Close();
+            _writer.Dispose();
         }
     }
 }

@@ -5,6 +5,7 @@
  */
 using System;
 using System.Collections.Generic;
+using System.Text;
 
 namespace CSVFile
 {
@@ -115,6 +116,11 @@ namespace CSVFile
         /// not throw an error for empty lines and will instead ignore it.
         /// </summary>
         public bool IgnoreEmptyLineForDeserialization { get; set; }
+        
+        /// <summary>
+        /// The encoding for converting streams of bytes to strings
+        /// </summary>
+        public Encoding Encoding { get; set; } = Encoding.UTF8;
 
         /// <summary>
         /// Standard comma-separated value (CSV) file settings

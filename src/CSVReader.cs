@@ -287,18 +287,16 @@ namespace CSVFile
         /// </summary>
         /// <param name="source">The string to read</param>
         /// <param name="settings">The CSV settings to use for this reader (Default: CSV)</param>
-        /// <param name="encoding">The string encoding to use for the reader (Default: UTF8)</param>
         /// <returns></returns>
-        public static CSVReader FromString(string source, CSVSettings settings = null, Encoding encoding = null)
+        public static CSVReader FromString(string source, CSVSettings settings = null)
         {
-            if (encoding == null)
+            if (settings == null)
             {
-                encoding = Encoding.UTF8;
+                settings = CSVSettings.CSV;
             }
-            var byteArray = encoding.GetBytes(source);
+            var byteArray = settings.Encoding.GetBytes(source);
             var stream = new MemoryStream(byteArray);
-            var sr = new StreamReader(stream);
-            return new CSVReader(sr, settings);
+            return new CSVReader(stream, settings);
         }
 
         /// <summary>
@@ -354,7 +352,44 @@ namespace CSVFile
                 Headers = _settings.AssumedHeaders;
             }
         }
+        
+        /// <summary>
+        /// Construct a new CSV reader off a streamed source
+        /// </summary>
+        /// <param name="source">The stream source. Note that when disposed, the CSV Reader will dispose the stream reader.</param>
+        /// <param name="settings">The CSV settings to use for this reader (Default: CSV)</param>
+        public CSVReader(Stream source, CSVSettings settings = null)
+        {
+            _settings = settings;
+            if (_settings == null)
+            {
+                _settings = CSVSettings.CSV;
+            }
+            _stream = new StreamReader(source, _settings.Encoding);
 
+            // Do we need to parse headers?
+            if (_settings.HeaderRowIncluded)
+            {
+                var line = _stream.ReadLine();
+                if (_settings.AllowSepLine)
+                {
+                    var newDelimiter = CSV.ParseSepLine(line);
+                    if (newDelimiter != null)
+                    {
+                        // We don't want to change the original settings, since they may be a singleton
+                        _settings = _settings.CloneWithNewDelimiter(newDelimiter.Value);
+                        line = _stream.ReadLine();
+                    }
+                }
+
+                Headers = CSV.ParseLine(line, _settings);
+            }
+            else
+            {
+                Headers = _settings.AssumedHeaders;
+            }
+        }
+        
         /// <summary>
         /// Iterate through all lines in this CSV file
         /// </summary>

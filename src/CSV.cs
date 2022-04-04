@@ -201,59 +201,82 @@ namespace CSVFile
             {
                 settings = CSVSettings.CSV;
             }
+            using (var ms = new MemoryStream())
+            {
+                using (var cw = new CSVWriter(ms, settings))
+                {
+                    cw.Serialize(list);
+                }
 
-            // Okay, let's add headers (if desired) and objects
-            var excluded = new ExcludedColumnHelper(settings);
-            var sb = new StringBuilder();
-            if (settings.HeaderRowIncluded)
-            {
-                AppendCSVHeader<T>(sb, settings);
+                return settings.Encoding.GetString(ms.ToArray());
             }
-            foreach (var obj in list)
-            {
-                AppendCSVLine(sb, obj, settings);
-            }
-            
-            // Here's your data serialized in CSV format
-            return sb.ToString();
         }
 
+        /// <summary>
+        /// Serialize an array of objects to CSV format
+        /// </summary>
+        /// <typeparam name="T">The type of objects to serialize from this CSV</typeparam>
+        /// <param name="list">The array of objects to serialize</param>
+        /// <param name="stream">The stream to which we will send this CSV text</param>
+        /// <param name="settings">The CSV settings to use when exporting this array (Default: CSV)</param>
+        /// <returns>The completed CSV string representing one line per element in list</returns>
+        public static void Serialize<T>(IEnumerable<T> list, Stream stream, CSVSettings settings = null) where T : class, new()
+        {
+            using (var cw = new CSVWriter(stream, settings))
+            {
+                cw.Serialize(list);
+            }
+        }
+        
+#if HAS_ASYNC
+        /// <summary>
+        /// Serialize an array of objects to CSV format
+        /// </summary>
+        /// <typeparam name="T">The type of objects to serialize from this CSV</typeparam>
+        /// <param name="list">The array of objects to serialize</param>
+        /// <param name="stream">The stream to which we will send this CSV text</param>
+        /// <param name="settings">The CSV settings to use when exporting this array (Default: CSV)</param>
+        /// <returns>The completed CSV string representing one line per element in list</returns>
+        public static Task SerializeAsync<T>(IEnumerable<T> list, Stream stream, CSVSettings settings = null) where T : class, new()
+        {
+            using (var cw = new CSVWriter(stream, settings))
+            {
+                return cw.SerializeAsync(list);
+            }
+        }
+#endif
+        
+#if HAS_ASYNC_IENUM
+        /// <summary>
+        /// Serialize an array of objects to CSV format
+        /// </summary>
+        /// <typeparam name="T">The type of objects to serialize from this CSV</typeparam>
+        /// <param name="list">The array of objects to serialize</param>
+        /// <param name="stream">The stream to which we will send this CSV text</param>
+        /// <param name="settings">The CSV settings to use when exporting this array (Default: CSV)</param>
+        /// <returns>The completed CSV string representing one line per element in list</returns>
+        public static Task SerializeAsync<T>(IAsyncEnumerable<T> list, Stream stream, CSVSettings settings = null) where T : class, new()
+        {
+            using (var cw = new CSVWriter(stream, settings))
+            {
+                return cw.SerializeAsync(list);
+            }
+        }
+#endif
+        
         /// <summary>
         /// Add a CSV Header line to a StringBuilder for a specific type
         /// </summary>
         /// <param name="sb">The StringBuilder to append data</param>
         /// <param name="settings">The CSV settings to use when exporting this array (Default: CSV)</param>
 #if NET2_0
-        public static void AppendCSVHeader<T>(StringBuilder sb, CSVSettings settings = null)
+        public static void AppendCSVHeader<T>(StringBuilder sb, CSVSettings settings = null) where T: class, new()
 #else
-        public static void AppendCSVHeader<T>(this StringBuilder sb, CSVSettings settings = null)
+        public static void AppendCSVHeader<T>(this StringBuilder sb, CSVSettings settings = null) where T: class, new()
 #endif
         {
-            // ReSharper disable once 
-            if (settings == null)
-            {
-                settings = CSVSettings.CSV;
-            }
-
-            var type = typeof(T);
-            var headers = new List<object>();
-            var excluded = new ExcludedColumnHelper(settings);
-            foreach (var field in type.GetFields())
-            {
-                if (!excluded.IsExcluded(field.Name))
-                {
-                    headers.Add(field.Name);
-                }
-            }
-            foreach (var prop in type.GetProperties())
-            {
-                if (!excluded.IsExcluded(prop.Name))
-                {
-                    headers.Add(prop.Name);
-                }
-            }
-            AppendCSVRow(sb, headers, settings);
-            sb.Append(settings.LineSeparator);
+            var header = Serialize(new T[] { }, settings);
+            sb.Append(header);
         }
 
         /// <summary>
@@ -274,29 +297,11 @@ namespace CSVFile
                 settings = CSVSettings.CSV;
             }
             
-            // Retrieve reflection information
-            var type = typeof(T);
-            var values = new List<object>();
-            var excluded = new ExcludedColumnHelper(settings);
-            foreach (var field in type.GetFields())
-            {
-                if (!excluded.IsExcluded(field.Name))
-                {
-                    values.Add(field.GetValue(obj));
-                }
-            }
-
-            foreach (var prop in type.GetProperties())
-            {
-                if (!excluded.IsExcluded(prop.Name))
-                {
-                    values.Add(prop.GetValue(obj, null));
-                }
-            }
-
-            // Output all the CSV items
-            AppendCSVRow(sb, values, settings);
-            sb.Append(settings.LineSeparator);
+            // Duplicate settings, but flag ourselves to ignore the header
+            settings = settings.CloneWithNewDelimiter(settings.FieldDelimiter);
+            settings.HeaderRowIncluded = false;
+            var line = Serialize(new T[] { obj }, settings);
+            sb.Append(line);
         }
 
         /// <summary>
@@ -315,53 +320,11 @@ namespace CSVFile
             {
                 settings = CSVSettings.CSV;
             }
-            var q = settings.TextQualifier.ToString();
 
-            var riskyChars = new char[3];
-            riskyChars[0] = settings.FieldDelimiter;
-            riskyChars[1] = settings.TextQualifier;
-            riskyChars[2] = '\n';  // this includes \r\n sequence as well
-            var riskyLineSeparator = !settings.LineSeparator.Contains("\n");
-            
-            // Okay, let's begin
-            foreach (var o in row)
-            {
-                // If this is null, check our settings for what they want us to do
-                if (o == null)
-                {
-                    if (settings.AllowNull)
-                    {
-                        sb.Append(settings.NullToken);
-                        sb.Append(settings.FieldDelimiter);
-                    }
-                    continue;
-                }
-
-                // Okay, let's handle this value normally
-                var s = o.ToString();
-                if (!string.IsNullOrEmpty(s))
-                {
-                    // Does this string contain any risky characters, or are we in force-qualifiers / allow-null mode?
-                    if (settings.ForceQualifiers || settings.AllowNull || (s.IndexOfAny(riskyChars) >= 0) || riskyLineSeparator && s.Contains(settings.LineSeparator))
-                    {
-                        sb.Append(q);
-
-                        // Double up any qualifiers that may occur
-                        sb.Append(s.Replace(q, q + q));
-                        sb.Append(q);
-                    }
-                    else
-                    {
-                        sb.Append(s);
-                    }
-                }
-
-                // Move to the next cell
-                sb.Append(settings.FieldDelimiter);
-            }
-
-            // Subtract the trailing delimiter so we don't inadvertently add an empty column at the end
-            sb.Length -= 1;
+            var riskyChars = settings.GetRiskyChars();
+            var forceQualifierTypes = settings.GetForceQualifierTypes();
+            var csv = ItemsToCsv(row, settings, riskyChars, forceQualifierTypes);
+            sb.Append(csv);
         }
         
         /// <summary>
