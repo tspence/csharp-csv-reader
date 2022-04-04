@@ -376,6 +376,17 @@ namespace CSVFile
             for (var i = 0; i < helper.NumColumns; i++)
             {
                 helper.Properties[i] = return_type.GetProperty(Headers[i], bindings);
+                
+                // Throw an easy-to-understand error for properties that lack a setter
+                if (helper.Properties[i] != null && !helper.Properties[i].CanWrite)
+                {
+                    if (_settings.IgnoreReadOnlyProperties && _settings.IgnoreHeaderErrors)
+                    {
+                        helper.Properties[i] = null;
+                        continue;
+                    }
+                    throw new Exception($"The column header '{Headers[i]}' matches a read-only property. To ignore this exception, enable IgnoreReadOnlyProperties and IgnoreHeaderErrors.");
+                }
 
                 // If we failed to get a property handler, let's try a field handler
                 if (helper.Properties[i] == null)

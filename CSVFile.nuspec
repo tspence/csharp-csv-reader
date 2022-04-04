@@ -2,7 +2,7 @@
 <package >
 	<metadata>
 		<id>CSVFile</id>
-		<version>3.0.9</version>
+		<version>3.1.0</version>
 		<title>CSVFile</title>
 		<authors>Ted Spence</authors>
 		<owners>Ted Spence</owners>
@@ -13,12 +13,9 @@
 		<description>Tiny and fast CSV and TSV parsing library (40KB) with zero dependencies.  Compatible with most dot net versions.</description>
 		<icon>docs/icons8-spreadsheet-96.png</icon>
 		<releaseNotes>
-			March 23, 2022
+			April 4, 2022
 			
-			* Fixed issues with Async stream parsing caused by code drift
-			* Unified all CSV parsing logic between string/stream/async
-			* Improved handling of #if tests for different releases
-			* Removed some unused code and variables
+			* Improve handling for read-only properties with more errors and options
 		</releaseNotes>
 		<readme>docs/README.md</readme>
 		<copyright>Copyright 2006 - 2022</copyright>

@@ -89,6 +89,11 @@ namespace CSVFile
         /// Set this value to true to ignore header errors when deserializing
         /// </summary>
         public bool IgnoreHeaderErrors { get; set; }
+        
+        /// <summary>
+        /// Set this flag to true to ignore read-only properties during serialization
+        /// </summary>
+        public bool IgnoreReadOnlyProperties { get; set; }
 
         /// <summary>
         /// Expect headers to be case sensitive during deserialization
