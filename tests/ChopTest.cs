@@ -4,7 +4,6 @@
  * Home page: https://github.com/tspence/csharp-csv-reader
  */
 using System;
-using System.Text;
 using System.Collections.Generic;
 using NUnit.Framework;
 using System.IO;

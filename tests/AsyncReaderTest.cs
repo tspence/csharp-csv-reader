@@ -4,11 +4,8 @@
  * Home page: https://github.com/tspence/csharp-csv-reader
  */
 using System;
-using System.Text;
-using System.Collections.Generic;
 using NUnit.Framework;
 using CSVFile;
-using System.IO;
 using System.Threading.Tasks;
 
 namespace CSVTestSuite
