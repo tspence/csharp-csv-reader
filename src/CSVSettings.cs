@@ -123,6 +123,11 @@ namespace CSVFile
         public Encoding Encoding { get; set; } = Encoding.UTF8;
 
         /// <summary>
+        /// The format to use for serializing date time objects, by default, ISO 8601
+        /// </summary>
+        public string DateTimeFormat { get; set; } = "o";
+
+        /// <summary>
         /// Standard comma-separated value (CSV) file settings
         /// </summary>
         public static readonly CSVSettings CSV = new CSVSettings();

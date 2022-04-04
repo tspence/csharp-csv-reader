@@ -339,20 +339,21 @@ namespace CSVTestSuite
             settings.LineSeparator = "\n";
             var backToCsv = CSV.Serialize(list, settings);
             Assert.AreEqual("TestString,DateProperty,ReadOnlySingle\n" +
-                            "Test String,1/1/2020 12:00:00 AM,\n" +
-                            "Test String,3/18/2001 12:00:00 AM,\n" +
-                            "Test String,5/4/1997 12:00:00 AM,\n" +
-                            "Test String,6/3/1993 12:00:00 AM,\n", backToCsv);
+                            "Test String,2020-01-01T00:00:00.0000000,\n" +
+                            "Test String,2001-03-18T00:00:00.0000000,\n" +
+                            "Test String,1997-05-04T00:00:00.0000000,\n" +
+                            "Test String,1993-06-03T00:00:00.0000000,\n", backToCsv);
                         
             // Try forcing all dates to be text-qualified
             settings.LineSeparator = "\n";
+            settings.DateTimeFormat = "yyyy-MM-dd";
             settings.ForceQualifierTypes = new []{ typeof(DateTime) };
             backToCsv = CSV.Serialize(list, settings);
             Assert.AreEqual("TestString,DateProperty,ReadOnlySingle\n" +
-                            "Test String,\"1/1/2020 12:00:00 AM\",\n" +
-                            "Test String,\"3/18/2001 12:00:00 AM\",\n" +
-                            "Test String,\"5/4/1997 12:00:00 AM\",\n" +
-                            "Test String,\"6/3/1993 12:00:00 AM\",\n", backToCsv);
+                            "Test String,\"2020-01-01\",\n" +
+                            "Test String,\"2001-03-18\",\n" +
+                            "Test String,\"1997-05-04\",\n" +
+                            "Test String,\"1993-06-03\",\n", backToCsv);
         }
 
         [Test]

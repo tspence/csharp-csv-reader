@@ -373,8 +373,18 @@ namespace CSVFile
                     continue;
                 }
                 
+                // Is this a date time?
+                string s;
+                if (item is DateTime)
+                {
+                    s = ((DateTime)item).ToString(settings.DateTimeFormat);
+                }
+                else
+                {
+                    s = item.ToString();
+                }
+                
                 // Check if this item requires qualifiers
-                var s = item.ToString();
                 var requiresQualifiers = settings.ForceQualifiers || s.IndexOfAny(riskyChars) >= 0 || (forceQualifierTypes != null && forceQualifierTypes.ContainsKey(item.GetType()));
 
                 // Okay, let's handle this value normally
@@ -397,7 +407,7 @@ namespace CSVFile
                     }
                     else
                     {
-                        sb.Append(item);
+                        sb.Append(s);
                     }
                 }
 
