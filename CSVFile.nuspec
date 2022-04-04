@@ -16,6 +16,10 @@
 			April 4, 2022
 			
 			* Improve handling for read-only properties with more errors and options
+			* Added support for excluding columns from serialization
+			* Added support for forcing columns to have text qualifiers
+			* Support for fully async serialization
+			* Unified all serialization code
 		</releaseNotes>
 		<readme>docs/README.md</readme>
 		<copyright>Copyright 2006 - 2022</copyright>

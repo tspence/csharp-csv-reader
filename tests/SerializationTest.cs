@@ -334,6 +334,25 @@ namespace CSVTestSuite
             Assert.AreEqual("Test String", list[3].TestString);
             Assert.AreEqual(new DateTime(1993, 6, 3), list[3].DateProperty);
             Assert.IsNull(list[3].ReadOnlySingle);
+                        
+            // Return this array back to a string
+            settings.LineSeparator = "\n";
+            var backToCsv = CSV.Serialize(list, settings);
+            Assert.AreEqual("TestString,DateProperty,ReadOnlySingle\n" +
+                            "Test String,1/1/2020 12:00:00 AM,\n" +
+                            "Test String,3/18/2001 12:00:00 AM,\n" +
+                            "Test String,5/4/1997 12:00:00 AM,\n" +
+                            "Test String,6/3/1993 12:00:00 AM,\n", backToCsv);
+                        
+            // Try forcing all dates to be text-qualified
+            settings.LineSeparator = "\n";
+            settings.ForceQualifierTypes = new []{ typeof(DateTime) };
+            backToCsv = CSV.Serialize(list, settings);
+            Assert.AreEqual("TestString,DateProperty,ReadOnlySingle\n" +
+                            "Test String,\"1/1/2020 12:00:00 AM\",\n" +
+                            "Test String,\"3/18/2001 12:00:00 AM\",\n" +
+                            "Test String,\"5/4/1997 12:00:00 AM\",\n" +
+                            "Test String,\"6/3/1993 12:00:00 AM\",\n", backToCsv);
         }
 
         [Test]
