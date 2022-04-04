@@ -12,6 +12,8 @@ using CSVFile;
 using System.Threading.Tasks;
 #endif
 
+// ReSharper disable StringLiteralTypo
+
 namespace CSVTestSuite
 {
     [TestFixture]
