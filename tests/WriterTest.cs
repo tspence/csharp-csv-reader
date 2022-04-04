@@ -9,6 +9,8 @@ using System.Collections.Generic;
 using NUnit.Framework;
 using CSVFile;
 
+// ReSharper disable InvokeAsExtensionMethod
+
 namespace CSVTestSuite
 {
     [TestFixture]
@@ -17,9 +19,9 @@ namespace CSVTestSuite
         [Test]
         public void TestForceQualifiers()
         {
-            string[] array = new string[] { "one", "two", "three", "four, five" };
-            string s = CSV.ToCSVString(array);
-            Assert.AreEqual(s, "one,two,three,\"four, five\"");
+            var array = new string[] { "one", "two", "three", "four, five" };
+            var s = CSV.ToCSVString(array);
+            Assert.AreEqual("one,two,three,\"four, five\"", s);
 
             // Now construct new settings
             var settings = new CSVSettings()
@@ -29,7 +31,7 @@ namespace CSVTestSuite
                 ForceQualifiers = true
             };
             s = CSV.ToCSVString(array, settings);
-            Assert.AreEqual(s, "'one'|'two'|'three'|'four, five'");
+            Assert.AreEqual("'one'|'two'|'three'|'four, five'", s);
         }
 
         public class ExampleCsvType

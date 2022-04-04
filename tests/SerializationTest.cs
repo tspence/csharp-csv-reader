@@ -376,13 +376,13 @@ namespace CSVTestSuite
             Assert.IsNull(list[3].NullableSingle);
             
             // Try serializing - we should no longer see a TestString column
+            settings.LineSeparator = "\n";
             var backToCsv = CSV.Serialize(list, settings);
             Assert.AreEqual("IntProperty,NullableSingle\n" +
                             "57,12.35\n" +
                             "57,\n" +
                             "57,56.19\n" + 
-                            "57,\n" +
-                            "\n", backToCsv);
+                            "57,\n", backToCsv);
         }
     }
 }

@@ -117,9 +117,17 @@ namespace CSVFile
         public static void WriteToFile(this DataTable dt, string filename, CSVSettings settings = null)
 #endif
         {
-            using (var sw = new StreamWriter(filename))
+            if (settings == null)
             {
-                WriteToStream(dt, sw, settings);
+                settings = CSVSettings.CSV;
+            }
+
+            using (var fs = new FileStream(filename, FileMode.CreateNew))
+            {
+                using (var sw = new StreamWriter(fs, settings.Encoding))
+                {
+                    WriteToStream(dt, sw, settings);
+                }
             }
         }
 
@@ -153,17 +161,16 @@ namespace CSVFile
         public static string WriteToString(this DataTable dt, CSVSettings settings = null)
 #endif
         {
+            if (settings == null)
+            {
+                settings = CSVSettings.CSV;
+            }
             using (var ms = new MemoryStream())
             {
-                var sw = new StreamWriter(ms);
-                var cw = new CSVWriter(sw, settings);
+                var cw = new CSVWriter(ms, settings);
                 cw.Write(dt);
-                sw.Flush();
-                ms.Position = 0;
-                using (var sr = new StreamReader(ms))
-                {
-                    return sr.ReadToEnd();
-                }
+                var rawString = settings.Encoding.GetString(ms.ToArray());
+                return CSV.RemoveByteOrderMarker(rawString);
             }
         }
     }

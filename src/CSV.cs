@@ -183,9 +183,13 @@ namespace CSVFile
         public static string ToCSVString(this IEnumerable<object> row, CSVSettings settings = null)
 #endif
         {
-            var sb = new StringBuilder();
-            AppendCSVRow(sb, row, settings);
-            return sb.ToString();
+            if (settings == null)
+            {
+                settings = CSVSettings.CSV;
+            }
+            var riskyChars = settings.GetRiskyChars();
+            var forceQualifierTypes = settings.GetForceQualifierTypes();
+            return ItemsToCsv(row, settings, riskyChars, forceQualifierTypes);
         }
 
         /// <summary>
@@ -208,8 +212,20 @@ namespace CSVFile
                     cw.Serialize(list);
                 }
 
-                return settings.Encoding.GetString(ms.ToArray());
+                var rawString = settings.Encoding.GetString(ms.ToArray());
+                return RemoveByteOrderMarker(rawString);
             }
+        }
+        
+        private static string _byteOrderMarkUtf8 =
+            Encoding.UTF8.GetString(Encoding.UTF8.GetPreamble());
+        internal static string RemoveByteOrderMarker(string rawString)
+        {
+            if (rawString.StartsWith(_byteOrderMarkUtf8, StringComparison.Ordinal))
+            {
+                return rawString.Substring(_byteOrderMarkUtf8.Length);
+            }
+            return rawString;
         }
 
         /// <summary>
@@ -325,6 +341,7 @@ namespace CSVFile
             var forceQualifierTypes = settings.GetForceQualifierTypes();
             var csv = ItemsToCsv(row, settings, riskyChars, forceQualifierTypes);
             sb.Append(csv);
+            sb.Append(settings.LineSeparator);
         }
         
         /// <summary>
@@ -391,7 +408,6 @@ namespace CSVFile
 
             // Subtract the trailing delimiter so we don't inadvertently add an empty column at the end
             sb.Length -= 1;
-            sb.Append(settings.LineSeparator);
             return sb.ToString();
         }
 

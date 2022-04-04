@@ -589,7 +589,8 @@ namespace CSVFile
                         if (cw == null)
                         {
                             var fn = Path.Combine(out_folder, file_prefix + file_id.ToString() + ext);
-                            sw = new StreamWriter(fn);
+                            var fs = new FileStream(fn, FileMode.CreateNew);
+                            sw = new StreamWriter(fs, settings.Encoding);
                             cw = new CSVWriter(sw, settings);
                             if (settings.HeaderRowIncluded)
                             {

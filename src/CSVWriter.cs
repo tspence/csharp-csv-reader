@@ -163,11 +163,13 @@ namespace CSVFile
                 foreach (DataColumn col in dt.Columns) {
                     headers.Add(col.ColumnName);
                 }
-                _writer.WriteLine(CSV.ItemsToCsv(headers, _settings, _riskyChars, _forceQualifierTypes));
+                _writer.Write(CSV.ItemsToCsv(headers, _settings, _riskyChars, _forceQualifierTypes));
+                _writer.Write(_settings.LineSeparator);
             }
 
             foreach (DataRow dr in dt.Rows) {
-                _writer.WriteLine(CSV.ItemsToCsv(dr.ItemArray, _settings, _riskyChars, _forceQualifierTypes));
+                _writer.Write(CSV.ItemsToCsv(dr.ItemArray, _settings, _riskyChars, _forceQualifierTypes));
+                _writer.Write(_settings.LineSeparator);
             }
         }
 
@@ -177,7 +179,8 @@ namespace CSVFile
         /// <param name="items"></param>
         public void WriteLine(IEnumerable<object> items)
         {
-            _writer.WriteLine(CSV.ItemsToCsv(items, _settings, _riskyChars, _forceQualifierTypes));
+            _writer.Write(CSV.ItemsToCsv(items, _settings, _riskyChars, _forceQualifierTypes));
+            _writer.Write(_settings.LineSeparator);
         }
         
 #if HAS_ASYNC
@@ -185,9 +188,10 @@ namespace CSVFile
         /// Write a single line to this CSV
         /// </summary>
         /// <param name="items"></param>
-        public Task WriteLineAsync(IEnumerable<object> items)
+        public async Task WriteLineAsync(IEnumerable<object> items)
         {
-            return _writer.WriteLineAsync(CSV.ItemsToCsv(items, _settings, _riskyChars, _forceQualifierTypes));
+            await _writer.WriteAsync(CSV.ItemsToCsv(items, _settings, _riskyChars, _forceQualifierTypes));
+            await _writer.WriteAsync(_settings.LineSeparator);
         }
         
         /// <summary>
@@ -201,11 +205,13 @@ namespace CSVFile
                 foreach (DataColumn col in dt.Columns) {
                     headers.Add(col.ColumnName);
                 }
-                await _writer.WriteLineAsync(CSV.ItemsToCsv(headers, _settings, _riskyChars, _forceQualifierTypes));
+                await _writer.WriteAsync(CSV.ItemsToCsv(headers, _settings, _riskyChars, _forceQualifierTypes));
+                await _writer.WriteAsync(_settings.LineSeparator);
             }
 
             foreach (DataRow dr in dt.Rows) {
-                await _writer.WriteLineAsync(CSV.ItemsToCsv(dr.ItemArray, _settings, _riskyChars, _forceQualifierTypes));
+                await _writer.WriteAsync(CSV.ItemsToCsv(dr.ItemArray, _settings, _riskyChars, _forceQualifierTypes));
+                await _writer.WriteAsync(_settings.LineSeparator);
             }
         }
 #endif
@@ -220,11 +226,13 @@ namespace CSVFile
             if (_settings.HeaderRowIncluded)
             {
                 _writer.Write(serializer.SerializeHeader());
+                _writer.Write(_settings.LineSeparator);
             }
 
             foreach (var row in list)
             {
                 _writer.Write(serializer.Serialize(row));
+                _writer.Write(_settings.LineSeparator);
             }
         }
         
@@ -239,11 +247,13 @@ namespace CSVFile
             if (_settings.HeaderRowIncluded)
             {
                 await _writer.WriteAsync(serializer.SerializeHeader());
+                await _writer.WriteAsync(_settings.LineSeparator);
             }
 
             foreach (var row in list)
             {
                 await _writer.WriteAsync(serializer.Serialize(row));
+                await _writer.WriteAsync(_settings.LineSeparator);
             }
         }
 #endif
@@ -259,11 +269,13 @@ namespace CSVFile
             if (_settings.HeaderRowIncluded)
             {
                 await _writer.WriteAsync(serializer.SerializeHeader());
+                await _writer.WriteAsync(_settings.LineSeparator);
             }
 
             await foreach (var row in list)
             {
                 await _writer.WriteAsync(serializer.Serialize(row));
+                await _writer.WriteAsync(_settings.LineSeparator);
             }
         }
 #endif
