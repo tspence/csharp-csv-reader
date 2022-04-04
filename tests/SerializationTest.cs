@@ -11,6 +11,7 @@ using CSVFile;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+// ReSharper disable ConvertToConstant.Local
 
 namespace CSVTestSuite
 {
@@ -278,5 +279,130 @@ namespace CSVTestSuite
             Assert.IsNull(list[3].NullableSingle);
         }
 #endif
+        
+        public class TestClassHasReadOnlyProperty
+        {
+            public string TestString;
+            public DateTime DateProperty { get; set; }
+            public float? ReadOnlySingle { get; }
+        }
+
+        [Test]
+        public void DeserializeReadOnlyProperty()
+        {
+            var csv = "TestString,DateProperty,ReadOnlySingle\n" +
+                      "Test String,2020-01-01,12.35\n" +
+                      "Test String,2001-03-18,\n" +
+                      "Test String,1997-05-04,56.19\n" +
+                      "Test String,1993-06-03,\n" +
+                      "\n";
+
+            // Let's specifically allow null
+            var settings = new CSVSettings
+            {
+                AllowNull = true,
+                NullToken = string.Empty,
+                IgnoreEmptyLineForDeserialization = true
+            };
+
+            // Deserialize back from a CSV string - should throw an error because "ReadOnlySingle" is read only
+            var ex = Assert.Throws<Exception>(() =>
+            {
+                var testClassHasReadOnlyProperties = CSV.Deserialize<TestClassHasReadOnlyProperty>(csv, settings).ToList();
+            });
+            Assert.AreEqual("The column header 'ReadOnlySingle' matches a read-only property. To ignore this exception, enable IgnoreReadOnlyProperties and IgnoreHeaderErrors.", ex.Message);
+            Assert.AreEqual(typeof(Exception), ex.GetType());
+            
+            // Now do the same thing while ignoring read-only properties
+            settings.IgnoreReadOnlyProperties = true;
+            settings.IgnoreHeaderErrors = true;
+            var list = CSV.Deserialize<TestClassHasReadOnlyProperty>(csv, settings).ToList();
+            Assert.AreEqual(4, list.Count);
+
+            Assert.AreEqual("Test String", list[0].TestString);
+            Assert.AreEqual(new DateTime(2020, 1, 1), list[0].DateProperty);
+            Assert.IsNull(list[0].ReadOnlySingle);
+
+            Assert.AreEqual("Test String", list[1].TestString);
+            Assert.AreEqual(new DateTime(2001, 3, 18), list[1].DateProperty);
+            Assert.IsNull(list[1].ReadOnlySingle);
+
+            Assert.AreEqual("Test String", list[2].TestString);
+            Assert.AreEqual(new DateTime(1997, 5, 4), list[2].DateProperty);
+            Assert.IsNull(list[2].ReadOnlySingle);
+
+            Assert.AreEqual("Test String", list[3].TestString);
+            Assert.AreEqual(new DateTime(1993, 6, 3), list[3].DateProperty);
+            Assert.IsNull(list[3].ReadOnlySingle);
+                        
+            // Return this array back to a string
+            settings.LineSeparator = "\n";
+            var backToCsv = CSV.Serialize(list, settings);
+            Assert.AreEqual("TestString,DateProperty,ReadOnlySingle\n" +
+                            "Test String,2020-01-01T00:00:00.0000000,\n" +
+                            "Test String,2001-03-18T00:00:00.0000000,\n" +
+                            "Test String,1997-05-04T00:00:00.0000000,\n" +
+                            "Test String,1993-06-03T00:00:00.0000000,\n", backToCsv);
+                        
+            // Try forcing all dates to be text-qualified
+            settings.LineSeparator = "\n";
+            settings.DateTimeFormat = "yyyy-MM-dd";
+            settings.ForceQualifierTypes = new []{ typeof(DateTime) };
+            backToCsv = CSV.Serialize(list, settings);
+            Assert.AreEqual("TestString,DateProperty,ReadOnlySingle\n" +
+                            "Test String,\"2020-01-01\",\n" +
+                            "Test String,\"2001-03-18\",\n" +
+                            "Test String,\"1997-05-04\",\n" +
+                            "Test String,\"1993-06-03\",\n", backToCsv);
+        }
+
+        [Test]
+        public void DeserializeExcludeColumns()
+        {
+            var csv = "TestString,IntProperty,NullableSingle\n" +
+                      "Test String,57,12.35\n" +
+                      "Test String,57,\n" +
+                      "Test String,57,56.19\n" + 
+                      "Test String,57,\n" +
+                      "\n";
+            
+            // Let's specifically allow null
+            var settings = new CSVSettings
+            {
+                AllowNull = true,
+                NullToken = string.Empty,
+                IgnoreEmptyLineForDeserialization = true,
+                ExcludedColumns = new []{ "TestString" }
+            };
+
+            // Try deserializing - we should see nulls in the TestString column
+            var list = CSV.Deserialize<TestClassLastColumnNullableSingle>(csv, settings).ToList();
+            Assert.AreEqual(4, list.Count);
+
+            Assert.IsNull(list[0].TestString);
+            Assert.AreEqual(57, list[0].IntProperty);
+            Assert.AreEqual(12.35f, list[0].NullableSingle);
+            
+            Assert.IsNull(list[1].TestString);
+            Assert.AreEqual(57, list[1].IntProperty);
+            Assert.IsNull(list[1].NullableSingle);
+            
+            Assert.IsNull(list[2].TestString);
+            Assert.AreEqual(57, list[2].IntProperty);
+            Assert.AreEqual(56.19f, list[2].NullableSingle);
+
+            Assert.IsNull(list[3].TestString);
+            Assert.AreEqual(57, list[3].IntProperty);
+            Assert.IsNull(list[3].NullableSingle);
+            
+            // Try serializing - we should no longer see a TestString column
+            settings.LineSeparator = "\n";
+            var backToCsv = CSV.Serialize(list, settings);
+            Assert.AreEqual("IntProperty,NullableSingle\n" +
+                            "57,12.35\n" +
+                            "57,\n" +
+                            "57,56.19\n" + 
+                            "57,\n", backToCsv);
+        }
     }
 }

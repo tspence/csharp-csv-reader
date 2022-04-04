@@ -36,7 +36,7 @@ namespace CSVFile
         /// <returns>An data table of strings that were retrieved from the CSV file.</returns>
         public static DataTable FromStream(StreamReader stream, CSVSettings settings = null)
         {
-            using (CSVReader cr = new CSVReader(stream, settings))
+            using (var cr = new CSVReader(stream, settings))
             {
                 return cr.ReadAsDataTable();
             }
@@ -50,10 +50,14 @@ namespace CSVFile
         /// <returns></returns>
         public static DataTable FromString(string source, CSVSettings settings = null)
         {
-            var byteArray = Encoding.UTF8.GetBytes(source);
+            if (settings == null)
+            {
+                settings = CSVSettings.CSV;
+            }
+            var byteArray = settings.Encoding.GetBytes(source);
             using (var stream = new MemoryStream(byteArray))
             {
-                using (var cr = new CSVReader(new StreamReader(stream), settings))
+                using (var cr = new CSVReader(stream, settings))
                 {
                     return cr.ReadAsDataTable();
                 }
@@ -113,9 +117,17 @@ namespace CSVFile
         public static void WriteToFile(this DataTable dt, string filename, CSVSettings settings = null)
 #endif
         {
-            using (var sw = new StreamWriter(filename))
+            if (settings == null)
             {
-                WriteToStream(dt, sw, settings);
+                settings = CSVSettings.CSV;
+            }
+
+            using (var fs = new FileStream(filename, FileMode.CreateNew))
+            {
+                using (var sw = new StreamWriter(fs, settings.Encoding))
+                {
+                    WriteToStream(dt, sw, settings);
+                }
             }
         }
 
@@ -149,17 +161,16 @@ namespace CSVFile
         public static string WriteToString(this DataTable dt, CSVSettings settings = null)
 #endif
         {
+            if (settings == null)
+            {
+                settings = CSVSettings.CSV;
+            }
             using (var ms = new MemoryStream())
             {
-                var sw = new StreamWriter(ms);
-                var cw = new CSVWriter(sw, settings);
+                var cw = new CSVWriter(ms, settings);
                 cw.Write(dt);
-                sw.Flush();
-                ms.Position = 0;
-                using (var sr = new StreamReader(ms))
-                {
-                    return sr.ReadToEnd();
-                }
+                var rawString = settings.Encoding.GetString(ms.ToArray());
+                return CSV.RemoveByteOrderMarker(rawString);
             }
         }
     }

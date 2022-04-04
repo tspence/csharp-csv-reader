@@ -183,9 +183,13 @@ namespace CSVFile
         public static string ToCSVString(this IEnumerable<object> row, CSVSettings settings = null)
 #endif
         {
-            var sb = new StringBuilder();
-            AppendCSVRow(sb, row, settings);
-            return sb.ToString();
+            if (settings == null)
+            {
+                settings = CSVSettings.CSV;
+            }
+            var riskyChars = settings.GetRiskyChars();
+            var forceQualifierTypes = settings.GetForceQualifierTypes();
+            return ItemsToCsv(row, settings, riskyChars, forceQualifierTypes);
         }
 
         /// <summary>
@@ -201,51 +205,94 @@ namespace CSVFile
             {
                 settings = CSVSettings.CSV;
             }
+            using (var ms = new MemoryStream())
+            {
+                using (var cw = new CSVWriter(ms, settings))
+                {
+                    cw.Serialize(list);
+                }
 
-            // Okay, let's add headers (if desired) and objects
-            var sb = new StringBuilder();
-            if (settings.HeaderRowIncluded)
-            {
-                AppendCSVHeader<T>(sb, settings);
+                var rawString = settings.Encoding.GetString(ms.ToArray());
+                return RemoveByteOrderMarker(rawString);
             }
-            foreach (var obj in list)
+        }
+        
+        private static string _byteOrderMarkUtf8 =
+            Encoding.UTF8.GetString(Encoding.UTF8.GetPreamble());
+        internal static string RemoveByteOrderMarker(string rawString)
+        {
+            if (rawString.StartsWith(_byteOrderMarkUtf8, StringComparison.Ordinal))
             {
-                AppendCSVLine(sb, obj, settings);
+                return rawString.Substring(_byteOrderMarkUtf8.Length);
             }
-            
-            // Here's your data serialized in CSV format
-            return sb.ToString();
+            return rawString;
         }
 
+        /// <summary>
+        /// Serialize an array of objects to CSV format
+        /// </summary>
+        /// <typeparam name="T">The type of objects to serialize from this CSV</typeparam>
+        /// <param name="list">The array of objects to serialize</param>
+        /// <param name="stream">The stream to which we will send this CSV text</param>
+        /// <param name="settings">The CSV settings to use when exporting this array (Default: CSV)</param>
+        /// <returns>The completed CSV string representing one line per element in list</returns>
+        public static void Serialize<T>(IEnumerable<T> list, Stream stream, CSVSettings settings = null) where T : class, new()
+        {
+            using (var cw = new CSVWriter(stream, settings))
+            {
+                cw.Serialize(list);
+            }
+        }
+        
+#if HAS_ASYNC
+        /// <summary>
+        /// Serialize an array of objects to CSV format
+        /// </summary>
+        /// <typeparam name="T">The type of objects to serialize from this CSV</typeparam>
+        /// <param name="list">The array of objects to serialize</param>
+        /// <param name="stream">The stream to which we will send this CSV text</param>
+        /// <param name="settings">The CSV settings to use when exporting this array (Default: CSV)</param>
+        /// <returns>The completed CSV string representing one line per element in list</returns>
+        public static Task SerializeAsync<T>(IEnumerable<T> list, Stream stream, CSVSettings settings = null) where T : class, new()
+        {
+            using (var cw = new CSVWriter(stream, settings))
+            {
+                return cw.SerializeAsync(list);
+            }
+        }
+#endif
+        
+#if HAS_ASYNC_IENUM
+        /// <summary>
+        /// Serialize an array of objects to CSV format
+        /// </summary>
+        /// <typeparam name="T">The type of objects to serialize from this CSV</typeparam>
+        /// <param name="list">The array of objects to serialize</param>
+        /// <param name="stream">The stream to which we will send this CSV text</param>
+        /// <param name="settings">The CSV settings to use when exporting this array (Default: CSV)</param>
+        /// <returns>The completed CSV string representing one line per element in list</returns>
+        public static Task SerializeAsync<T>(IAsyncEnumerable<T> list, Stream stream, CSVSettings settings = null) where T : class, new()
+        {
+            using (var cw = new CSVWriter(stream, settings))
+            {
+                return cw.SerializeAsync(list);
+            }
+        }
+#endif
+        
         /// <summary>
         /// Add a CSV Header line to a StringBuilder for a specific type
         /// </summary>
         /// <param name="sb">The StringBuilder to append data</param>
         /// <param name="settings">The CSV settings to use when exporting this array (Default: CSV)</param>
 #if NET2_0
-        public static void AppendCSVHeader<T>(StringBuilder sb, CSVSettings settings = null)
+        public static void AppendCSVHeader<T>(StringBuilder sb, CSVSettings settings = null) where T: class, new()
 #else
-        public static void AppendCSVHeader<T>(this StringBuilder sb, CSVSettings settings = null)
+        public static void AppendCSVHeader<T>(this StringBuilder sb, CSVSettings settings = null) where T: class, new()
 #endif
         {
-            // ReSharper disable once 
-            if (settings == null)
-            {
-                settings = CSVSettings.CSV;
-            }
-
-            var type = typeof(T);
-            var headers = new List<object>();
-            foreach (var field in type.GetFields())
-            {
-                headers.Add(field.Name);
-            }
-            foreach (var prop in type.GetProperties())
-            {
-                headers.Add(prop.Name);
-            }
-            AppendCSVRow(sb, headers, settings);
-            sb.Append(settings.LineSeparator);
+            var header = Serialize(new T[] { }, settings);
+            sb.Append(header);
         }
 
         /// <summary>
@@ -266,21 +313,11 @@ namespace CSVFile
                 settings = CSVSettings.CSV;
             }
             
-            // Retrieve reflection information
-            var type = typeof(T);
-            var values = new List<object>();
-            foreach (var field in type.GetFields())
-            {
-                values.Add(field.GetValue(obj));
-            }
-            foreach (var prop in type.GetProperties())
-            {
-                values.Add(prop.GetValue(obj, null));
-            }
-
-            // Output all the CSV items
-            AppendCSVRow(sb, values, settings);
-            sb.Append(settings.LineSeparator);
+            // Duplicate settings, but flag ourselves to ignore the header
+            settings = settings.CloneWithNewDelimiter(settings.FieldDelimiter);
+            settings.HeaderRowIncluded = false;
+            var line = Serialize(new T[] { obj }, settings);
+            sb.Append(line);
         }
 
         /// <summary>
@@ -299,40 +336,74 @@ namespace CSVFile
             {
                 settings = CSVSettings.CSV;
             }
-            var q = settings.TextQualifier.ToString();
 
-            var riskyChars = new char[3];
-            riskyChars[0] = settings.FieldDelimiter;
-            riskyChars[1] = settings.TextQualifier;
-            riskyChars[2] = '\n';  // this includes \r\n sequence as well
-            var riskyLineSeparator = !settings.LineSeparator.Contains("\n");
-            
-            // Okay, let's begin
-            foreach (var o in row)
+            var riskyChars = settings.GetRiskyChars();
+            var forceQualifierTypes = settings.GetForceQualifierTypes();
+            var csv = ItemsToCsv(row, settings, riskyChars, forceQualifierTypes);
+            sb.Append(csv);
+            sb.Append(settings.LineSeparator);
+        }
+        
+        /// <summary>
+        /// Internal method to convert a list of things into a CSV line using the specified settings object
+        /// 
+        /// This function assumes:
+        ///  * That the list of items is not null, but it may contain nulls
+        ///  * That settings is not null
+        ///  * That RiskyChars and ForceQualifierTypes have been set up correctly to match the CSV settings
+        /// </summary>
+        /// <param name="items"></param>
+        /// <param name="settings"></param>
+        /// <param name="riskyChars"></param>
+        /// <param name="forceQualifierTypes"></param>
+        /// <returns></returns>
+        internal static string ItemsToCsv(IEnumerable<object> items, CSVSettings settings, char[] riskyChars, Dictionary<Type, int> forceQualifierTypes)
+        {
+            var sb = new StringBuilder();
+            foreach (var item in items)
             {
                 // If this is null, check our settings for what they want us to do
-                if (o == null)
+                if (item == null)
                 {
                     if (settings.AllowNull)
                     {
                         sb.Append(settings.NullToken);
-                        sb.Append(settings.FieldDelimiter);
                     }
+                    sb.Append(settings.FieldDelimiter);
                     continue;
                 }
+                
+                // Is this a date time?
+                string s;
+                if (item is DateTime)
+                {
+                    s = ((DateTime)item).ToString(settings.DateTimeFormat);
+                }
+                else
+                {
+                    s = item.ToString();
+                }
+                
+                // Check if this item requires qualifiers
+                var requiresQualifiers = settings.ForceQualifiers || s.IndexOfAny(riskyChars) >= 0 || (forceQualifierTypes != null && forceQualifierTypes.ContainsKey(item.GetType()));
 
                 // Okay, let's handle this value normally
-                var s = o.ToString();
+                if (requiresQualifiers) sb.Append(settings.TextQualifier);
                 if (!string.IsNullOrEmpty(s))
                 {
-                    // Does this string contain any risky characters, or are we in force-qualifiers / allow-null mode?
-                    if (settings.ForceQualifiers || settings.AllowNull || (s.IndexOfAny(riskyChars) >= 0) || riskyLineSeparator && s.Contains(settings.LineSeparator))
+                    // Only go character-by-character if necessary
+                    if (s.IndexOf(settings.TextQualifier) >= 0)
                     {
-                        sb.Append(q);
+                        foreach (var c in s.ToCharArray())
+                        {
+                            // Double up text qualifiers
+                            if (c == settings.TextQualifier)
+                            {
+                                sb.Append(c);
+                            }
 
-                        // Double up any qualifiers that may occur
-                        sb.Append(s.Replace(q, q + q));
-                        sb.Append(q);
+                            sb.Append(c);
+                        }
                     }
                     else
                     {
@@ -341,11 +412,13 @@ namespace CSVFile
                 }
 
                 // Move to the next cell
+                if (requiresQualifiers) sb.Append(settings.TextQualifier);
                 sb.Append(settings.FieldDelimiter);
             }
 
             // Subtract the trailing delimiter so we don't inadvertently add an empty column at the end
             sb.Length -= 1;
+            return sb.ToString();
         }
 
         /// <summary>
