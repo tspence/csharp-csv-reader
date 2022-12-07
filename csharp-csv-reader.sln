@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.31112.23
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33122.133
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "net standard", "net standard", "{0CDFDACD-6043-48E8-8AA3-7122461F7C7A}"
 EndProject
@@ -13,12 +13,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "src.netstandard20", "src\ne
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{E92F982D-FAD2-4BF7-94F5-2E9B46AB7651}"
 	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
 		CSVFile.nuspec = CSVFile.nuspec
+		.github\workflows\dotnet.yml = .github\workflows\dotnet.yml
+		icons8-spreadsheet-96.png = icons8-spreadsheet-96.png
 		LICENSE = LICENSE
 		README.md = README.md
-		icons8-spreadsheet-96.png = icons8-spreadsheet-96.png
-		.github\workflows\dotnet.yml = .github\workflows\dotnet.yml
-		.gitignore = .gitignore
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "dot net framework", "dot net framework", "{3D301792-0A39-4D02-927E-B7EFFAC43E30}"
@@ -33,9 +33,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "src.net20", "src\net20\src.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "tests.net20", "tests\net20\tests.net20.csproj", "{093B961F-DD8E-4F27-A903-5BD97447A162}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "src.net50", "src\net50\src.net50.csproj", "{C78A66F7-113D-452A-989B-306CD6534E7B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "src.net50", "src\net50\src.net50.csproj", "{C78A66F7-113D-452A-989B-306CD6534E7B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "tests.net50", "tests\net50\tests.net50.csproj", "{D0F7CD1F-EEA9-4727-94C8-71F69FB456BF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "tests.net50", "tests\net50\tests.net50.csproj", "{D0F7CD1F-EEA9-4727-94C8-71F69FB456BF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "tests.net70", "tests\net70\tests.net70\tests.net70.csproj", "{CF96E85B-04C0-482F-9A2A-7EBBE977CD22}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -83,6 +85,10 @@ Global
 		{D0F7CD1F-EEA9-4727-94C8-71F69FB456BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D0F7CD1F-EEA9-4727-94C8-71F69FB456BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D0F7CD1F-EEA9-4727-94C8-71F69FB456BF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CF96E85B-04C0-482F-9A2A-7EBBE977CD22}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CF96E85B-04C0-482F-9A2A-7EBBE977CD22}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CF96E85B-04C0-482F-9A2A-7EBBE977CD22}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CF96E85B-04C0-482F-9A2A-7EBBE977CD22}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -98,6 +104,7 @@ Global
 		{093B961F-DD8E-4F27-A903-5BD97447A162} = {3D301792-0A39-4D02-927E-B7EFFAC43E30}
 		{C78A66F7-113D-452A-989B-306CD6534E7B} = {0CDFDACD-6043-48E8-8AA3-7122461F7C7A}
 		{D0F7CD1F-EEA9-4727-94C8-71F69FB456BF} = {0CDFDACD-6043-48E8-8AA3-7122461F7C7A}
+		{CF96E85B-04C0-482F-9A2A-7EBBE977CD22} = {0CDFDACD-6043-48E8-8AA3-7122461F7C7A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0A368276-2291-4A3B-B4EE-1C2D8042E97D}

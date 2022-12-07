@@ -263,7 +263,7 @@ namespace CSVTestSuite
             settings.IgnoreEmptyLineForDeserialization = true;
 
             // Try deserializing using the async version
-            var list = await CSV.DeserializeAsync<TestClassLastColumnNullableSingle>(csv, settings).ToListAsync();
+            var list = await CSV.DeserializeAsync<TestClassLastColumnNullableSingle>(csv, settings);
             Assert.AreEqual(4, list.Count);
 
             Assert.AreEqual("Test String", list[0].TestString);
