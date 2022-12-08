@@ -1,17 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-
+    <AssemblyName>CSVFile.Tests.net50</AssemblyName>
+    <RootNamespace>CSVFile.Tests</RootNamespace>
     <IsPackable>false</IsPackable>
-
-    <TargetFramework>net6.0</TargetFramework>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DefineConstants>HAS_ASYNC;HAS_ASYNC_IENUM;</DefineConstants>
-  </PropertyGroup>
-
-  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <TargetFramework>net5.0</TargetFramework>
     <DefineConstants>HAS_ASYNC;HAS_ASYNC_IENUM;</DefineConstants>
   </PropertyGroup>
 
