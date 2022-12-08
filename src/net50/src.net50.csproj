@@ -4,7 +4,7 @@
     <AssemblyName>CSVFile</AssemblyName>
     <RootNamespace>CSVFile</RootNamespace>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -24,6 +24,10 @@
       <Link>CSVStateMachine.cs</Link>
     </Compile>
     <Compile Include="..\CSVWriter.cs" Link="CSVWriter.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="NUnit3TestAdapter" Version="4.3.1" />
   </ItemGroup>
 
 </Project>
