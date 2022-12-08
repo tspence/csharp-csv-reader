@@ -5,13 +5,6 @@
     <RootNamespace>CSVFile</RootNamespace>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <TargetFramework>net6.0</TargetFramework>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DefineConstants>HAS_ASYNC;HAS_ASYNC_IENUM;</DefineConstants>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DefineConstants>HAS_ASYNC;HAS_ASYNC_IENUM;</DefineConstants>
   </PropertyGroup>
 
@@ -20,9 +13,7 @@
     <Compile Include="..\CSVDataTable.cs" Link="CSVDataTable.cs" />
     <Compile Include="..\CSVReader.cs" Link="CSVReader.cs" />
     <Compile Include="..\CSVSettings.cs" Link="CSVSettings.cs" />
-    <Compile Include="..\CSVStateMachine.cs">
-      <Link>CSVStateMachine.cs</Link>
-    </Compile>
+    <Compile Include="..\CSVStateMachine.cs" Link="CSVStateMachine.cs" />
     <Compile Include="..\CSVWriter.cs" Link="CSVWriter.cs" />
   </ItemGroup>
 

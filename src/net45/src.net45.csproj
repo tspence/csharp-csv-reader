@@ -1,90 +1,23 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\..\packages\NUnit3TestAdapter.4.3.1\build\net35\NUnit3TestAdapter.props" Condition="Exists('..\..\packages\NUnit3TestAdapter.4.3.1\build\net35\NUnit3TestAdapter.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{6E72622B-03F6-4C09-8B81-47C011C5FF8E}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CSVFile</RootNamespace>
     <AssemblyName>CSVFile</AssemblyName>
-    <TargetFrameworkVersion>v4.8.1</TargetFrameworkVersion>
+    <RootNamespace>CSVFile</RootNamespace>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\net45\</OutputPath>
-    <DefineConstants>DEBUG;NET4_5;HAS_ASYNC;</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\net45\</OutputPath>
+    <TargetFramework>4.5</TargetFramework>
     <DefineConstants>NET4_5;HAS_ASYNC;</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Release\net45\src.net45.xml</DocumentationFile>
   </PropertyGroup>
+
   <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
+    <Compile Include="..\CSV.cs" Link="CSV.cs" />
+    <Compile Include="..\CSVDataTable.cs" Link="CSVDataTable.cs" />
+    <Compile Include="..\CSVReader.cs" Link="CSVReader.cs" />
+    <Compile Include="..\CSVSettings.cs" Link="CSVSettings.cs" />
+    <Compile Include="..\CSVStateMachine.cs" Link="CSVStateMachine.cs" />
+    <Compile Include="..\CSVWriter.cs" Link="CSVWriter.cs" />
   </ItemGroup>
+
   <ItemGroup>
-    <Folder Include="Properties\" />
+    <PackageReference Include="NUnit3TestAdapter" Version="4.3.1" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\AssemblyInfo.cs">
-      <Link>AssemblyInfo.cs</Link>
-    </Compile>
-    <Compile Include="..\CSV.cs">
-      <Link>CSV.cs</Link>
-    </Compile>
-    <Compile Include="..\CSVReader.cs">
-      <Link>CSVReader.cs</Link>
-    </Compile>
-    <Compile Include="..\CSVDataTable.cs">
-      <Link>CSVDataTable.cs</Link>
-    </Compile>
-    <Compile Include="..\CSVStateMachine.cs">
-      <Link>CSVStateMachine.cs</Link>
-    </Compile>
-    <Compile Include="..\CSVWriter.cs">
-      <Link>CSVWriter.cs</Link>
-    </Compile>
-    <Compile Include="..\CSVSettings.cs">
-      <Link>CSVSettings.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\..\packages\NUnit3TestAdapter.4.3.1\build\net35\NUnit3TestAdapter.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\NUnit3TestAdapter.4.3.1\build\net35\NUnit3TestAdapter.props'))" />
-  </Target>
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
 </Project>

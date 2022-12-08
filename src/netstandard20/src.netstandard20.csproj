@@ -5,14 +5,9 @@
     <RootNamespace>CSVFile</RootNamespace>
     <TargetFramework>netstandard2.0</TargetFramework>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <DefineConstants>HAS_ASYNC;</DefineConstants>
   </PropertyGroup>
 
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DefineConstants>HAS_ASYNC;</DefineConstants>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DefineConstants>HAS_ASYNC;</DefineConstants>
-  </PropertyGroup>
   <ItemGroup>
     <Compile Include="..\CSV.cs">
       <Link>CSV.cs</Link>
