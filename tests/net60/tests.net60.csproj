@@ -1,15 +1,15 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <AssemblyName>CSVFile.Tests.netstandard20</AssemblyName>
+    <AssemblyName>CSVFile.Tests.net60</AssemblyName>
     <RootNamespace>CSVFile.Tests</RootNamespace>
     <IsPackable>false</IsPackable>
-    <TargetFramework>v4.8</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <DefineConstants>NETSTANDARD2_0;HAS_ASYNC;</DefineConstants>
+    <NoWarn>CS1591</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="..\AsyncReaderTest.cs" Link="AsyncReaderTest.cs" />
     <Compile Include="..\BasicParseTests.cs" Link="BasicParseTests.cs" />
     <Compile Include="..\ChopTest.cs" Link="ChopTest.cs" />
     <Compile Include="..\DataTableReaderTest.cs" Link="DataTableReaderTest.cs" />
@@ -19,8 +19,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="NUnit" Version="3.13.3" />
-    <PackageReference Include="NUnit3TestAdapter" Version="4.3.1" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.4.0" />
+    <PackageReference Include="NUnit" Version="3.11.0" />
+    <PackageReference Include="NUnit3TestAdapter" Version="3.11.0" />
   </ItemGroup>
 
   <ItemGroup>
