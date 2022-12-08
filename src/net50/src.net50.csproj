@@ -4,7 +4,7 @@
     <AssemblyName>CSVFile</AssemblyName>
     <RootNamespace>CSVFile</RootNamespace>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net5.0</TargetFramework>
     <DefineConstants>HAS_ASYNC;HAS_ASYNC_IENUM;</DefineConstants>
   </PropertyGroup>
 
@@ -15,10 +15,6 @@
     <Compile Include="..\CSVSettings.cs" Link="CSVSettings.cs" />
     <Compile Include="..\CSVStateMachine.cs" Link="CSVStateMachine.cs" />
     <Compile Include="..\CSVWriter.cs" Link="CSVWriter.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="NUnit3TestAdapter" Version="4.3.1" />
   </ItemGroup>
 
 </Project>

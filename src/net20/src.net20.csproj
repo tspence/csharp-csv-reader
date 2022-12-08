@@ -16,8 +16,4 @@
     <Compile Include="..\CSVStateMachine.cs" Link="CSVStateMachine.cs" />
     <Compile Include="..\CSVWriter.cs" Link="CSVWriter.cs" />
   </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="NUnit3TestAdapter" Version="4.3.1" />
-  </ItemGroup>
 </Project>
