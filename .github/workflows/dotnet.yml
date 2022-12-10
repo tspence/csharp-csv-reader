@@ -18,20 +18,22 @@ jobs:
         dotnet-version: |
           5.0.x
           6.0.x
-    - name: Build (Framework Compatibility)
+    - name: Build (Framework 2.0)
       run: msbuild /t:restore ./src/net20/src.net20.csproj
-    - name: Build (Framework Compatibility)
+    - name: Build (Framework 4.0)
       run: msbuild /t:restore ./src/net40/src.net40.csproj
-    - name: Build (Framework Compatibility)
+    - name: Build (Framework 4.5)
       run: msbuild /t:restore ./src/net45/src.net45.csproj
-    - name: Build (DotNet Core)
+    - name: Build (DotNet Core 5.0 and NetStandard 2.0)
       run: dotnet build ./csharp-csv-reader.sln
+	- name: Install NUnit.ConsoleRunner
+	  run: nuget install NUnit.ConsoleRunner -Version 3.11.1 -DirectDownload -OutputDirectory .
     - name: Test (net20)
-      run: ./packages/NUnit.ConsoleRunner.3.11.1/tools/nunit3-console.exe ./tests/net20/tests.net20.csproj
+      run: ./NUnit.ConsoleRunner.3.11.1/tools/nunit3-console.exe ./tests/net20/tests.net20.csproj
     - name: Test (net40)
-      run: ./packages/NUnit.ConsoleRunner.3.11.1/tools/nunit3-console.exe ./tests/net40/tests.net40.csproj
+      run: ./NUnit.ConsoleRunner.3.11.1/tools/nunit3-console.exe ./tests/net40/tests.net40.csproj
     - name: Test (net45)
-      run: ./packages/NUnit.ConsoleRunner.3.11.1/tools/nunit3-console.exe ./tests/net45/tests.net45.csproj
+      run: ./NUnit.ConsoleRunner.3.11.1/tools/nunit3-console.exe ./tests/net45/tests.net45.csproj
     - name: Test (net50)
       run: dotnet test ./tests/net50/tests.net50.csproj
     - name: Test (net60)
