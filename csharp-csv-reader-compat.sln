@@ -19,6 +19,16 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "tests.net40", "tests\net40\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "tests.net45", "tests\net45\tests.net45.csproj", "{F72EC540-8005-403E-9DD0-E0C5C39DF10E}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{9E54C107-F983-4000-9281-E0BA056804A0}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+		CSVFile.nuspec = CSVFile.nuspec
+		.github\workflows\dotnet.yml = .github\workflows\dotnet.yml
+		icons8-spreadsheet-96.png = icons8-spreadsheet-96.png
+		LICENSE = LICENSE
+		README.md = README.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
