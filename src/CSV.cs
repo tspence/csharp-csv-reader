@@ -216,7 +216,7 @@ namespace CSVFile
                 return RemoveByteOrderMarker(rawString);
             }
         }
-        
+
         private static string _byteOrderMarkUtf8 =
             Encoding.UTF8.GetString(Encoding.UTF8.GetPreamble());
         internal static string RemoveByteOrderMarker(string rawString)
@@ -243,7 +243,7 @@ namespace CSVFile
                 cw.Serialize(list);
             }
         }
-        
+
 #if HAS_ASYNC
         /// <summary>
         /// Serialize an array of objects to CSV format
@@ -261,7 +261,7 @@ namespace CSVFile
             }
         }
 #endif
-        
+
 #if HAS_ASYNC_IENUM
         /// <summary>
         /// Serialize an array of objects to CSV format
@@ -279,7 +279,7 @@ namespace CSVFile
             }
         }
 #endif
-        
+
         /// <summary>
         /// Add a CSV Header line to a StringBuilder for a specific type
         /// </summary>
@@ -288,7 +288,7 @@ namespace CSVFile
 #if NET2_0
         public static void AppendCSVHeader<T>(StringBuilder sb, CSVSettings settings = null) where T: class, new()
 #else
-        public static void AppendCSVHeader<T>(this StringBuilder sb, CSVSettings settings = null) where T: class, new()
+        public static void AppendCSVHeader<T>(this StringBuilder sb, CSVSettings settings = null) where T : class, new()
 #endif
         {
             var header = Serialize(new T[] { }, settings);
@@ -312,7 +312,7 @@ namespace CSVFile
             {
                 settings = CSVSettings.CSV;
             }
-            
+
             // Duplicate settings, but flag ourselves to ignore the header
             settings = settings.CloneWithNewDelimiter(settings.FieldDelimiter);
             settings.HeaderRowIncluded = false;
@@ -343,7 +343,7 @@ namespace CSVFile
             sb.Append(csv);
             sb.Append(settings.LineSeparator);
         }
-        
+
         /// <summary>
         /// Internal method to convert a list of things into a CSV line using the specified settings object
         /// 
@@ -372,7 +372,7 @@ namespace CSVFile
                     sb.Append(settings.FieldDelimiter);
                     continue;
                 }
-                
+
                 // Is this a date time?
                 string s;
                 if (item is DateTime)
@@ -383,7 +383,7 @@ namespace CSVFile
                 {
                     s = item.ToString();
                 }
-                
+
                 // Check if this item requires qualifiers
                 var requiresQualifiers = settings.ForceQualifiers || s.IndexOfAny(riskyChars) >= 0 || (forceQualifierTypes != null && forceQualifierTypes.ContainsKey(item.GetType()));
 

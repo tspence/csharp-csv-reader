@@ -13,7 +13,6 @@ using System.ComponentModel;
 using System.Text;
 #if HAS_ASYNC
 using System.Threading;
-using System.Threading.Tasks;
 #endif
 
 // These suggestions from Resharper apply because we don't want it to recommend fixing things needed for Net20:
@@ -35,7 +34,7 @@ namespace CSVFile
         /// </summary>
         private readonly Dictionary<string, int> _excluded;
         private readonly CSVSettings _settings;
-        
+
         /// <summary>
         /// Construct a helper object to track which columns are excluded from serialization
         /// </summary>
@@ -80,11 +79,11 @@ namespace CSVFile
             return _excluded.ContainsKey(excludedColumnName);
         }
     }
-    
+
     /// <summary>
     /// A helper object to deserialize a class based on CSV strings
     /// </summary>
-    public class DeserializationHelper<T> where T: class, new()
+    public class DeserializationHelper<T> where T : class, new()
     {
         private readonly int _numColumns;
         private readonly Type[] _columnTypes;
@@ -130,7 +129,7 @@ namespace CSVFile
             {
                 // Is this column excluded?
                 if (excluded.IsExcluded(headers[i])) continue;
-                
+
                 // Check if this is a property
                 _properties[i] = return_type.GetProperty(headers[i], bindings);
                 if (_properties[i] != null && !_properties[i].CanWrite)
@@ -211,7 +210,8 @@ namespace CSVFile
             }
 
             // Does this line match the length of the first line?  Does the caller want us to complain?
-            if (line.Length != _numColumns && !settings.IgnoreHeaderErrors) {
+            if (line.Length != _numColumns && !settings.IgnoreHeaderErrors)
+            {
                 throw new Exception($"Line #{row_num} contains {line.Length} columns; expected {_numColumns}");
             }
 
@@ -220,13 +220,13 @@ namespace CSVFile
             for (var i = 0; i < Math.Min(line.Length, _numColumns); i++)
             {
                 if (_converters[i] == null) continue;
-                
+
                 // Attempt to convert this to the specified type
                 object value = null;
                 if (settings.AllowNull && (line[i] == null || line[i] == settings.NullToken))
                 {
                     value = null;
-                } 
+                }
                 else if (_converters[i].IsValid(line[i]))
                 {
                     value = _converters[i].ConvertFromString(line[i]);
@@ -264,7 +264,7 @@ namespace CSVFile
 #else
     public class CSVReader : IEnumerable<string[]>, IDisposable
 #endif
-    
+
     {
         private readonly CSVSettings _settings;
         private readonly StreamReader _stream;
@@ -315,7 +315,7 @@ namespace CSVFile
             var sr = new StreamReader(filename, encoding);
             return new CSVReader(sr, settings);
         }
-        
+
         /// <summary>
         /// Construct a new CSV reader off a streamed source
         /// </summary>
@@ -352,7 +352,7 @@ namespace CSVFile
                 Headers = _settings.AssumedHeaders;
             }
         }
-        
+
         /// <summary>
         /// Construct a new CSV reader off a streamed source
         /// </summary>
@@ -389,7 +389,7 @@ namespace CSVFile
                 Headers = _settings.AssumedHeaders;
             }
         }
-        
+
         /// <summary>
         /// Iterate through all lines in this CSV file
         /// </summary>
@@ -412,7 +412,7 @@ namespace CSVFile
         {
             return GetEnumerator();
         }
-        
+
 #if HAS_ASYNC_IENUM
         /// <summary>
         /// Iterate through all lines in this CSV file using async
@@ -472,7 +472,8 @@ namespace CSVFile
                 var rawLine = _stream.ReadLine();
                 firstLine = CSV.ParseLine(rawLine, _settings);
                 var list = new List<string>();
-                for (var i = 0; i < firstLine.Length; i++) {
+                for (var i = 0; i < firstLine.Length; i++)
+                {
                     list.Add($"Column{i}");
                 }
 
@@ -495,23 +496,31 @@ namespace CSVFile
             }
 
             // Start reading through the file
-            foreach (var line in CSV.ParseStream(_stream, _settings)) {
+            foreach (var line in CSV.ParseStream(_stream, _settings))
+            {
 
                 // Does this line match the length of the first line?
-                if (line.Length != numColumns) {
-                    if (!_settings.IgnoreDimensionErrors) {
+                if (line.Length != numColumns)
+                {
+                    if (!_settings.IgnoreDimensionErrors)
+                    {
                         throw new Exception($"Line #{row_num} contains {line.Length} columns; expected {numColumns}");
-                    } else {
+                    }
+                    else
+                    {
 
                         // Add as best we can - construct a new line and make it fit
                         var list = new List<string>();
                         list.AddRange(line);
-                        while (list.Count < numColumns) {
+                        while (list.Count < numColumns)
+                        {
                             list.Add("");
                         }
                         dt.Rows.Add(list.GetRange(0, numColumns).ToArray());
                     }
-                } else {
+                }
+                else
+                {
                     dt.Rows.Add(line);
                 }
 
@@ -545,7 +554,7 @@ namespace CSVFile
                 }
             }
         }
-        
+
         /// <summary>
         /// Close our resources - specifically, the stream reader
         /// </summary>
