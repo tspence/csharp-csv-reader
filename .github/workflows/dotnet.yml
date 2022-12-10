@@ -19,7 +19,7 @@ jobs:
           5.0.x
           6.0.x
     - name: Build (Compatibility)
-      run: msbuild ./csharp-csv-reader-compat.sln
+      run: msbuild /t:restore ./csharp-csv-reader-compat.sln
     - name: Test (net20)
       run: packages\NUnit.ConsoleRunner.3.11.1\tools\nunit3-console.exe .\tests\net20\tests.net20.csproj
     - name: Test (net40)
