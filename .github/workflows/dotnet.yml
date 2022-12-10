@@ -21,11 +21,11 @@ jobs:
     - name: Build (Compatibility)
       run: msbuild /t:restore ./csharp-csv-reader-compat.sln
     - name: Test (net20)
-      run: packages\NUnit.ConsoleRunner.3.11.1\tools\nunit3-console.exe .\tests\net20\tests.net20.csproj
+      run: packages/NUnit.ConsoleRunner.3.11.1/tools/nunit3-console.exe ./tests/net20/tests.net20.csproj
     - name: Test (net40)
-      run: packages\NUnit.ConsoleRunner.3.11.1\tools\nunit3-console.exe .\tests\net40\tests.net40.csproj
+      run: packages/NUnit.ConsoleRunner.3.11.1/tools/nunit3-console.exe ./tests/net40/tests.net40.csproj
     - name: Test (net45)
-      run: packages\NUnit.ConsoleRunner.3.11.1\tools\nunit3-console.exe .\tests\net45\tests.net45.csproj
+      run: packages/NUnit.ConsoleRunner.3.11.1/tools/nunit3-console.exe ./tests/net45/tests.net45.csproj
     - name: Build
       run: dotnet build ./csharp-csv-reader.sln
     - name: Test 
