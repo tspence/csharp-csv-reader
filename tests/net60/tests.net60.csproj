@@ -1,16 +1,15 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <AssemblyName>CSVFile.Tests.net50</AssemblyName>
+    <AssemblyName>CSVFile.Tests.net60</AssemblyName>
     <RootNamespace>CSVFile.Tests</RootNamespace>
     <IsPackable>false</IsPackable>
-    <TargetFramework>net5.0</TargetFramework>
-    <DefineConstants>HAS_ASYNC;HAS_ASYNC_IENUM;</DefineConstants>
+    <TargetFramework>net6.0</TargetFramework>
+    <DefineConstants>NETSTANDARD2_0;HAS_ASYNC;</DefineConstants>
     <NoWarn>CS1591</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="..\AsyncReaderTest.cs" Link="AsyncReaderTest.cs" />
     <Compile Include="..\BasicParseTests.cs" Link="BasicParseTests.cs" />
     <Compile Include="..\ChopTest.cs" Link="ChopTest.cs" />
     <Compile Include="..\DataTableReaderTest.cs" Link="DataTableReaderTest.cs" />
@@ -23,11 +22,11 @@
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.4.0" />
     <PackageReference Include="NUnit" Version="3.11.0" />
     <PackageReference Include="NUnit3TestAdapter" Version="3.11.0" />
-    <PackageReference Include="System.Linq.Async" Version="6.0.1" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\net50\src.net50.csproj" />
+    <ProjectReference Include="..\..\src\netstandard20\src.netstandard20.csproj" />
   </ItemGroup>
 
 </Project>
+

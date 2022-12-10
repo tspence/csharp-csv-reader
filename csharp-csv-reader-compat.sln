@@ -1,0 +1,74 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "src.net20", "src\net20\src.net20.csproj", "{94A57E9B-A38C-48E2-A739-DD9F5E05A206}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{9A42B47F-F2AE-4B35-91CD-D614245A1B54}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "src.net40", "src\net40\src.net40.csproj", "{C528C907-F779-4F23-807C-8E2C55EBBABE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "src.net45", "src\net45\src.net45.csproj", "{4B35ABEF-C89A-4B9B-9B5F-996062F7FB7F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{5996AF01-C9C5-497F-BF51-6A479BB09A35}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "tests.net20", "tests\net20\tests.net20.csproj", "{7116B8F5-AE61-43AC-B389-A06B86BE5E0E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "tests.net40", "tests\net40\tests.net40.csproj", "{43BB0383-638C-4430-80F9-5982B7B40063}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "tests.net45", "tests\net45\tests.net45.csproj", "{F72EC540-8005-403E-9DD0-E0C5C39DF10E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{9E54C107-F983-4000-9281-E0BA056804A0}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+		CSVFile.nuspec = CSVFile.nuspec
+		.github\workflows\dotnet.yml = .github\workflows\dotnet.yml
+		icons8-spreadsheet-96.png = icons8-spreadsheet-96.png
+		LICENSE = LICENSE
+		README.md = README.md
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{94A57E9B-A38C-48E2-A739-DD9F5E05A206}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{94A57E9B-A38C-48E2-A739-DD9F5E05A206}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{94A57E9B-A38C-48E2-A739-DD9F5E05A206}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{94A57E9B-A38C-48E2-A739-DD9F5E05A206}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C528C907-F779-4F23-807C-8E2C55EBBABE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C528C907-F779-4F23-807C-8E2C55EBBABE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C528C907-F779-4F23-807C-8E2C55EBBABE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C528C907-F779-4F23-807C-8E2C55EBBABE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4B35ABEF-C89A-4B9B-9B5F-996062F7FB7F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4B35ABEF-C89A-4B9B-9B5F-996062F7FB7F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4B35ABEF-C89A-4B9B-9B5F-996062F7FB7F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4B35ABEF-C89A-4B9B-9B5F-996062F7FB7F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7116B8F5-AE61-43AC-B389-A06B86BE5E0E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7116B8F5-AE61-43AC-B389-A06B86BE5E0E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7116B8F5-AE61-43AC-B389-A06B86BE5E0E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7116B8F5-AE61-43AC-B389-A06B86BE5E0E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{43BB0383-638C-4430-80F9-5982B7B40063}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{43BB0383-638C-4430-80F9-5982B7B40063}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{43BB0383-638C-4430-80F9-5982B7B40063}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{43BB0383-638C-4430-80F9-5982B7B40063}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F72EC540-8005-403E-9DD0-E0C5C39DF10E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F72EC540-8005-403E-9DD0-E0C5C39DF10E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F72EC540-8005-403E-9DD0-E0C5C39DF10E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F72EC540-8005-403E-9DD0-E0C5C39DF10E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{94A57E9B-A38C-48E2-A739-DD9F5E05A206} = {9A42B47F-F2AE-4B35-91CD-D614245A1B54}
+		{C528C907-F779-4F23-807C-8E2C55EBBABE} = {9A42B47F-F2AE-4B35-91CD-D614245A1B54}
+		{4B35ABEF-C89A-4B9B-9B5F-996062F7FB7F} = {9A42B47F-F2AE-4B35-91CD-D614245A1B54}
+		{7116B8F5-AE61-43AC-B389-A06B86BE5E0E} = {5996AF01-C9C5-497F-BF51-6A479BB09A35}
+		{43BB0383-638C-4430-80F9-5982B7B40063} = {5996AF01-C9C5-497F-BF51-6A479BB09A35}
+		{F72EC540-8005-403E-9DD0-E0C5C39DF10E} = {5996AF01-C9C5-497F-BF51-6A479BB09A35}
+	EndGlobalSection
+EndGlobal
