@@ -23,7 +23,7 @@ jobs:
     - name: Build (Framework 2.0)
       run: msbuild ./src/net20/src.net20.csproj
     - name: Build (Framework 2.0 Tests)
-      run: msbuild /t:restore;build ./tests/net20/tests.net20.csproj
+      run: msbuild ./tests/net20/tests.net20.csproj
     - name: Test (net20)
       run: ./NUnit.ConsoleRunner.3.4.0/tools/nunit3-console.exe ./tests/net20/bin/Debug/tests.net20.dll
     - name: Build (Framework 4.0)
