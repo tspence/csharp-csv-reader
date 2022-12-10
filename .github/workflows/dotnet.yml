@@ -26,8 +26,6 @@ jobs:
       run: msbuild /t:restore ./src/net45/src.net45.csproj
     - name: Build (DotNet Core)
       run: dotnet build ./csharp-csv-reader.sln
-	- name: Check builds
-	  run: ls ./packages
     - name: Test (net20)
       run: ./packages/NUnit.ConsoleRunner.3.11.1/tools/nunit3-console.exe ./tests/net20/tests.net20.csproj
     - name: Test (net40)
