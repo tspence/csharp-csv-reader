@@ -39,7 +39,7 @@ jobs:
     - name: Build (Framework 4.5 Tests)
       run: msbuild ./tests/net45/tests.net45.csproj
     - name: Test (net45)
-      run: ./NUnit.ConsoleRunner.3.4.5/tools/nunit3-console.exe ./tests/net45/bin/Debug/tests.net45.dll
+      run: ./NUnit.ConsoleRunner.3.4.0/tools/nunit3-console.exe ./tests/net45/bin/Debug/tests.net45.dll
     - name: Build (DotNet Core 5.0 and NetStandard 2.0)
       run: dotnet build ./csharp-csv-reader.sln
     - name: Test (net60)
