@@ -65,47 +65,6 @@ namespace CSVFile
         }
 
         /// <summary>
-        /// Quick shortcut to send a datatable as an attachment via SMTP
-        /// </summary>
-        /// <param name="dt"></param>
-        /// <param name="from_address"></param>
-        /// <param name="to_address"></param>
-        /// <param name="subject"></param>
-        /// <param name="body"></param>
-        /// <param name="smtp_host"></param>
-        /// <param name="attachment_filename"></param>
-#if NET2_0
-        public static void SendCsvAttachment(DataTable dt, string from_address, string to_address, string subject, string body, string smtp_host, string attachment_filename)
-#else
-        public static void SendCsvAttachment(this DataTable dt, string from_address, string to_address, string subject, string body, string smtp_host, string attachment_filename)
-#endif
-        {
-            // Save this CSV to a string
-            string csv = WriteToString(dt);
-
-            // Prepare the email message and attachment
-            System.Net.Mail.MailMessage message = new System.Net.Mail.MailMessage();
-            message.To.Add(to_address);
-            message.Subject = subject;
-            message.From = new System.Net.Mail.MailAddress(from_address);
-            message.Body = body;
-            System.Net.Mail.Attachment a = System.Net.Mail.Attachment.CreateAttachmentFromString(csv, "text/csv");
-            a.Name = attachment_filename;
-            message.Attachments.Add(a);
-
-#if NET2_0
-            // In DotNet 2.0, SmtpClient isn't disposable
-            var smtp = new System.Net.Mail.SmtpClient(smtp_host);
-            smtp.Send(message);
-#else
-            using (System.Net.Mail.SmtpClient smtp = new System.Net.Mail.SmtpClient(smtp_host))
-            {
-                smtp.Send(message);
-            }
-#endif
-        }
-
-        /// <summary>
         /// Write a data table to disk at the designated file name in CSV format
         /// </summary>
         /// <param name="dt"></param>
