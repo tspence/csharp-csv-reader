@@ -1,19 +1,78 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
-    <AssemblyName>CSVFile</AssemblyName>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{94A57E9B-A38C-48E2-A739-DD9F5E05A206}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>CSVFile</RootNamespace>
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <TargetFramework>2.0</TargetFramework>
-    <DefineConstants>NET2_0</DefineConstants>
+    <AssemblyName>CSVFile</AssemblyName>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <TargetFrameworkProfile />
   </PropertyGroup>
-
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;NET2_0</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE;NET2_0</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
   <ItemGroup>
-    <Compile Include="..\CSV.cs" Link="CSV.cs" />
-    <Compile Include="..\CSVDataTable.cs" Link="CSVDataTable.cs" />
-    <Compile Include="..\CSVReader.cs" Link="CSVReader.cs" />
-    <Compile Include="..\CSVSettings.cs" Link="CSVSettings.cs" />
-    <Compile Include="..\CSVStateMachine.cs" Link="CSVStateMachine.cs" />
-    <Compile Include="..\CSVWriter.cs" Link="CSVWriter.cs" />
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\CSV.cs">
+      <Link>CSV.cs</Link>
+    </Compile>
+    <Compile Include="..\CSVDataTable.cs">
+      <Link>CSVDataTable.cs</Link>
+    </Compile>
+    <Compile Include="..\CSVReader.cs">
+      <Link>CSVReader.cs</Link>
+    </Compile>
+    <Compile Include="..\CSVSettings.cs">
+      <Link>CSVSettings.cs</Link>
+    </Compile>
+    <Compile Include="..\CSVStateMachine.cs">
+      <Link>CSVStateMachine.cs</Link>
+    </Compile>
+    <Compile Include="..\CSVWriter.cs">
+      <Link>CSVWriter.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
 </Project>

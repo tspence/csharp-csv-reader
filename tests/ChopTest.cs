@@ -126,8 +126,8 @@ namespace CSVTestSuite
 
             // Save this string to a test file
             var fileGroupName = Guid.NewGuid().ToString();
-            var outfile = fileGroupName + ".csv";
-            var dirname = Guid.NewGuid().ToString();
+            var outfile = Path.Combine(Path.GetTempPath(), fileGroupName + ".csv");
+            var dirname = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
             try
             {
                 CSVDataTable.WriteToFile(dt, outfile);
