@@ -21,7 +21,7 @@ namespace CSVFile
     /// Helper object that implements serialization separately from the string or stream I/O
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class SerializationHelper<T> where T: class, new()
+    public class SerializationHelper<T> where T : class, new()
     {
         private readonly CSVSettings _settings;
         private readonly PropertyInfo[] _properties;
@@ -42,7 +42,7 @@ namespace CSVFile
             {
                 _settings = CSVSettings.CSV;
             }
-            
+
             // Extract properties and fields that are not excluded
             var excluded = new ExcludedColumnHelper(_settings);
             var props = new List<PropertyInfo>();
@@ -87,13 +87,13 @@ namespace CSVFile
 
             return CSV.ItemsToCsv(headers, _settings, _riskyChars, _forceQualifierTypes);
         }
-        
+
         /// <summary>
         /// Serialize a single row for the CSV file
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>
-        public string Serialize(T obj) 
+        public string Serialize(T obj)
         {
             var items = new List<object>();
             foreach (var field in _fields)
@@ -134,7 +134,7 @@ namespace CSVFile
             _riskyChars = _settings.GetRiskyChars();
             _forceQualifierTypes = _settings.GetForceQualifierTypes();
         }
-        
+
         /// <summary>
         /// Construct a new CSV writer to produce output on the enclosed stream
         /// </summary>
@@ -158,16 +158,19 @@ namespace CSVFile
         /// <param name="dt">The data table to write</param>
         public void Write(DataTable dt)
         {
-            if (_settings.HeaderRowIncluded) {
+            if (_settings.HeaderRowIncluded)
+            {
                 var headers = new List<object>();
-                foreach (DataColumn col in dt.Columns) {
+                foreach (DataColumn col in dt.Columns)
+                {
                     headers.Add(col.ColumnName);
                 }
                 _writer.Write(CSV.ItemsToCsv(headers, _settings, _riskyChars, _forceQualifierTypes));
                 _writer.Write(_settings.LineSeparator);
             }
 
-            foreach (DataRow dr in dt.Rows) {
+            foreach (DataRow dr in dt.Rows)
+            {
                 _writer.Write(CSV.ItemsToCsv(dr.ItemArray, _settings, _riskyChars, _forceQualifierTypes));
                 _writer.Write(_settings.LineSeparator);
             }
@@ -182,7 +185,7 @@ namespace CSVFile
             _writer.Write(CSV.ItemsToCsv(items, _settings, _riskyChars, _forceQualifierTypes));
             _writer.Write(_settings.LineSeparator);
         }
-        
+
 #if HAS_ASYNC
         /// <summary>
         /// Write a single line to this CSV
@@ -193,23 +196,26 @@ namespace CSVFile
             await _writer.WriteAsync(CSV.ItemsToCsv(items, _settings, _riskyChars, _forceQualifierTypes));
             await _writer.WriteAsync(_settings.LineSeparator);
         }
-        
+
         /// <summary>
         /// Write the data table to a stream in CSV format
         /// </summary>
         /// <param name="dt">The data table to write</param>
         public async Task WriteAsync(DataTable dt)
         {
-            if (_settings.HeaderRowIncluded) {
+            if (_settings.HeaderRowIncluded)
+            {
                 var headers = new List<object>();
-                foreach (DataColumn col in dt.Columns) {
+                foreach (DataColumn col in dt.Columns)
+                {
                     headers.Add(col.ColumnName);
                 }
                 await _writer.WriteAsync(CSV.ItemsToCsv(headers, _settings, _riskyChars, _forceQualifierTypes));
                 await _writer.WriteAsync(_settings.LineSeparator);
             }
 
-            foreach (DataRow dr in dt.Rows) {
+            foreach (DataRow dr in dt.Rows)
+            {
                 await _writer.WriteAsync(CSV.ItemsToCsv(dr.ItemArray, _settings, _riskyChars, _forceQualifierTypes));
                 await _writer.WriteAsync(_settings.LineSeparator);
             }
@@ -220,7 +226,7 @@ namespace CSVFile
         /// Serialize a list of objects to CSV using this writer
         /// </summary>
         /// <param name="list">An IEnumerable that produces the list of objects to serialize.</param>
-        public void Serialize<T>(IEnumerable<T> list) where T: class, new()
+        public void Serialize<T>(IEnumerable<T> list) where T : class, new()
         {
             var serializer = new SerializationHelper<T>(_settings, _riskyChars, _forceQualifierTypes);
             if (_settings.HeaderRowIncluded)
@@ -235,13 +241,13 @@ namespace CSVFile
                 _writer.Write(_settings.LineSeparator);
             }
         }
-        
+
 #if HAS_ASYNC
         /// <summary>
         /// Serialize a list of objects to CSV using this writer
         /// </summary>
         /// <param name="list">An IEnumerable that produces the list of objects to serialize.</param>
-        public async Task SerializeAsync<T>(IEnumerable<T> list) where T: class, new()
+        public async Task SerializeAsync<T>(IEnumerable<T> list) where T : class, new()
         {
             var serializer = new SerializationHelper<T>(_settings, _riskyChars, _forceQualifierTypes);
             if (_settings.HeaderRowIncluded)
@@ -257,13 +263,13 @@ namespace CSVFile
             }
         }
 #endif
-        
+
 #if HAS_ASYNC_IENUM
         /// <summary>
         /// Serialize a list of objects to CSV using this writer
         /// </summary>
         /// <param name="list">An IEnumerable that produces the list of objects to serialize.</param>
-        public async Task SerializeAsync<T>(IAsyncEnumerable<T> list) where T: class, new()
+        public async Task SerializeAsync<T>(IAsyncEnumerable<T> list) where T : class, new()
         {
             var serializer = new SerializationHelper<T>(_settings, _riskyChars, _forceQualifierTypes);
             if (_settings.HeaderRowIncluded)
@@ -279,7 +285,7 @@ namespace CSVFile
             }
         }
 #endif
-        
+
         /// <summary>
         /// Close our resources - specifically, the stream reader
         /// </summary>

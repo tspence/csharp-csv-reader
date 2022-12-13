@@ -90,7 +90,7 @@ namespace CSVFile
         /// Set this value to true to ignore header errors when deserializing
         /// </summary>
         public bool IgnoreHeaderErrors { get; set; }
-        
+
         /// <summary>
         /// Set this flag to true to ignore read-only properties during serialization
         /// </summary>
@@ -105,18 +105,18 @@ namespace CSVFile
         /// Exclude these columns during serialization and deserialization
         /// </summary>
         public string[] ExcludedColumns { get; set; }
-        
+
         /// <summary>
         /// A list of data types that require text qualifiers during serialization.
         /// </summary>
         public Type[] ForceQualifierTypes { get; set; }
-        
+
         /// <summary>
         /// Some CSV files contain an empty line at the end. If you set this flag to true, deserialization will
         /// not throw an error for empty lines and will instead ignore it.
         /// </summary>
         public bool IgnoreEmptyLineForDeserialization { get; set; }
-        
+
         /// <summary>
         /// The encoding for converting streams of bytes to strings
         /// </summary>
@@ -144,7 +144,8 @@ namespace CSVFile
         /// <summary>
         /// Standard tab-separated value (TSV) file settings
         /// </summary>
-        public static readonly CSVSettings TSV = new CSVSettings() { 
+        public static readonly CSVSettings TSV = new CSVSettings()
+        {
             FieldDelimiter = '\t'
         };
 

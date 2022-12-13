@@ -5,7 +5,6 @@
  */
 using System.Data;
 using System.IO;
-using System.Text;
 
 namespace CSVFile
 {

@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Text;
 
 // These suggestions from Resharper apply because we don't want it to recommend fixing things needed for Net20:
@@ -22,13 +21,13 @@ namespace CSVFile
         /// <summary>
         /// We have reached the end of the CSV and everything is done
         /// </summary>
-        Done, 
-        
+        Done,
+
         /// <summary>
         /// We don't need more text at the moment
         /// </summary>
         CanKeepGoing,
-        
+
         /// <summary>
         /// The CSV reached the end, but there was a missing (unpaired) text qualifier.
         /// For example:
@@ -36,7 +35,7 @@ namespace CSVFile
         /// </summary>
         MissingTrailingQualifier
     }
-    
+
     /// <summary>
     /// This state machine handles all functions of CSV processing except for the I/O, which can come in a variety
     /// of forms, either from a stream or an in-memory collection.
@@ -74,7 +73,7 @@ namespace CSVFile
             // The presence of a "sep=" line may affect these values
             _delimiter = _settings.FieldDelimiter;
             _allowSepLine = _settings.AllowSepLine;
-            
+
             // We are ready for work
             State = CSVState.CanKeepGoing;
         }
@@ -96,7 +95,7 @@ namespace CSVFile
             }
             return ParseChunk(line, reachedEnd);
         }
-        
+
         /// <summary>
         /// Parse a new chunk of text retrieved via some other means than a stream.
         ///
@@ -114,10 +113,10 @@ namespace CSVFile
                 State = CSVState.Done;
                 return null;
             }
-            
+
             // Add this chunk to the current processing logic
             _line += chunk;
-            
+
             // Check for the presence of a "sep=" line once at the beginning of a stream
             if (_allowSepLine)
             {
@@ -129,12 +128,12 @@ namespace CSVFile
                     return null;
                 }
             }
-            
+
             // Process one character at a time from the current line
             while (_position < _line.Length || !reachedEnd)
             {
                 _position++;
-                
+
                 // Have we reached the end of the stream?
                 if (_position >= _line.Length)
                 {
@@ -166,7 +165,7 @@ namespace CSVFile
                         _work.Append(c);
                     }
                     _inTextQualifier = true;
-                    
+
                     // Our next task is to find the end of this qualified-text field
                     var p2 = -1;
                     while (p2 < 0)
@@ -200,7 +199,7 @@ namespace CSVFile
                             p2 = -1;
                         }
                     }
-                    
+
                     // We're done parsing this text qualifier
                     _inTextQualifier = false;
                 }
@@ -233,7 +232,7 @@ namespace CSVFile
                         _list.Add(s);
                     }
                     _work.Length = 0;
-                    
+
                     // Test for special case: when the user has written a casual comma, space, and text qualifier, skip the space
                     // Checks if the second parameter of the if statement will pass through successfully
                     // e.g. `"bob", "mary", "bill"`
