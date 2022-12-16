@@ -11,6 +11,8 @@ A few reasons:
 * No dependencies.
 * Handles all the horrible edge cases from poorly written CSV generating software: custom delimiters, embedded newlines, and doubled-up text qualifiers.
 * Reads via streams, optionally using asynchronous I/O.  You can parse CSV files larger than you can hold in memory without thrashing.
+* Ability to pipe data tables directly into SQL Server using [Table Parameter Inserts](https://www.gamedeveloper.com/programming/in-depth-sql-server---high-performance-inserts)
+* Fastest with direct string parsing or async I/O, but [good enough performance when reading from MemoryStreams](https://www.joelverhagen.com/blog/2020/12/fastest-net-csv-parsers)
 
 ## CSV edge cases
 This library was designed to handle edge cases I experienced when working with partner files.
