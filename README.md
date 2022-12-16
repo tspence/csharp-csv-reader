@@ -24,6 +24,7 @@ This library was designed to handle edge cases I experienced when working with p
 | Hand written CSV with spaces after deliminters | `"field1", "field2", "field3"` |
 | Embedded newlines within a text qualifier | `"field1\r\nanother line","field2"` |
 | Text qualifiers as regular characters within a field | `"field1",field2 "field2" field2,"field3"` |
+| Doubled up text qualifiers within a qualified field | `"field1","field2 ""field2"" field2","field3"` |
 | Different line separators | CR, LF, something else |
 | Different text encoding | UTF-8, UTF-16, ASCII |
 | [SEP= lines for European CSV files](https://superuser.com/questions/773644/what-is-the-sep-metadata-you-can-add-to-csvs) | `sep=;\\r\\n` |
