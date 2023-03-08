@@ -261,13 +261,13 @@ namespace CSVTestSuite
             };
             
             // This use case was reported by wvdvegt as https://github.com/tspence/csharp-csv-reader/issues/53
-            var source = "\"test\",\"\r\n\",,,,\"Normal\",\"False\",,,\"Normal\",\"\"";
+            var source = "\"test\",\"" + Environment.NewLine + "\",,,,\"Normal\",\"False\",,,\"Normal\",\"\"";
             using (var cr = CSVReader.FromString(source, settings))
             {
                 foreach (var line in cr.Lines())
                 {
                     Assert.AreEqual("test", line[0]);
-                    Assert.AreEqual("\r\n", line[1]);
+                    Assert.AreEqual(Environment.NewLine, line[1]);
                     Assert.AreEqual("", line[2]);
                     Assert.AreEqual("", line[3]);
                     Assert.AreEqual("", line[4]);
