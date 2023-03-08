@@ -157,33 +157,22 @@ namespace CSVFile
                 }
                 var c = _line[_position];
 
-                // Are we currently processing a text block (which may optionally span multiple lines)?
-                if (_inTextQualifier || (!_inTextQualifier && c == _settings.TextQualifier && _work.Length == 0))
+                // If we are resuming after starting a text qualifier, can we find the end?
+                if (_inTextQualifier)
                 {
-                    if (_inTextQualifier)
-                    {
-                        _work.Append(c);
-                    }
-                    _inTextQualifier = true;
-
-                    // Our next task is to find the end of this qualified-text field
                     var p2 = -1;
                     while (p2 < 0)
                     {
-
-                        // If we don't see an end in sight, read more from the stream
                         p2 = _line.IndexOf(_settings.TextQualifier, _position + 1);
                         if (p2 < 0)
                         {
-
-                            // No text qualifiers yet? Let's read more from the stream and continue
-                            _work.Append(_line.Substring(_position + 1));
-                            _line = string.Empty;
-                            _position = -1;
                             if (reachedEnd)
                             {
                                 State = CSVState.MissingTrailingQualifier;
                             }
+
+                            // Backtrack one character so we can move forward when the next chunk loads
+                            _position--;
                             return null;
                         }
 
@@ -202,6 +191,12 @@ namespace CSVFile
 
                     // We're done parsing this text qualifier
                     _inTextQualifier = false;
+                }
+                // Is this the start of a text qualified field?
+                else if (c == _settings.TextQualifier && _work.Length == 0)
+                {
+                    _inTextQualifier = true;
+                    _position--;
                 }
                 // Are we at a line separator? Let's do a quick test first
                 else if (c == _settings.LineSeparator[0] && _position + _settings.LineSeparator.Length <= _line.Length)

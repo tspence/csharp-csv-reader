@@ -251,6 +251,36 @@ namespace CSVTestSuite
             }
         }
         
+                
+        [Test]
+        public void TestIssue53()
+        {
+            var settings = new CSVSettings()
+            {
+                HeaderRowIncluded = false
+            };
+            
+            // This use case was reported by wvdvegt as https://github.com/tspence/csharp-csv-reader/issues/53
+            var source = "\"test\",\"\r\n\",,,,\"Normal\",\"False\",,,\"Normal\",\"\"";
+            using (var cr = CSVReader.FromString(source, settings))
+            {
+                foreach (var line in cr.Lines())
+                {
+                    Assert.AreEqual("test", line[0]);
+                    Assert.AreEqual("\r\n", line[1]);
+                    Assert.AreEqual("", line[2]);
+                    Assert.AreEqual("", line[3]);
+                    Assert.AreEqual("", line[4]);
+                    Assert.AreEqual("Normal", line[5]);
+                    Assert.AreEqual("False", line[6]);
+                    Assert.AreEqual("", line[7]);
+                    Assert.AreEqual("", line[8]);
+                    Assert.AreEqual("Normal", line[9]);
+                    Assert.AreEqual("", line[10]);
+                }
+            }
+        }
+
 #if HAS_ASYNC_IENUM
         [Test]
         public async Task TestAsyncReader()
