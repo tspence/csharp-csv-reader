@@ -190,5 +190,51 @@ namespace CSVTestSuite
                 CSV.ParseSepLine("sep= this is a test since separators can't be more than a single character");
             });
         }
+        
+        [Test]
+        public void TestIssue53()
+        {
+            // This use case was reported by wvdvegt as https://github.com/tspence/csharp-csv-reader/issues/53
+            var line = CSV.ParseLine("\"test\",\"\n\",,,,\"Normal\",\"False\",,,\"Normal\",\"\"");
+            Assert.AreEqual("test", line[0]);
+            Assert.AreEqual("\n", line[1]);
+            Assert.AreEqual("", line[2]);
+            Assert.AreEqual("", line[3]);
+            Assert.AreEqual("", line[4]);
+            Assert.AreEqual("Normal", line[5]);
+            Assert.AreEqual("False", line[6]);
+            Assert.AreEqual("", line[7]);
+            Assert.AreEqual("", line[8]);
+            Assert.AreEqual("Normal", line[9]);
+            Assert.AreEqual("", line[10]);
+            
+            // Try same thing with MS-DOS newlines - CRLF
+            var line2 = CSV.ParseLine("\"test\",\"\r\n\",,,,\"Normal\",\"False\",,,\"Normal\",\"\"");
+            Assert.AreEqual("test", line2[0]);
+            Assert.AreEqual("\r\n", line2[1]);
+            Assert.AreEqual("", line2[2]);
+            Assert.AreEqual("", line2[3]);
+            Assert.AreEqual("", line2[4]);
+            Assert.AreEqual("Normal", line2[5]);
+            Assert.AreEqual("False", line2[6]);
+            Assert.AreEqual("", line2[7]);
+            Assert.AreEqual("", line2[8]);
+            Assert.AreEqual("Normal", line2[9]);
+            Assert.AreEqual("", line2[10]);
+            
+            // Try same thing with just LF only
+            var line3 = CSV.ParseLine("\"test\",\"\r\",,,,\"Normal\",\"False\",,,\"Normal\",\"\"");
+            Assert.AreEqual("test", line3[0]);
+            Assert.AreEqual("\r", line3[1]);
+            Assert.AreEqual("", line3[2]);
+            Assert.AreEqual("", line3[3]);
+            Assert.AreEqual("", line3[4]);
+            Assert.AreEqual("Normal", line3[5]);
+            Assert.AreEqual("False", line3[6]);
+            Assert.AreEqual("", line3[7]);
+            Assert.AreEqual("", line3[8]);
+            Assert.AreEqual("Normal", line3[9]);
+            Assert.AreEqual("", line3[10]);
+        }
     }
 }

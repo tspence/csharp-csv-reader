@@ -2,7 +2,7 @@
 <package >
 	<metadata>
 		<id>CSVFile</id>
-		<version>3.1.0</version>
+		<version>3.1.1</version>
 		<title>CSVFile</title>
 		<authors>Ted Spence</authors>
 		<owners>Ted Spence</owners>
@@ -13,16 +13,12 @@
 		<description>Tiny and fast CSV and TSV parsing library (40KB) with zero dependencies.  Compatible with most dot net versions.</description>
 		<icon>docs/icons8-spreadsheet-96.png</icon>
 		<releaseNotes>
-			April 4, 2022
+			March 7, 2023
 			
-			* Improve handling for read-only properties with more errors and options
-			* Added support for excluding columns from serialization
-			* Added support for forcing columns to have text qualifiers
-			* Support for fully async serialization
-			* Unified all serialization code
+			* Fix issue when reading a stream with a text qualified field that ends with a newline
 		</releaseNotes>
 		<readme>docs/README.md</readme>
-		<copyright>Copyright 2006 - 2022</copyright>
+		<copyright>Copyright 2006 - 2023</copyright>
     	<tags>fast csv parser serialization deserialization streaming async</tags>
 		<repository type="git" url="https://github.com/tspence/csharp-csv-reader" />
 		<dependencies>
