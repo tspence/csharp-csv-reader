@@ -172,7 +172,7 @@ namespace CSVFile
             var riskyChars = new List<char>();
             riskyChars.Add(FieldDelimiter);
             riskyChars.Add(TextQualifier);
-            foreach (var c in LineSeparator.ToCharArray())
+            foreach (var c in LineSeparator)
             {
                 riskyChars.Add(c);
             }

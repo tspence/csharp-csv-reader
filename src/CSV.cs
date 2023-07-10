@@ -321,30 +321,6 @@ namespace CSVFile
         }
 
         /// <summary>
-        /// Append an array of objects to a StringBuilder in CSV format
-        /// </summary>
-        /// <param name="sb">The StringBuilder to append</param>
-        /// <param name="row">The list of objects to append</param>
-        /// <param name="settings">The CSV settings to use when exporting this array (Default: CSV)</param>
-#if NET2_0
-        private static void AppendCSVRow(StringBuilder sb, IEnumerable<object> row, CSVSettings settings = null)
-#else
-        private static void AppendCSVRow(this StringBuilder sb, IEnumerable<object> row, CSVSettings settings = null)
-#endif
-        {
-            if (settings == null)
-            {
-                settings = CSVSettings.CSV;
-            }
-
-            var riskyChars = settings.GetRiskyChars();
-            var forceQualifierTypes = settings.GetForceQualifierTypes();
-            var csv = ItemsToCsv(row, settings, riskyChars, forceQualifierTypes);
-            sb.Append(csv);
-            sb.Append(settings.LineSeparator);
-        }
-
-        /// <summary>
         /// Internal method to convert a list of things into a CSV line using the specified settings object
         /// 
         /// This function assumes:
@@ -394,7 +370,7 @@ namespace CSVFile
                     // Only go character-by-character if necessary
                     if (s.IndexOf(settings.TextQualifier) >= 0)
                     {
-                        foreach (var c in s.ToCharArray())
+                        foreach (var c in s)
                         {
                             // Double up text qualifiers
                             if (c == settings.TextQualifier)
