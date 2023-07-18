@@ -236,5 +236,24 @@ namespace CSVTestSuite
             Assert.AreEqual("Normal", line3[9]);
             Assert.AreEqual("", line3[10]);
         }
+
+        [Test]
+        public void TestMultipleNewlines()
+        {
+            // Specific issue reported by domdere
+            var line1 = CSV.ParseLine("\"test\",\"blah\r\n\r\n\r\nfoo\",\"Normal\"");
+            Assert.AreEqual("test", line1[0]);
+            Assert.AreEqual("blah\r\n\r\n\r\nfoo", line1[1]);
+            Assert.AreEqual("Normal", line1[2]);
+
+            // Test a few potential use cases here
+            var line2 = CSV.ParseLine("\"test\",\"\n\n\",\"\r\n\r\n\r\n\",\"Normal\",\"\",\"\r\r\r\r\r\"");
+            Assert.AreEqual("test", line2[0]);
+            Assert.AreEqual("\n\n", line2[1]);
+            Assert.AreEqual("\r\n\r\n\r\n", line2[2]);
+            Assert.AreEqual("Normal", line2[3]);
+            Assert.AreEqual("", line2[4]);
+            Assert.AreEqual("\r\r\r\r\r", line2[5]);
+        }
     }
 }

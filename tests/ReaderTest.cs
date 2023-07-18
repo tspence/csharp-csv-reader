@@ -281,6 +281,43 @@ namespace CSVTestSuite
             }
         }
 
+
+        [Test]
+        public void TestMultipleNewlines()
+        {
+            var settings = new CSVSettings()
+            {
+                HeaderRowIncluded = false
+            };
+
+            // This use case was reported by domdere as https://github.com/tspence/csharp-csv-reader/issues/59
+            var source = "\"test\",\"blah\r\n\r\n\r\nfoo\",\"Normal\"";
+            using (var cr = CSVReader.FromString(source, settings))
+            {
+                foreach (var line in cr.Lines())
+                {
+                    Assert.AreEqual("test", line[0]);
+                    Assert.AreEqual("blah\r\n\r\n\r\nfoo", line[1]);
+                    Assert.AreEqual("Normal", line[2]);
+                }
+            }
+
+            // Test a few potential use cases here
+            var source2 = "\"test\",\"\n\n\",\"\r\n\r\n\r\n\",\"Normal\",\"\",\"\r\r\r\r\r\"";
+            using (var cr = CSVReader.FromString(source2, settings))
+            {
+                foreach (var line in cr.Lines())
+                {
+                    Assert.AreEqual("test", line[0]);
+                    Assert.AreEqual("\n\n", line[1]);
+                    Assert.AreEqual("\r\n\r\n\r\n", line[2]);
+                    Assert.AreEqual("Normal", line[3]);
+                    Assert.AreEqual("", line[4]);
+                    Assert.AreEqual("\r\r\r\r\r", line[5]);
+                }
+            }
+        }
+
 #if HAS_ASYNC_IENUM
         [Test]
         public async Task TestAsyncReader()

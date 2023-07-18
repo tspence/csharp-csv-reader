@@ -68,6 +68,11 @@ namespace CSVFile
                 if (row != null)
                 {
                     yield return row;
+                } 
+                else
+                {
+                    // We didn't get a row, so add environment newline
+                    machine.ParseChunk(Environment.NewLine, false);
                 }
             }
         }
