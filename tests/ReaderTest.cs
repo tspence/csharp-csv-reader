@@ -29,7 +29,8 @@ namespace CSVTestSuite
             // Skip header row
             var settings = new CSVSettings()
             {
-                HeaderRowIncluded = false
+                HeaderRowIncluded = false,
+                LineSeparator = "\n",
             };
 
             // Convert into stream
@@ -88,7 +89,8 @@ namespace CSVTestSuite
             // Skip header row
             var settings = new CSVSettings()
             {
-                HeaderRowIncluded = false
+                HeaderRowIncluded = false,
+                LineSeparator = "\n",
             };
 
             // Convert into stream
@@ -156,7 +158,7 @@ namespace CSVTestSuite
                          "Dr. Kelso\tChief of Medicine\tx100";
 
             // Convert into stream
-            var settings = new CSVSettings() { HeaderRowIncluded = true, FieldDelimiter = '\t' };
+            var settings = new CSVSettings() { HeaderRowIncluded = true, FieldDelimiter = '\t', LineSeparator = "\n", };
             using (var cr = CSVReader.FromString(source, settings))
             {
                 Assert.AreEqual("Name", cr.Headers[0]);
@@ -210,7 +212,7 @@ namespace CSVTestSuite
                          "Dr. Kelso|Chief of Medicine|x100";
 
             // Convert into stream
-            var settings = new CSVSettings() { HeaderRowIncluded = true, FieldDelimiter = '\t', AllowSepLine = true };
+            var settings = new CSVSettings() { HeaderRowIncluded = true, FieldDelimiter = '\t', AllowSepLine = true, LineSeparator = "\n", };
             using (var cr = CSVReader.FromString(source, settings))
             {
                 // The field delimiter should have been changed, but the original object should remain the same
@@ -333,7 +335,7 @@ namespace CSVTestSuite
                          "Dr. Kelso|Chief of Medicine|x100";
 
             // Convert into stream
-            var settings = new CSVSettings() { HeaderRowIncluded = true, FieldDelimiter = '\t', AllowSepLine = true };
+            var settings = new CSVSettings() { HeaderRowIncluded = true, FieldDelimiter = '\t', LineSeparator = "\n", AllowSepLine = true };
             using (var cr = CSVReader.FromString(source, settings))
             {
                 // The field delimiter should have been changed, but the original object should remain the same

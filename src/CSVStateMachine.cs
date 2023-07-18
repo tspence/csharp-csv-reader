@@ -195,18 +195,21 @@ namespace CSVFile
                     _position--;
                 }
                 // Are we at a line separator? Let's do a quick test first
-                else if (c == _settings.LineSeparator[0] && _position + _settings.LineSeparator.Length <= _line.Length)
+                else if (c == _settings.LineSeparator[0])
                 {
-                    if (string.Equals(_line.Substring(_position, _settings.LineSeparator.Length),
-                            _settings.LineSeparator))
+                    if (_position + _settings.LineSeparator.Length <= _line.Length)
                     {
-                        _line = _line.Substring(_position + _settings.LineSeparator.Length);
-                        _position = -1;
-                        _list.Add(_work.ToString());
-                        var row = _list.ToArray();
-                        _list.Clear();
-                        _work.Length = 0;
-                        return row;
+                        if (string.Equals(_line.Substring(_position, _settings.LineSeparator.Length),
+                                _settings.LineSeparator))
+                        {
+                            _line = _line.Substring(_position + _settings.LineSeparator.Length);
+                            _position = -1;
+                            _list.Add(_work.ToString());
+                            var row = _list.ToArray();
+                            _list.Clear();
+                            _work.Length = 0;
+                            return row;
+                        }
                     }
                 }
                 // Does this start a new field?
