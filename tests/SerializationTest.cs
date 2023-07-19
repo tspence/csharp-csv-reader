@@ -141,7 +141,8 @@ namespace CSVTestSuite
                 "NULL,7,Fourth";
 
             // Deserialize back from a CSV string - should not throw any errors!
-            var newList = CSV.Deserialize<TestClassTwo>(csv, CSVSettings.CSV_PERMIT_NULL).ToList();
+            var permitNull = new CSVSettings() { AllowNull = true, LineSeparator = "\n", NullToken = "NULL" };
+            var newList = CSV.Deserialize<TestClassTwo>(csv, permitNull).ToList();
 
             // Compare original objects to new ones
             for (var i = 0; i < list.Count; i++)
@@ -164,6 +165,7 @@ namespace CSVTestSuite
             {
                 AllowNull = true,
                 NullToken = string.Empty,
+                LineSeparator = "\n",
             };
 
             // Deserialize back from a CSV string - should not throw any errors!
@@ -186,6 +188,7 @@ namespace CSVTestSuite
             {
                 AllowNull = true,
                 NullToken = "SPECIAL_NULL",
+                LineSeparator = "\n",
             };
 
             // Deserialize back from a CSV string - should not throw any errors!

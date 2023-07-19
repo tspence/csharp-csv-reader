@@ -62,7 +62,7 @@ namespace CSVFile
             while (machine.State == CSVState.CanKeepGoing)
             {
                 var line = string.Empty;
-                if (!inStream.EndOfStream)
+                if (machine.NeedsMoreText() && !inStream.EndOfStream)
                 {
                     var readChars = inStream.ReadBlock(buffer, 0, bufferSize);
                     line = new string(buffer, 0, readChars);
@@ -90,7 +90,7 @@ namespace CSVFile
             while (machine.State == CSVState.CanKeepGoing)
             {
                 var line = string.Empty;
-                if (!inStream.EndOfStream)
+                if (machine.NeedsMoreText() && !inStream.EndOfStream)
                 {
                     var readChars = await inStream.ReadBlockAsync(buffer, 0, bufferSize);
                     line = new string(buffer, 0, readChars);

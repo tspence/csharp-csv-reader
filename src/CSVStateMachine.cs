@@ -60,6 +60,15 @@ namespace CSVFile
         public CSVState State { get; private set; }
 
         /// <summary>
+        /// Returns true if we need more text
+        /// </summary>
+        /// <returns></returns>
+        public bool NeedsMoreText()
+        {
+            return String.IsNullOrEmpty(_line) || _position == _line.Length;
+        }
+
+        /// <summary>
         /// Constructs a new state machine to begin processing CSV text
         /// </summary>
         public CSVStateMachine(CSVSettings settings)
@@ -104,7 +113,7 @@ namespace CSVFile
         public string[] ParseChunk(string chunk, bool reachedEnd)
         {
             // Detect end of stream
-            if (reachedEnd && string.IsNullOrEmpty(chunk) && _position == -1)
+            if (reachedEnd && string.IsNullOrEmpty(chunk) && _position == -1 && string.IsNullOrEmpty(_line))
             {
                 State = CSVState.Done;
                 return null;
