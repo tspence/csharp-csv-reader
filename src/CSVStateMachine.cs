@@ -198,19 +198,33 @@ namespace CSVFile
                 // Are we at a line separator? Let's do a quick test first
                 else if (c == _settings.LineSeparator[0])
                 {
-                    if (_position + _settings.LineSeparator.Length <= _line.Length)
+                    // If we don't have enough characters left to test the line separator properly, ask for more
+                    var notEnoughChars = _position + _settings.LineSeparator.Length > _line.Length;
+                    if (notEnoughChars && !reachedEnd)
                     {
-                        if (string.Equals(_line.Substring(_position, _settings.LineSeparator.Length),
-                                _settings.LineSeparator))
-                        {
-                            _line = _line.Substring(_position + _settings.LineSeparator.Length);
-                            _position = -1;
-                            _list.Add(_work.ToString());
-                            var row = _list.ToArray();
-                            _list.Clear();
-                            _work.Length = 0;
-                            return row;
-                        }
+                        return null;
+                    }
+
+                    // If we have reached the end, but this isn't a complete line separator, it's just text
+                    if (notEnoughChars && reachedEnd)
+                    {
+                        _work.Append(c);
+                    }
+                    // OK, we have enough characters, see if this is a line separator
+                    else if (string.Equals(_line.Substring(_position, _settings.LineSeparator.Length), _settings.LineSeparator))
+                    {
+                        _line = _line.Substring(_position + _settings.LineSeparator.Length);
+                        _position = -1;
+                        _list.Add(_work.ToString());
+                        var row = _list.ToArray();
+                        _list.Clear();
+                        _work.Length = 0;
+                        return row;
+                    }
+                    // It's not a line separator, it's just a normal character
+                    else
+                    {
+                        _work.Append(c);
                     }
                 }
                 // Does this start a new field?
