@@ -33,10 +33,10 @@
 		<file src=".\LICENSE" target="docs/LICENSE"/>
 		<file src=".\README.md" target="docs/README.md"/>
 		<file src=".\icons8-spreadsheet-96.png" target="docs/icons8-spreadsheet-96.png"/>
-		<file src="src\net20\bin\release\net20\*" target="lib\net20" />
-		<file src="src\net40\bin\release\net40\*" target="lib\net40" />
-		<file src="src\net45\bin\release\net45\*" target="lib\net45" />
-		<file src="src\netstandard20\bin\release\netstandard2.0\*" target="lib\netstandard20" />
-		<file src="src\net50\bin\release\net5.0\*" target="lib\net5.0" />
+		<file src="src\net20\bin\Release\net20\*" target="lib\net20" />
+		<file src="src\net40\bin\Release\net40\*" target="lib\net40" />
+		<file src="src\net45\bin\Release\net45\*" target="lib\net45" />
+		<file src="src\netstandard20\bin\Release\netstandard2.0\*" target="lib\netstandard20" />
+		<file src="src\net50\bin\Release\net5.0\*" target="lib\net5.0" />
 	</files>
 </package>
