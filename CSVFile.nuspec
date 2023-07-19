@@ -2,20 +2,20 @@
 <package >
 	<metadata>
 		<id>CSVFile</id>
-		<version>3.1.1</version>
+		<version>3.1.2</version>
 		<title>CSVFile</title>
 		<authors>Ted Spence</authors>
 		<owners>Ted Spence</owners>
 		<license type="file">docs/LICENSE</license>
 		<projectUrl>https://github.com/tspence/csharp-csv-reader</projectUrl>
 		<requireLicenseAcceptance>false</requireLicenseAcceptance>
-		<summary>Tiny and fast CSV and TSV parsing library (40KB) with zero dependencies.  Compatible with most dot net versions.</summary>
-		<description>Tiny and fast CSV and TSV parsing library (40KB) with zero dependencies.  Compatible with most dot net versions.</description>
+		<summary>Tiny and fast CSV and TSV parsing library (40KB) with zero dependencies.  Compatible with DotNetFramework (2.0 onwards) and DotNetCore.</summary>
+		<description>Tiny and fast CSV and TSV parsing library (40KB) with zero dependencies.  Compatible with DotNetFramework (2.0 onwards) and DotNetCore.</description>
 		<icon>docs/icons8-spreadsheet-96.png</icon>
 		<releaseNotes>
-			March 7, 2023
+			July 18, 2023
 			
-			* Fix issue when reading a stream with a text qualified field that ends with a newline
+			* Fix issue with inconsistent handling of embedded newlines in the streaming version of the reader
 		</releaseNotes>
 		<readme>docs/README.md</readme>
 		<copyright>Copyright 2006 - 2023</copyright>
