@@ -65,7 +65,7 @@ namespace CSVFile
         /// <returns></returns>
         public bool NeedsMoreText()
         {
-            return String.IsNullOrEmpty(_line) || _position == _line.Length;
+            return String.IsNullOrEmpty(_line) || _position >= _line.Length;
         }
 
         /// <summary>
@@ -88,20 +88,6 @@ namespace CSVFile
         }
 
         /// <summary>
-        /// Parse a single line when read from a stream.
-        ///
-        /// Call this function when you are using the "ReadLine" or "ReadLineAsync" functions so that
-        /// each line will obey the CSV Settings rules for line separators.
-        /// </summary>
-        /// <param name="line"></param>
-        /// <param name="reachedEnd"></param>
-        /// <returns></returns>
-        public string[] ParseLine(string line, bool reachedEnd)
-        {
-            return ParseChunk(line, reachedEnd);
-        }
-
-        /// <summary>
         /// Parse a new chunk of text retrieved via some other means than a stream.
         ///
         /// Call this function when you are retrieving your own text and when each chunk may or may not
@@ -117,6 +103,12 @@ namespace CSVFile
             {
                 State = CSVState.Done;
                 return null;
+            }
+
+            // If we're at the end of the line, remember to backtrack one because we increment immediately
+            if (_position == _line.Length)
+            {
+                _position -= 1;
             }
 
             // Add this chunk to the current processing logic

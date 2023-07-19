@@ -67,7 +67,7 @@ namespace CSVFile
                     var readChars = inStream.ReadBlock(buffer, 0, bufferSize);
                     line = new string(buffer, 0, readChars);
                 }
-                var row = machine.ParseLine(line, inStream.EndOfStream);
+                var row = machine.ParseChunk(line, inStream.EndOfStream);
                 if (row != null)
                 {
                     yield return row;
@@ -95,7 +95,7 @@ namespace CSVFile
                     var readChars = await inStream.ReadBlockAsync(buffer, 0, bufferSize);
                     line = new string(buffer, 0, readChars);
                 }
-                var row = machine.ParseLine(line, inStream.EndOfStream);
+                var row = machine.ParseChunk(line, inStream.EndOfStream);
                 if (row != null)
                 {
                     yield return row;
