@@ -26,11 +26,11 @@ jobs:
             7.0.x
 
       - name: Build (Framework 2.0)
-        run: msbuild ./src/net20/src.net20.csproj
+        run: msbuild ./src/net20/src.net20.csproj /property:Configuration=Release
       - name: Build (Framework 4.0)
-        run: msbuild ./src/net40/src.net40.csproj
+        run: msbuild ./src/net40/src.net40.csproj /property:Configuration=Release
       - name: Build (Framework 4.5)
-        run: msbuild ./src/net45/src.net45.csproj
+        run: msbuild ./src/net45/src.net45.csproj /property:Configuration=Release
       - name: Build (DotNetCore 5.0)
         run: dotnet build -c Release ./src/net50/src.net50.csproj
       - name: Build (NetStandard 2.0)
@@ -43,7 +43,7 @@ jobs:
           nuget-version: "5.x"
 
       - name: Run Nuget pack
-        run: nuget pack Searchlight.nuspec
+        run: nuget pack CSVFile.nuspec
 
 #      - name: Push generated package to GitHub registry
 #        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
