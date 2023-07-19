@@ -118,6 +118,12 @@ namespace CSVFile
         public bool IgnoreEmptyLineForDeserialization { get; set; }
 
         /// <summary>
+        /// When reading data from a stream, this is the block size to read at once.
+        /// </summary>
+        public int BufferSize { get; set; } = DEFAULT_BUFFER_SIZE;
+        internal static readonly int DEFAULT_BUFFER_SIZE = 65536;
+
+        /// <summary>
         /// The encoding for converting streams of bytes to strings
         /// </summary>
         public Encoding Encoding { get; set; } = Encoding.UTF8;

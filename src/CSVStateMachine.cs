@@ -60,6 +60,15 @@ namespace CSVFile
         public CSVState State { get; private set; }
 
         /// <summary>
+        /// Returns true if we need more text
+        /// </summary>
+        /// <returns></returns>
+        public bool NeedsMoreText()
+        {
+            return String.IsNullOrEmpty(_line) || _position >= _line.Length;
+        }
+
+        /// <summary>
         /// Constructs a new state machine to begin processing CSV text
         /// </summary>
         public CSVStateMachine(CSVSettings settings)
@@ -79,24 +88,6 @@ namespace CSVFile
         }
 
         /// <summary>
-        /// Parse a single line when read from a stream.
-        ///
-        /// Call this function when you are using the "ReadLine" or "ReadLineAsync" functions so that
-        /// each line will obey the CSV Settings rules for line separators.
-        /// </summary>
-        /// <param name="line"></param>
-        /// <param name="reachedEnd"></param>
-        /// <returns></returns>
-        public string[] ParseLine(string line, bool reachedEnd)
-        {
-            if (!string.IsNullOrEmpty(line))
-            {
-                line += _settings.LineSeparator;
-            }
-            return ParseChunk(line, reachedEnd);
-        }
-
-        /// <summary>
         /// Parse a new chunk of text retrieved via some other means than a stream.
         ///
         /// Call this function when you are retrieving your own text and when each chunk may or may not
@@ -108,10 +99,16 @@ namespace CSVFile
         public string[] ParseChunk(string chunk, bool reachedEnd)
         {
             // Detect end of stream
-            if (reachedEnd && string.IsNullOrEmpty(chunk) && _position == -1)
+            if (reachedEnd && string.IsNullOrEmpty(chunk) && _position == -1 && string.IsNullOrEmpty(_line))
             {
                 State = CSVState.Done;
                 return null;
+            }
+
+            // If we're at the end of the line, remember to backtrack one because we increment immediately
+            if (_position == _line.Length)
+            {
+                _position -= 1;
             }
 
             // Add this chunk to the current processing logic
@@ -199,10 +196,22 @@ namespace CSVFile
                     _position--;
                 }
                 // Are we at a line separator? Let's do a quick test first
-                else if (c == _settings.LineSeparator[0] && _position + _settings.LineSeparator.Length <= _line.Length)
+                else if (c == _settings.LineSeparator[0])
                 {
-                    if (string.Equals(_line.Substring(_position, _settings.LineSeparator.Length),
-                            _settings.LineSeparator))
+                    // If we don't have enough characters left to test the line separator properly, ask for more
+                    var notEnoughChars = _position + _settings.LineSeparator.Length > _line.Length;
+                    if (notEnoughChars && !reachedEnd)
+                    {
+                        return null;
+                    }
+
+                    // If we have reached the end, but this isn't a complete line separator, it's just text
+                    if (notEnoughChars && reachedEnd)
+                    {
+                        _work.Append(c);
+                    }
+                    // OK, we have enough characters, see if this is a line separator
+                    else if (string.Equals(_line.Substring(_position, _settings.LineSeparator.Length), _settings.LineSeparator))
                     {
                         _line = _line.Substring(_position + _settings.LineSeparator.Length);
                         _position = -1;
@@ -211,6 +220,11 @@ namespace CSVFile
                         _list.Clear();
                         _work.Length = 0;
                         return row;
+                    }
+                    // It's not a line separator, it's just a normal character
+                    else
+                    {
+                        _work.Append(c);
                     }
                 }
                 // Does this start a new field?

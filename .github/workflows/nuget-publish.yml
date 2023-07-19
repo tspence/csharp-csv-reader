@@ -1,0 +1,48 @@
+name: NuGet Publish
+
+on:
+  push:
+    branches: [ main ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: Update NuGet package
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v1
+
+      - name: Setup .NET Core @ Latest
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: |
+            5.0.x
+            6.0.x
+            7.0.x
+
+      - name: Build (Framework 2.0)
+        run: msbuild ./src/net20/src.net20.csproj /property:Configuration=Release
+      - name: Build (Framework 4.0)
+        run: msbuild ./src/net40/src.net40.csproj /property:Configuration=Release
+      - name: Build (Framework 4.5)
+        run: msbuild ./src/net45/src.net45.csproj /property:Configuration=Release
+      - name: Build (DotNetCore 5.0)
+        run: dotnet build -c Release ./src/net50/src.net50.csproj
+      - name: Build (NetStandard 2.0)
+        run: dotnet build -c Release ./src/netstandard20/src.netstandard20.csproj
+        
+      - name: Setup Nuget
+        uses: nuget/setup-nuget@v1
+        with:
+          nuget-api-key: ${{ secrets.NUGET_API_KEY }}
+          nuget-version: "5.x"
+
+      - name: Run Nuget pack
+        run: nuget pack CSVFile.nuspec
+
+      - name: Push generated package to GitHub registry
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: nuget push *.nupkg -Source 'https://api.nuget.org/v3/index.json' -ApiKey ${{secrets.NUGET_API_KEY}}

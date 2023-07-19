@@ -1,8 +1,8 @@
 [![NuGet](https://img.shields.io/nuget/v/CSVFile.svg?style=plastic)](https://www.nuget.org/packages/CSVFile/)
-![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/tspence/csharp-csv-reader/dotnet.yml?branch=main)
-[![SonarCloud Coverage](https://sonarcloud.io/api/project_badges/measure?project=tspence_csharp-csv-reader&metric=coverage)](https://sonarcloud.io/component_measures?id=tspence_csharp-csv-reader&metric=coverage&view=list)
-[![SonarCloud Bugs](https://sonarcloud.io/api/project_badges/measure?project=tspence_csharp-csv-reader&metric=bugs)](https://sonarcloud.io/project/issues?resolved=false&types=BUG&id=tspence_csharp-csv-reader)
-[![SonarCloud Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=tspence_csharp-csv-reader&metric=vulnerabilities)](https://sonarcloud.io/project/issues?resolved=false&types=VULNERABILITY&id=tspence_csharp-csv-reader)
+[![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/tspence/csharp-csv-reader/dotnet.yml?branch=main)](https://github.com/tspence/csharp-csv-reader/actions/workflows/dotnet.yml)
+[![SonarCloud Coverage](https://sonarcloud.io/api/project_badges/measure?project=tspence_csharp-csv-reader&metric=coverage)](https://sonarcloud.io/summary/overall?id=tspence_csharp-csv-reader)
+[![SonarCloud Bugs](https://sonarcloud.io/api/project_badges/measure?project=tspence_csharp-csv-reader&metric=bugs)](https://sonarcloud.io/summary/overall?id=tspence_csharp-csv-reader)
+[![SonarCloud Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=tspence_csharp-csv-reader&metric=vulnerabilities)](https://sonarcloud.io/summary/overall?id=tspence_csharp-csv-reader)
 
 # CSVFile
 This library is a series of unit tested, thoroughly commented CSV parsing functions which I have developed off and on since 2006. Extremely small and easy to implement; includes unit tests for the majority of odd CSV edge cases. Library supports different delimiters, qualifiers, and embedded newlines. Can read and write from data tables.

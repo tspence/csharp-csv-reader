@@ -27,7 +27,8 @@ namespace CSVTestSuite
             // Skip header row
             var settings = new CSVSettings()
             {
-                HeaderRowIncluded = false
+                HeaderRowIncluded = false,
+                LineSeparator = "\n",
             };
 
             // Convert into stream
@@ -88,7 +89,8 @@ namespace CSVTestSuite
             // Skip header row
             var settings = new CSVSettings()
             {
-                HeaderRowIncluded = false
+                HeaderRowIncluded = false,
+                LineSeparator = "\n",
             };
 
             // Convert into stream
@@ -156,7 +158,7 @@ namespace CSVTestSuite
                          "Dr. Kelso\tChief of Medicine\tx100";
 
             // Convert into stream
-            var settings = new CSVSettings() { HeaderRowIncluded = true, FieldDelimiter = '\t' };
+            var settings = new CSVSettings() { HeaderRowIncluded = true, FieldDelimiter = '\t', LineSeparator = "\n" };
             using (var cr = CSVReader.FromString(source, settings))
             {
                 Assert.AreEqual("Name", cr.Headers[0]);

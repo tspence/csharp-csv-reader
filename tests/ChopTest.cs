@@ -97,7 +97,6 @@ namespace CSVTestSuite
                     Assert.AreEqual(list[i].email, results[i].email);
                 }
             }
-            // Clean up
             finally
             {
                 if (Directory.Exists(dirname))

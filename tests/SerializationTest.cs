@@ -141,7 +141,8 @@ namespace CSVTestSuite
                 "NULL,7,Fourth";
 
             // Deserialize back from a CSV string - should not throw any errors!
-            var newList = CSV.Deserialize<TestClassTwo>(csv, CSVSettings.CSV_PERMIT_NULL).ToList();
+            var permitNull = new CSVSettings() { AllowNull = true, LineSeparator = "\n", NullToken = "NULL" };
+            var newList = CSV.Deserialize<TestClassTwo>(csv, permitNull).ToList();
 
             // Compare original objects to new ones
             for (var i = 0; i < list.Count; i++)
@@ -164,6 +165,7 @@ namespace CSVTestSuite
             {
                 AllowNull = true,
                 NullToken = string.Empty,
+                LineSeparator = "\n",
             };
 
             // Deserialize back from a CSV string - should not throw any errors!
@@ -186,6 +188,7 @@ namespace CSVTestSuite
             {
                 AllowNull = true,
                 NullToken = "SPECIAL_NULL",
+                LineSeparator = "\n",
             };
 
             // Deserialize back from a CSV string - should not throw any errors!
@@ -223,6 +226,7 @@ namespace CSVTestSuite
             settings.AllowNull = true;
             settings.NullToken = string.Empty;
             settings.IgnoreEmptyLineForDeserialization = true;
+            settings.LineSeparator = "\n";
 
             // Deserialize back from a CSV string - should not throw any errors!
             var list = CSV.Deserialize<TestClassLastColumnNullableSingle>(csv, settings).ToList();
@@ -261,6 +265,7 @@ namespace CSVTestSuite
             settings.AllowNull = true;
             settings.NullToken = string.Empty;
             settings.IgnoreEmptyLineForDeserialization = true;
+            settings.LineSeparator = "\n";
 
             // Try deserializing using the async version
             var list = await CSV.DeserializeAsync<TestClassLastColumnNullableSingle>(csv, settings).ToListAsync();
@@ -306,7 +311,8 @@ namespace CSVTestSuite
             {
                 AllowNull = true,
                 NullToken = string.Empty,
-                IgnoreEmptyLineForDeserialization = true
+                IgnoreEmptyLineForDeserialization = true,
+                LineSeparator = "\n",
             };
 
             // Deserialize back from a CSV string - should throw an error because "ReadOnlySingle" is read only
@@ -376,7 +382,8 @@ namespace CSVTestSuite
                 AllowNull = true,
                 NullToken = string.Empty,
                 IgnoreEmptyLineForDeserialization = true,
-                ExcludedColumns = new []{ "TestString" }
+                ExcludedColumns = new []{ "TestString" },
+                LineSeparator = "\n",
             };
 
             // Try deserializing - we should see nulls in the TestString column

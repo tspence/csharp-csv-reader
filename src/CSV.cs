@@ -56,19 +56,22 @@ namespace CSVFile
         /// <returns>An enumerable object that can be examined to retrieve rows from the stream.</returns>
         public static IEnumerable<string[]> ParseStream(StreamReader inStream, CSVSettings settings = null)
         {
+            int bufferSize = settings?.BufferSize ?? CSVSettings.DEFAULT_BUFFER_SIZE;
+            var buffer = new char[bufferSize];
             var machine = new CSVStateMachine(settings);
             while (machine.State == CSVState.CanKeepGoing)
             {
                 var line = string.Empty;
-                if (!inStream.EndOfStream)
+                if (machine.NeedsMoreText() && !inStream.EndOfStream)
                 {
-                    line = inStream.ReadLine();
+                    var readChars = inStream.ReadBlock(buffer, 0, bufferSize);
+                    line = new string(buffer, 0, readChars);
                 }
-                var row = machine.ParseLine(line, inStream.EndOfStream);
+                var row = machine.ParseChunk(line, inStream.EndOfStream);
                 if (row != null)
                 {
                     yield return row;
-                }
+                } 
             }
         }
 
@@ -81,15 +84,18 @@ namespace CSVFile
         /// <returns>An enumerable object that can be examined to retrieve rows from the stream.</returns>
         public static async IAsyncEnumerable<string[]> ParseStreamAsync(StreamReader inStream, CSVSettings settings = null)
         {
+            int bufferSize = settings?.BufferSize ?? CSVSettings.DEFAULT_BUFFER_SIZE;
+            var buffer = new char[bufferSize];
             var machine = new CSVStateMachine(settings);
             while (machine.State == CSVState.CanKeepGoing)
             {
                 var line = string.Empty;
-                if (!inStream.EndOfStream)
+                if (machine.NeedsMoreText() && !inStream.EndOfStream)
                 {
-                    line = await inStream.ReadLineAsync();
+                    var readChars = await inStream.ReadBlockAsync(buffer, 0, bufferSize);
+                    line = new string(buffer, 0, readChars);
                 }
-                var row = machine.ParseLine(line, inStream.EndOfStream);
+                var row = machine.ParseChunk(line, inStream.EndOfStream);
                 if (row != null)
                 {
                     yield return row;

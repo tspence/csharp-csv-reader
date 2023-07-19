@@ -33,7 +33,11 @@ namespace CSVTestSuite
         [Test]
         public void TestBasicDataTable()
         {
-            var dt = CSVDataTable.FromString(source);
+            var settings = new CSVSettings()
+            {
+                LineSeparator = "\n",
+            };
+            var dt = CSVDataTable.FromString(source, settings);
             Assert.AreEqual(3, dt.Columns.Count);
             Assert.AreEqual(4, dt.Rows.Count);
             Assert.AreEqual("JD", dt.Rows[0].ItemArray[0]);
@@ -53,12 +57,16 @@ namespace CSVTestSuite
         [Test]
         public void TestDataTableWithEmbeddedNewlines()
         {
-            var dt = CSVDataTable.FromString(source_embedded_newlines);
+            var settings = new CSVSettings()
+            {
+                LineSeparator = "\n",
+            };
+            var dt = CSVDataTable.FromString(source_embedded_newlines, settings);
             Assert.AreEqual(3, dt.Columns.Count);
             Assert.AreEqual(4, dt.Rows.Count);
             Assert.AreEqual("JD", dt.Rows[0].ItemArray[0]);
             Assert.AreEqual("Janitor", dt.Rows[1].ItemArray[0]);
-            Assert.AreEqual("Dr. Reed, " + Environment.NewLine + "Eliot", dt.Rows[2].ItemArray[0]);
+            Assert.AreEqual("Dr. Reed, \nEliot", dt.Rows[2].ItemArray[0]);
             Assert.AreEqual("Dr. Kelso", dt.Rows[3].ItemArray[0]);
             Assert.AreEqual("Doctor", dt.Rows[0].ItemArray[1]);
             Assert.AreEqual("Janitor", dt.Rows[1].ItemArray[1]);
