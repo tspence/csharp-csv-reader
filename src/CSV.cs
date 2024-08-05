@@ -341,7 +341,7 @@ namespace CSVFile
         /// <param name="riskyChars"></param>
         /// <param name="forceQualifierTypes"></param>
         /// <returns></returns>
-        internal static string ItemsToCsv(IEnumerable<object> items, CSVSettings settings, char[] riskyChars, Dictionary<Type, int> forceQualifierTypes)
+        internal static string ItemsToCsv(IEnumerable items, CSVSettings settings, char[] riskyChars, Dictionary<Type, int> forceQualifierTypes)
         {
             var sb = new StringBuilder();
             foreach (var item in items)
@@ -364,27 +364,9 @@ namespace CSVFile
                 {
                     s = ((DateTime)item).ToString(settings.DateTimeFormat);
                 }
-                else if (itemType.IsArray)
-                {
-                    s = string.Empty;
-                    switch (settings.NestedArrayBehavior)
-                    {
-                        case ArrayOptions.ToString:
-                            s = item.ToString();
-                            break;
-                        case ArrayOptions.CountItems:
-                            s = ((Array)item).Length.ToString();
-                            break;
-                        case ArrayOptions.TreatAsNull:
-                            if (settings.AllowNull)
-                            {
-                                s = settings.NullToken;
-                            }
-                            break;
-                    }
-                }
                 else if (itemType != typeof(string) && itemType.GetInterfaces().Contains(typeof(IEnumerable)))
                 {
+                    IEnumerable enumerable = item as IEnumerable;
                     s = string.Empty;
                     switch (settings.NestedArrayBehavior)
                     {
@@ -393,18 +375,21 @@ namespace CSVFile
                             break;
                         case ArrayOptions.CountItems:
                             // from https://stackoverflow.com/questions/3546051/how-to-invoke-system-linq-enumerable-count-on-ienumerablet-using-reflection
-                            IEnumerable enumerable = (IEnumerable)item;
-                            int enumerableCount = 0;
-                            var iter = enumerable.GetEnumerator();
-                            using (iter as IDisposable)
+                            if (enumerable != null)
                             {
-                                while (iter.MoveNext())
+                                int enumerableCount = 0;
+                                var iter = enumerable.GetEnumerator();
+                                using (iter as IDisposable)
                                 {
-                                    enumerableCount++;
+                                    while (iter.MoveNext())
+                                    {
+                                        enumerableCount++;
+                                    }
                                 }
+
+                                s = enumerableCount.ToString();
                             }
 
-                            s = enumerableCount.ToString();
                             break;
                         case ArrayOptions.TreatAsNull:
                             if (settings.AllowNull)
@@ -412,8 +397,13 @@ namespace CSVFile
                                 s = settings.NullToken;
                             }
                             break;
+                        case ArrayOptions.RecursiveSerialization:
+                            if (enumerable != null)
+                            {
+                                s = ItemsToCsv(enumerable, settings, riskyChars, forceQualifierTypes);
+                            }
+                            break;
                     }
-                    
                 }
                 else
                 {
@@ -453,7 +443,10 @@ namespace CSVFile
             }
 
             // Subtract the trailing delimiter so we don't inadvertently add an empty column at the end
-            sb.Length -= 1;
+            if (sb.Length > 0)
+            {
+                sb.Length -= 1;
+            }
             return sb.ToString();
         }
 

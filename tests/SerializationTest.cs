@@ -178,6 +178,12 @@ namespace CSVTestSuite
             var ignoreArraysCsv = CSV.Serialize(list, options);
             Assert.AreEqual($"Name,StringArray,IntList,BoolEnumerable,GuidList,NullableList{Environment.NewLine}"
                 + $"Test,NULL,NULL,NULL,NULL,NULL{Environment.NewLine}", ignoreArraysCsv);
+
+            // And now for the magic: Recursive serialization!
+            options.NestedArrayBehavior = ArrayOptions.RecursiveSerialization;
+            var recursiveCsv = CSV.Serialize(list, options);
+            Assert.AreEqual($"Name,StringArray,IntList,BoolEnumerable,GuidList,NullableList{Environment.NewLine}"
+                            + $"Test,\"a,b,c\",\"1,2,3\",\"True,False,True,False\",,NULL{Environment.NewLine}", recursiveCsv);
         }
         
         [Test]
