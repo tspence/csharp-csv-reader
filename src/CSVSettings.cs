@@ -15,7 +15,7 @@ namespace CSVFile
     public enum ArrayOptions
     {
         /// <summary>
-        /// Use built-in string conversion, which renders arrays as `MyObject[]` 
+        /// Use built-in string conversion, which renders arrays as `MyNamespace.MyObject[]` 
         /// </summary>
         ToString,
         
@@ -28,6 +28,22 @@ namespace CSVFile
         /// Render the number of items in the array
         /// </summary>
         CountItems,
+        
+        /// <summary>
+        /// Serialize child arrays recursively using the same settings
+        /// </summary>
+        RecursiveSerialization,
+    }
+
+    /// <summary>
+    /// Defines the behavior of CSV Serialization when a nested object (class) is encountered
+    /// </summary>
+    public enum ObjectOptions
+    {
+        /// <summary>
+        /// Use built-in string conversion, which renders as `MyNamespace.MyObject`
+        /// </summary>
+        ToString,
         
         /// <summary>
         /// Serialize child objects recursively using the same settings
@@ -160,9 +176,14 @@ namespace CSVFile
         public string DateTimeFormat { get; set; } = "o";
 
         /// <summary>
-        /// The behavior to use when serializing a column of an array type
+        /// The behavior to use when serializing a column that is an array or enumerable type
         /// </summary>
-        public ArrayOptions NestedArrayBehavior = ArrayOptions.TreatAsNull;
+        public ArrayOptions NestedArrayBehavior { get; set; } = ArrayOptions.ToString;
+
+        /// <summary>
+        /// The behavior to use when serializing a column that is a class
+        /// </summary>
+        public ObjectOptions NestedObjectBehavior { get; set; } = ObjectOptions.ToString;
 
         /// <summary>
         /// Standard comma-separated value (CSV) file settings
