@@ -4,6 +4,7 @@
  * Home page: https://github.com/tspence/csharp-csv-reader
  */
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -339,7 +340,7 @@ namespace CSVFile
         /// <param name="riskyChars"></param>
         /// <param name="forceQualifierTypes"></param>
         /// <returns></returns>
-        internal static string ItemsToCsv(IEnumerable<object> items, CSVSettings settings, char[] riskyChars, Dictionary<Type, int> forceQualifierTypes)
+        internal static string ItemsToCsv(IEnumerable items, CSVSettings settings, char[] riskyChars, Dictionary<Type, int> forceQualifierTypes)
         {
             var sb = new StringBuilder();
             foreach (var item in items)
@@ -355,11 +356,66 @@ namespace CSVFile
                     continue;
                 }
 
-                // Is this a date time?
+                // Special cases for other types of serialization
                 string s;
+                var itemType = item.GetType();
+                var interfaces = itemType.GetInterfaces();
+                bool isEnumerable = false;
+                if (itemType != typeof(string))
+                {
+                    foreach (var itemInterface in interfaces)
+                    {
+                        if (itemInterface == typeof(IEnumerable))
+                        {
+                            isEnumerable = true;
+                        }
+                    }
+                }
+
                 if (item is DateTime)
                 {
                     s = ((DateTime)item).ToString(settings.DateTimeFormat);
+                }
+                else if (isEnumerable)
+                {
+                    IEnumerable enumerable = item as IEnumerable;
+                    s = string.Empty;
+                    switch (settings.NestedArrayBehavior)
+                    {
+                        case ArrayOptions.ToString:
+                            s = item.ToString();
+                            break;
+                        case ArrayOptions.CountItems:
+                            // from https://stackoverflow.com/questions/3546051/how-to-invoke-system-linq-enumerable-count-on-ienumerablet-using-reflection
+                            if (enumerable != null)
+                            {
+                                int enumerableCount = 0;
+                                var iter = enumerable.GetEnumerator();
+                                using (iter as IDisposable)
+                                {
+                                    while (iter.MoveNext())
+                                    {
+                                        enumerableCount++;
+                                    }
+                                }
+
+                                s = enumerableCount.ToString();
+                            }
+
+                            break;
+                        case ArrayOptions.TreatAsNull:
+                            if (settings.AllowNull)
+                            {
+                                s = settings.NullToken;
+                            }
+                            break;
+                        case ArrayOptions.RecursiveSerialization:
+                            if (enumerable != null)
+                            {
+                                s = ItemsToCsv(enumerable, settings, riskyChars, forceQualifierTypes);
+                            }
+                            break;
+                    }
                 }
                 else
                 {
@@ -399,7 +455,10 @@ namespace CSVFile
             }
 
             // Subtract the trailing delimiter so we don't inadvertently add an empty column at the end
-            sb.Length -= 1;
+            if (sb.Length > 0)
+            {
+                sb.Length -= 1;
+            }
             return sb.ToString();
         }
 
