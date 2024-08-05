@@ -361,8 +361,8 @@ namespace CSVFile
                 if (item is string)
                 {
                     s = item as string;
-                }
-                if (item is DateTime)
+                } 
+                else if (item is DateTime)
                 {
                     s = ((DateTime)item).ToString(settings.DateTimeFormat);
                 }
@@ -428,6 +428,19 @@ namespace CSVFile
                                 }
                                 break;
                         }
+                    }
+                    else if (itemType.IsClass && settings.NestedObjectBehavior == ObjectOptions.RecursiveSerialization)
+                    {
+                        var nestedItems = new List<object>();
+                        foreach (var field in itemType.GetFields())
+                        {
+                            nestedItems.Add(field.GetValue(item));
+                        }
+                        foreach (var prop in itemType.GetProperties())
+                        {
+                            nestedItems.Add(prop.GetValue(item, null));
+                        }
+                        s = ItemsToCsv(nestedItems, settings, riskyChars, forceQualifierTypes);
                     }
                     else
                     {

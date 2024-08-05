@@ -54,6 +54,12 @@ namespace CSVTestSuite
             public List<Guid> NullableList { get; set; }
         }
 
+        public class TestClassFour
+        {
+            public string Name { get; set; }
+            public TestClassTwo Details { get; set; }
+        }
+
         [Test]
         public void TestObjectSerialization()
         {
@@ -136,10 +142,7 @@ namespace CSVTestSuite
         }
 
         /// <summary>
-        /// Arrays and child objects aren't well suited for complex serialization within a CSV file.
-        /// However, we have options:
-        /// * ToString just converts it to "MyClass[]"
-        /// * CountItems just produces the number of elements in the array
+        /// Tests that validate whether we can serialize arrays within arrays
         /// </summary>
         [Test]
         public void TestArraySerialization()
@@ -184,6 +187,51 @@ namespace CSVTestSuite
             var recursiveCsv = CSV.Serialize(list, options);
             Assert.AreEqual($"Name,StringArray,IntList,BoolEnumerable,GuidList,NullableList{Environment.NewLine}"
                             + $"Test,\"a,b,c\",\"1,2,3\",\"True,False,True,False\",,NULL{Environment.NewLine}", recursiveCsv);
+        }
+        
+        /// <summary>
+        /// Tests that validate whether we can serialize objects within arrays
+        /// </summary>
+        [Test]
+        public void TestNestedObjectSerialization()
+        {
+            var list = new List<TestClassFour>();
+            list.Add(new TestClassFour()
+            {
+                Name = "Non-Null Test",
+                Details = new TestClassTwo()
+                {
+                    FirstColumn = "Hello World!",
+                    SecondColumn = 42,
+                    ThirdColumn = EnumTestType.Third,
+                }
+            });
+            list.Add(new TestClassFour()
+            {
+                Name = "Null Test",
+                Details = null
+            });
+
+            // Serialize to a CSV string using ToString
+            // This was the default behavior in CSVFile 3.1.2 and earlier - it's pretty ugly!
+            var options = new CSVSettings()
+            {
+                HeaderRowIncluded = true,
+                NestedObjectBehavior = ObjectOptions.ToString,
+                NullToken = "NULL",
+                AllowNull = true,
+            };
+            var toStringCsv = CSV.Serialize(list, options);
+            Assert.AreEqual($"Name,Details{Environment.NewLine}"
+                + $"Non-Null Test,CSVTestSuite.SerializationTest+TestClassTwo{Environment.NewLine}"
+                + $"Null Test,NULL{Environment.NewLine}", toStringCsv);
+
+            // Serialize to a CSV string using counts
+            options.NestedObjectBehavior = ObjectOptions.RecursiveSerialization;
+            var recursiveCsv = CSV.Serialize(list, options);
+            Assert.AreEqual($"Name,Details{Environment.NewLine}"
+                + $"Non-Null Test,\"Hello World!,42,Third\"{Environment.NewLine}"
+                + $"Null Test,NULL{Environment.NewLine}", recursiveCsv);
         }
         
         [Test]
