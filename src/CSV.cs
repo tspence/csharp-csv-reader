@@ -7,7 +7,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
 #if HAS_ASYNC
 using System.Threading.Tasks;
@@ -360,11 +359,24 @@ namespace CSVFile
                 // Special cases for other types of serialization
                 string s;
                 var itemType = item.GetType();
+                var interfaces = itemType.GetInterfaces();
+                bool isEnumerable = false;
+                if (itemType != typeof(string))
+                {
+                    foreach (var itemInterface in interfaces)
+                    {
+                        if (itemInterface == typeof(IEnumerable))
+                        {
+                            isEnumerable = true;
+                        }
+                    }
+                }
+
                 if (item is DateTime)
                 {
                     s = ((DateTime)item).ToString(settings.DateTimeFormat);
                 }
-                else if (itemType != typeof(string) && itemType.GetInterfaces().Contains(typeof(IEnumerable)))
+                else if (isEnumerable)
                 {
                     IEnumerable enumerable = item as IEnumerable;
                     s = string.Empty;
