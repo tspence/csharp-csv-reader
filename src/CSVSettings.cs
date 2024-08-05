@@ -162,7 +162,7 @@ namespace CSVFile
         /// <summary>
         /// The behavior to use when serializing a column of an array type
         /// </summary>
-        public ArrayOptions NestedArrayBehavior = ArrayOptions.TreatAsNull;
+        public ArrayOptions NestedArrayBehavior { get; set; } = ArrayOptions.ToString;
 
         /// <summary>
         /// Standard comma-separated value (CSV) file settings

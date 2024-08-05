@@ -358,68 +358,77 @@ namespace CSVFile
 
                 // Special cases for other types of serialization
                 string s;
-                var itemType = item.GetType();
-                var interfaces = itemType.GetInterfaces();
-                bool isEnumerable = false;
-                if (itemType != typeof(string))
+                if (item is string)
                 {
-                    foreach (var itemInterface in interfaces)
-                    {
-                        if (itemInterface == typeof(IEnumerable))
-                        {
-                            isEnumerable = true;
-                        }
-                    }
+                    s = item as string;
                 }
-
                 if (item is DateTime)
                 {
                     s = ((DateTime)item).ToString(settings.DateTimeFormat);
                 }
-                else if (isEnumerable)
-                {
-                    IEnumerable enumerable = item as IEnumerable;
-                    s = string.Empty;
-                    switch (settings.NestedArrayBehavior)
-                    {
-                        case ArrayOptions.ToString:
-                            s = item.ToString();
-                            break;
-                        case ArrayOptions.CountItems:
-                            // from https://stackoverflow.com/questions/3546051/how-to-invoke-system-linq-enumerable-count-on-ienumerablet-using-reflection
-                            if (enumerable != null)
-                            {
-                                int enumerableCount = 0;
-                                var iter = enumerable.GetEnumerator();
-                                using (iter as IDisposable)
-                                {
-                                    while (iter.MoveNext())
-                                    {
-                                        enumerableCount++;
-                                    }
-                                }
-
-                                s = enumerableCount.ToString();
-                            }
-
-                            break;
-                        case ArrayOptions.TreatAsNull:
-                            if (settings.AllowNull)
-                            {
-                                s = settings.NullToken;
-                            }
-                            break;
-                        case ArrayOptions.RecursiveSerialization:
-                            if (enumerable != null)
-                            {
-                                s = ItemsToCsv(enumerable, settings, riskyChars, forceQualifierTypes);
-                            }
-                            break;
-                    }
-                }
                 else
                 {
-                    s = item.ToString();
+                    var itemType = item.GetType();
+                    var interfaces = itemType.GetInterfaces();
+                    bool isEnumerable = false;
+                    if (itemType != typeof(string))
+                    {
+                        foreach (var itemInterface in interfaces)
+                        {
+                            if (itemInterface == typeof(IEnumerable))
+                            {
+                                isEnumerable = true;
+                            }
+                        }
+                    }
+
+                    // Treat enumerables as a simple class of objects that can be unrolled
+                    if (isEnumerable)
+                    {
+                        IEnumerable enumerable = item as IEnumerable;
+                        s = string.Empty;
+                        switch (settings.NestedArrayBehavior)
+                        {
+                            case ArrayOptions.ToString:
+                                s = item.ToString();
+                                break;
+                            case ArrayOptions.CountItems:
+                                if (enumerable != null)
+                                {
+                                    int enumerableCount = 0;
+                                    var iter = enumerable.GetEnumerator();
+                                    using (iter as IDisposable)
+                                    {
+                                        while (iter.MoveNext())
+                                        {
+                                            enumerableCount++;
+                                        }
+                                    }
+                                    s = enumerableCount.ToString();
+                                }
+                                break;
+                            case ArrayOptions.TreatAsNull:
+                                if (settings.AllowNull)
+                                {
+                                    s = settings.NullToken;
+                                }
+                                break;
+                            case ArrayOptions.RecursiveSerialization:
+                                if (enumerable != null)
+                                {
+                                    s = ItemsToCsv(enumerable, settings, riskyChars, forceQualifierTypes);
+                                }
+                                break;
+                        }
+                    }
+                    else if (itemType.IsClass)
+                    {
+                        
+                    }
+                    else
+                    {
+                        s = item.ToString();
+                    }
                 }
 
                 // Check if this item requires qualifiers
