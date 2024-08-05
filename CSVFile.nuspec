@@ -13,9 +13,9 @@
 		<description>Tiny and fast CSV and TSV parsing library (40KB) with zero dependencies.  Compatible with DotNetFramework (2.0 onwards) and DotNetCore.</description>
 		<icon>docs/icons8-spreadsheet-96.png</icon>
 		<releaseNotes>
-			July 18, 2023
+			August 5, 2024
 			
-			* Add serialization options for arrays
+			* Add serialization options for arrays and objects
 		</releaseNotes>
 		<readme>docs/README.md</readme>
 		<copyright>Copyright 2006 - 2024</copyright>
