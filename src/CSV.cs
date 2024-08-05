@@ -412,18 +412,22 @@ namespace CSVFile
                                 {
                                     s = settings.NullToken;
                                 }
+                                else
+                                {
+                                    s = string.Empty;
+                                }
                                 break;
                             case ArrayOptions.RecursiveSerialization:
                                 if (enumerable != null)
                                 {
                                     s = ItemsToCsv(enumerable, settings, riskyChars, forceQualifierTypes);
                                 }
+                                else
+                                {
+                                    s = string.Empty;
+                                }
                                 break;
                         }
-                    }
-                    else if (itemType.IsClass)
-                    {
-                        
                     }
                     else
                     {
