@@ -44,6 +44,16 @@ namespace CSVTestSuite
             public EnumTestType? ThirdColumn;
         }
 
+        public class TestClassThree
+        {
+            public string Name { get; set; }
+            public string[] StringArray { get; set; }
+            public List<int> IntList { get; set; }
+            public IEnumerable<bool> BoolEnumerable { get; set; }
+            public List<Guid> GuidList { get; set; }
+            public List<Guid> NullableList { get; set; }
+        }
+
         [Test]
         public void TestObjectSerialization()
         {
@@ -125,6 +135,51 @@ namespace CSVTestSuite
             }
         }
 
+        /// <summary>
+        /// Arrays and child objects aren't well suited for complex serialization within a CSV file.
+        /// However, we have options:
+        /// * ToString just converts it to "MyClass[]"
+        /// * CountItems just produces the number of elements in the array
+        /// </summary>
+        [Test]
+        public void TestArraySerialization()
+        {
+            var list = new List<TestClassThree>();
+            list.Add(new TestClassThree()
+            {
+                Name = "Test",
+                StringArray = new [] { "a", "b", "c"},
+                IntList = new List<int> { 1, 2, 3 },
+                BoolEnumerable = new [] { true, false, true, false },
+                GuidList = new List<Guid>(),
+            });
+
+            // Serialize to a CSV string using ToString
+            // This was the default behavior in CSVFile 3.1.2 and earlier - it's pretty ugly!
+            var options = new CSVSettings()
+            {
+                HeaderRowIncluded = true,
+                NestedArrayBehavior = ArrayOptions.ToString,
+                NullToken = "NULL",
+                AllowNull = true,
+            };
+            var toStringCsv = CSV.Serialize(list, options);
+            Assert.AreEqual($"Name,StringArray,IntList,BoolEnumerable,GuidList,NullableList{Environment.NewLine}"
+                + $"Test,System.String[],System.Collections.Generic.List`1[System.Int32],System.Boolean[],System.Collections.Generic.List`1[System.Guid],NULL{Environment.NewLine}", toStringCsv);
+
+            // Serialize to a CSV string using counts
+            options.NestedArrayBehavior = ArrayOptions.CountItems;
+            var countItemsCsv = CSV.Serialize(list, options);
+            Assert.AreEqual($"Name,StringArray,IntList,BoolEnumerable,GuidList,NullableList{Environment.NewLine}"
+                + $"Test,3,3,4,0,NULL{Environment.NewLine}", countItemsCsv);
+
+            // Serialize to a CSV string using counts
+            options.NestedArrayBehavior = ArrayOptions.TreatAsNull;
+            var ignoreArraysCsv = CSV.Serialize(list, options);
+            Assert.AreEqual($"Name,StringArray,IntList,BoolEnumerable,GuidList,NullableList{Environment.NewLine}"
+                + $"Test,NULL,NULL,NULL,NULL,NULL{Environment.NewLine}", ignoreArraysCsv);
+        }
+        
         [Test]
         public void TestCaseInsensitiveDeserializer()
         {

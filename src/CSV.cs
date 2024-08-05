@@ -4,8 +4,10 @@
  * Home page: https://github.com/tspence/csharp-csv-reader
  */
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 #if HAS_ASYNC
 using System.Threading.Tasks;
@@ -355,11 +357,63 @@ namespace CSVFile
                     continue;
                 }
 
-                // Is this a date time?
+                // Special cases for other types of serialization
                 string s;
+                var itemType = item.GetType();
                 if (item is DateTime)
                 {
                     s = ((DateTime)item).ToString(settings.DateTimeFormat);
+                }
+                else if (itemType.IsArray)
+                {
+                    s = string.Empty;
+                    switch (settings.NestedArrayBehavior)
+                    {
+                        case ArrayOptions.ToString:
+                            s = item.ToString();
+                            break;
+                        case ArrayOptions.CountItems:
+                            s = ((Array)item).Length.ToString();
+                            break;
+                        case ArrayOptions.TreatAsNull:
+                            if (settings.AllowNull)
+                            {
+                                s = settings.NullToken;
+                            }
+                            break;
+                    }
+                }
+                else if (itemType != typeof(string) && itemType.GetInterfaces().Contains(typeof(IEnumerable)))
+                {
+                    s = string.Empty;
+                    switch (settings.NestedArrayBehavior)
+                    {
+                        case ArrayOptions.ToString:
+                            s = item.ToString();
+                            break;
+                        case ArrayOptions.CountItems:
+                            // from https://stackoverflow.com/questions/3546051/how-to-invoke-system-linq-enumerable-count-on-ienumerablet-using-reflection
+                            IEnumerable enumerable = (IEnumerable)item;
+                            int enumerableCount = 0;
+                            var iter = enumerable.GetEnumerator();
+                            using (iter as IDisposable)
+                            {
+                                while (iter.MoveNext())
+                                {
+                                    enumerableCount++;
+                                }
+                            }
+
+                            s = enumerableCount.ToString();
+                            break;
+                        case ArrayOptions.TreatAsNull:
+                            if (settings.AllowNull)
+                            {
+                                s = settings.NullToken;
+                            }
+                            break;
+                    }
+                    
                 }
                 else
                 {

@@ -10,6 +10,32 @@ using System.Text;
 namespace CSVFile
 {
     /// <summary>
+    /// Defines the behavior of CSV serialization when a nested array is encountered
+    /// </summary>
+    public enum ArrayOptions
+    {
+        /// <summary>
+        /// Use built-in string conversion, which renders arrays as `MyObject[]` 
+        /// </summary>
+        ToString,
+        
+        /// <summary>
+        /// Convert any array columns that are array types into nulls (either blanks or null tokens)
+        /// </summary>
+        TreatAsNull,
+        
+        /// <summary>
+        /// Render the number of items in the array
+        /// </summary>
+        CountItems,
+        
+        /// <summary>
+        /// Serialize child objects recursively using the same settings
+        /// </summary>
+        RecursiveSerialization,
+    }
+    
+    /// <summary>
     /// Settings to configure how a CSV file is parsed
     /// </summary>
     public class CSVSettings
@@ -134,10 +160,15 @@ namespace CSVFile
         public string DateTimeFormat { get; set; } = "o";
 
         /// <summary>
+        /// The behavior to use when serializing a column of an array type
+        /// </summary>
+        public ArrayOptions NestedArrayBehavior = ArrayOptions.TreatAsNull;
+
+        /// <summary>
         /// Standard comma-separated value (CSV) file settings
         /// </summary>
         public static readonly CSVSettings CSV = new CSVSettings();
-
+        
         /// <summary>
         /// Standard comma-separated value (CSV) file settings that permit rendering of NULL values
         /// </summary>
