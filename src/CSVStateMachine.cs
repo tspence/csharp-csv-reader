@@ -65,7 +65,7 @@ namespace CSVFile
         /// <returns></returns>
         public bool NeedsMoreText()
         {
-            return String.IsNullOrEmpty(_line) || _position >= _line.Length;
+            return String.IsNullOrEmpty(_line) || _position + _settings.LineSeparator.Length >= _line.Length;
         }
 
         /// <summary>
@@ -202,11 +202,13 @@ namespace CSVFile
                     var notEnoughChars = _position + _settings.LineSeparator.Length > _line.Length;
                     if (notEnoughChars && !reachedEnd)
                     {
+                        // Backtrack one character so we can pick up the line separator completely next time
+                        _position--;
                         return null;
                     }
 
                     // If we have reached the end, but this isn't a complete line separator, it's just text
-                    if (notEnoughChars && reachedEnd)
+                    if (notEnoughChars)
                     {
                         _work.Append(c);
                     }
