@@ -75,6 +75,12 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="..\PackageAssets.csv">
+      <Link>PackageAssets.csv</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
