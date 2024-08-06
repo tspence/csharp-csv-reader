@@ -57,7 +57,6 @@ namespace CSVFile
         /// <returns>An enumerable object that can be examined to retrieve rows from the stream.</returns>
         public static IEnumerable<string[]> ParseStream(StreamReader inStream, CSVSettings settings = null)
         {
-            int numBytesProcessed = 0;
             int bufferSize = settings?.BufferSize ?? CSVSettings.DEFAULT_BUFFER_SIZE;
             var buffer = new char[bufferSize];
             var machine = new CSVStateMachine(settings);
@@ -67,12 +66,7 @@ namespace CSVFile
                 if (machine.NeedsMoreText() && !inStream.EndOfStream)
                 {
                     var readChars = inStream.ReadBlock(buffer, 0, bufferSize);
-                    numBytesProcessed += readChars;
                     line += new string(buffer, 0, readChars);
-                    if (line[line.Length - 1] == '\r')
-                    {
-                        Console.WriteLine("Something weird is about to happen");
-                    }
                 }
                 var row = machine.ParseChunk(line, inStream.EndOfStream);
                 if (row != null)
@@ -85,8 +79,6 @@ namespace CSVFile
                     break;
                 }
             }
-
-            Console.WriteLine($"Test: {numBytesProcessed}");
         }
 
 #if HAS_ASYNC_IENUM
@@ -98,7 +90,6 @@ namespace CSVFile
         /// <returns>An enumerable object that can be examined to retrieve rows from the stream.</returns>
         public static async IAsyncEnumerable<string[]> ParseStreamAsync(StreamReader inStream, CSVSettings settings = null)
         {
-            int numBytesProcessed = 0;
             int bufferSize = settings?.BufferSize ?? CSVSettings.DEFAULT_BUFFER_SIZE;
             var buffer = new char[bufferSize];
             var machine = new CSVStateMachine(settings);
@@ -108,7 +99,6 @@ namespace CSVFile
                 if (machine.NeedsMoreText() && !inStream.EndOfStream)
                 {
                     var readChars = await inStream.ReadBlockAsync(buffer, 0, bufferSize);
-                    numBytesProcessed += readChars;
                     line += new string(buffer, 0, readChars);
                 }
                 var row = machine.ParseChunk(line, inStream.EndOfStream);
@@ -122,7 +112,6 @@ namespace CSVFile
                     break;
                 }
             }
-            Console.WriteLine($"Test: {numBytesProcessed}");
         }
 #endif
 

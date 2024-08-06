@@ -361,16 +361,10 @@ namespace CSVTestSuite
             var rawBytes = Encoding.UTF8.GetBytes(rawText);
             using var memoryStream = new MemoryStream(rawBytes);
             using var streamReader = new StreamReader(memoryStream);
-            var output = new System.Collections.Generic.List<string[]>();
             using var csvReader = new CSVReader(streamReader, config);
             {
                 foreach (var row in csvReader)
                 {
-                    if (row.Length > 25)
-                    {
-                        Console.WriteLine("Something weird happened");
-                    }
-                    output.Add(row);
                     outputLines++;
                 }
             }
