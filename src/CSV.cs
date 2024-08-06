@@ -73,6 +73,10 @@ namespace CSVFile
                 {
                     yield return row;
                 } 
+                else if (inStream.EndOfStream)
+                {
+                    break;
+                }
             }
         }
 
@@ -100,6 +104,10 @@ namespace CSVFile
                 if (row != null)
                 {
                     yield return row;
+                }
+                else if (inStream.EndOfStream)
+                {
+                    break;
                 }
             }
         }

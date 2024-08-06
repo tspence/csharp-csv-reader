@@ -32,5 +32,12 @@
     <ProjectReference Include="..\..\src\netstandard20\src.netstandard20.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Include="..\PackageAssets.csv">
+      <Link>PackageAssets.csv</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
 </Project>
 

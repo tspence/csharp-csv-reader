@@ -27,19 +27,22 @@ jobs:
     - name: Build (Framework 2.0 Tests)
       run: msbuild ./tests/net20/tests.net20.csproj
     - name: Test (net20)
-      run: ./NUnit.ConsoleRunner.3.4.0/tools/nunit3-console.exe ./tests/net20/bin/Debug/tests.net20.dll
+      working-directory: ./tests/net20/bin/Debug/
+      run: ../../../../NUnit.ConsoleRunner.3.4.0/tools/nunit3-console.exe ./tests.net20.dll
     - name: Build (Framework 4.0)
       run: msbuild ./src/net40/src.net40.csproj
     - name: Build (Framework 4.0 Tests)
       run: msbuild ./tests/net40/tests.net40.csproj
     - name: Test (net40)
-      run: ./NUnit.ConsoleRunner.3.4.0/tools/nunit3-console.exe ./tests/net40/bin/Debug/tests.net40.dll
+      working-directory: ./tests/net40/bin/Debug
+      run: ../../../../NUnit.ConsoleRunner.3.4.0/tools/nunit3-console.exe ./tests.net40.dll
     - name: Build (Framework 4.5)
       run: msbuild ./src/net45/src.net45.csproj
     - name: Build (Framework 4.5 Tests)
       run: msbuild ./tests/net45/tests.net45.csproj
     - name: Test (net45)
-      run: ./NUnit.ConsoleRunner.3.4.0/tools/nunit3-console.exe ./tests/net45/bin/Debug/tests.net45.dll
+      working-directory: ./tests/net45/bin/Debug/
+      run: ../../../../NUnit.ConsoleRunner.3.4.0/tools/nunit3-console.exe ./tests.net45.dll
     - name: Build (DotNet Core 5.0 and NetStandard 2.0)
       run: dotnet build ./csharp-csv-reader.sln
     - name: Test (net50)

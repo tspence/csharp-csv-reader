@@ -4,6 +4,10 @@
  * Home page: https://github.com/tspence/csharp-csv-reader
  */
 using System;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Text;
 using NUnit.Framework;
 using CSVFile;
 #if HAS_ASYNC
@@ -334,6 +338,41 @@ namespace CSVTestSuite
                     Assert.AreEqual("\r\r", line[6]);
                 }
             }
+        }
+
+        [Test]
+        public void TestIssue62()
+        {
+            var inputLines = File.ReadAllLines("PackageAssets.csv");
+            var desiredLines = 53_543;
+            var linesToRead = Enumerable
+                .Repeat(inputLines, desiredLines / inputLines.Length + 1)
+                .SelectMany(x => x)
+                .Take(desiredLines)
+                .ToArray();
+
+            var config = new CSVSettings
+            {
+                HeaderRowIncluded = false,
+            };
+
+            var outputLines = 0;
+            var rawText = string.Join(Environment.NewLine, linesToRead);
+            var rawBytes = Encoding.UTF8.GetBytes(rawText);
+            using (var memoryStream = new MemoryStream(rawBytes))
+            {
+                using (var streamReader = new StreamReader(memoryStream))
+                {
+                    using (var csvReader = new CSVReader(streamReader, config))
+                    {
+                        foreach (var row in csvReader)
+                        {
+                            outputLines++;
+                        }
+                    }
+                }
+            }
+            Assert.AreEqual(desiredLines, outputLines);
         }
 
 #if HAS_ASYNC_IENUM
