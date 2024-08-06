@@ -359,13 +359,17 @@ namespace CSVTestSuite
             var outputLines = 0;
             var rawText = string.Join(Environment.NewLine, linesToRead);
             var rawBytes = Encoding.UTF8.GetBytes(rawText);
-            using var memoryStream = new MemoryStream(rawBytes);
-            using var streamReader = new StreamReader(memoryStream);
-            using var csvReader = new CSVReader(streamReader, config);
+            using (var memoryStream = new MemoryStream(rawBytes))
             {
-                foreach (var row in csvReader)
+                using (var streamReader = new StreamReader(memoryStream))
                 {
-                    outputLines++;
+                    using (var csvReader = new CSVReader(streamReader, config))
+                    {
+                        foreach (var row in csvReader)
+                        {
+                            outputLines++;
+                        }
+                    }
                 }
             }
             Assert.AreEqual(desiredLines, outputLines);

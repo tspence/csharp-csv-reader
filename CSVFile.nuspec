@@ -2,7 +2,7 @@
 <package >
 	<metadata>
 		<id>CSVFile</id>
-		<version>3.1.4</version>
+		<version>3.2.0</version>
 		<title>CSVFile</title>
 		<authors>Ted Spence</authors>
 		<owners>Ted Spence</owners>
@@ -15,8 +15,8 @@
 		<releaseNotes>
 			August 5, 2024
 			
-			* Add serialization options for arrays and objects
-			* Fix bad deploy of 3.1.3
+			* Fix issue with Windows-style newlines crossing chunks found by @joelverhagen
+			* Fix issue with endless loops reported by @wvvegt
 		</releaseNotes>
 		<readme>docs/README.md</readme>
 		<copyright>Copyright 2006 - 2024</copyright>
