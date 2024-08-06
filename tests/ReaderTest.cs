@@ -349,7 +349,7 @@ namespace CSVTestSuite
                 .Repeat(inputLines, desiredLines / inputLines.Length + 1)
                 .SelectMany(x => x)
                 .Take(desiredLines)
-                .ToList();
+                .ToArray();
 
             var config = new CSVSettings
             {
