@@ -60,19 +60,18 @@ namespace CSVFile
             int bufferSize = settings?.BufferSize ?? CSVSettings.DEFAULT_BUFFER_SIZE;
             var buffer = new char[bufferSize];
             var machine = new CSVStateMachine(settings);
-            var line = string.Empty;
             while (machine.State == CSVState.CanKeepGoing)
             {
+                var line = string.Empty;
                 if (machine.NeedsMoreText() && !inStream.EndOfStream)
                 {
                     var readChars = inStream.ReadBlock(buffer, 0, bufferSize);
-                    line += new string(buffer, 0, readChars);
+                    line = new string(buffer, 0, readChars);
                 }
                 var row = machine.ParseChunk(line, inStream.EndOfStream);
                 if (row != null)
                 {
                     yield return row;
-                    line = string.Empty;
                 } 
                 else if (inStream.EndOfStream)
                 {
@@ -93,19 +92,18 @@ namespace CSVFile
             int bufferSize = settings?.BufferSize ?? CSVSettings.DEFAULT_BUFFER_SIZE;
             var buffer = new char[bufferSize];
             var machine = new CSVStateMachine(settings);
-            var line = string.Empty;
             while (machine.State == CSVState.CanKeepGoing)
             {
+                var line = string.Empty;
                 if (machine.NeedsMoreText() && !inStream.EndOfStream)
                 {
                     var readChars = await inStream.ReadBlockAsync(buffer, 0, bufferSize);
-                    line += new string(buffer, 0, readChars);
+                    line = new string(buffer, 0, readChars);
                 }
                 var row = machine.ParseChunk(line, inStream.EndOfStream);
                 if (row != null)
                 {
                     yield return row;
-                    line = string.Empty;
                 }
                 else if (inStream.EndOfStream)
                 {
