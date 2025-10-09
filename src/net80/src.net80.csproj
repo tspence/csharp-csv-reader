@@ -4,7 +4,7 @@
     <AssemblyName>CSVFile</AssemblyName>
     <RootNamespace>CSVFile</RootNamespace>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <DefineConstants>HAS_ASYNC;HAS_ASYNC_IENUM;</DefineConstants>
   </PropertyGroup>
 

@@ -10,14 +10,14 @@ jobs:
   build-ubuntu:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v5
       name: Checkout Code
     - name: Setup .NET
-      uses: actions/setup-dotnet@v1
+      uses: actions/setup-dotnet@v5
       with:
         dotnet-version: |
-          5.0.x
-          6.0.x
+          8.0.x
+          9.0.x
     - name: Install NUnit.ConsoleRunner 3.4.0 (compatibility)
       run: nuget install NUnit.ConsoleRunner -Version 3.4.0 -DirectDownload -OutputDirectory .
     - name: Install NUnit 3.11.0 (compatibility)
@@ -43,10 +43,8 @@ jobs:
     - name: Test (net45)
       working-directory: ./tests/net45/bin/Debug/
       run: ../../../../NUnit.ConsoleRunner.3.4.0/tools/nunit3-console.exe ./tests.net45.dll
-    - name: Build (DotNet Core 5.0 and NetStandard 2.0)
+    - name: Build (DotNet Core 8.0 and NetStandard 2.0)
       run: dotnet build ./csharp-csv-reader.sln
-    - name: Test (net50)
-      run: dotnet test ./tests/net50/tests.net50.csproj
     - name: SonarCloud Install
       run:
         dotnet tool update dotnet-sonarscanner --tool-path /tmp/sonar
@@ -56,9 +54,9 @@ jobs:
     - name: SonarCloud Start
       run:
         /tmp/sonar/dotnet-sonarscanner begin /k:"tspence_csharp-csv-reader" /o:"tspence" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.vscoveragexml.reportsPaths=coverage.xml
-    - name: Test (net60)
+    - name: Test (net80)
       run:
-        /tmp/coverage/dotnet-coverage collect "dotnet test ./tests/net60/tests.net60.csproj" -f xml -o "coverage.xml"
+        /tmp/coverage/dotnet-coverage collect "dotnet test ./tests/net80/tests.net80.csproj" -f xml -o "coverage.xml"
     - name: SonarCloud End
       run:
         /tmp/sonar/dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
