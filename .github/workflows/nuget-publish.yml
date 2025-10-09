@@ -36,7 +36,7 @@ jobs:
         uses: nuget/setup-nuget@v2
         with:
           nuget-api-key: ${{ secrets.NUGET_API_KEY }}
-          nuget-version: latest
+          nuget-version: '5.x'
 
       - name: Run Nuget pack
         run: nuget pack CSVFile.nuspec
