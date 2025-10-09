@@ -345,7 +345,7 @@ namespace CSVFile
                     }
                 }
 
-#if NET2_0
+#if NET2_0 || NET4_0 || NET4_5
                 Headers = CSV.ParseLine(line, _settings) ?? new string[] {};
 #else
                 Headers = CSV.ParseLine(line, _settings) ?? Array.Empty<string>();
@@ -386,7 +386,7 @@ namespace CSVFile
                     }
                 }
 
-#if NET2_0
+#if NET2_0 || NET4_0 || NET4_5
                 Headers = CSV.ParseLine(line, _settings) ?? new string[] {};
 #else
                 Headers = CSV.ParseLine(line, _settings) ?? Array.Empty<string>();
