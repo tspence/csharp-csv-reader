@@ -13,15 +13,13 @@ jobs:
     name: Update NuGet package
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v1
+        uses: actions/checkout@v5
 
       - name: Setup .NET Core @ Latest
-        uses: actions/setup-dotnet@v1
+        uses: actions/setup-dotnet@v5
         with:
           dotnet-version: |
-            5.0.x
-            6.0.x
-            7.0.x
+            8.0.x
 
       - name: Build (Framework 2.0)
         run: msbuild ./src/net20/src.net20.csproj /property:Configuration=Release
@@ -35,10 +33,10 @@ jobs:
         run: dotnet build -c Release ./src/netstandard20/src.netstandard20.csproj
         
       - name: Setup Nuget
-        uses: nuget/setup-nuget@v1
+        uses: nuget/setup-nuget@v2
         with:
           nuget-api-key: ${{ secrets.NUGET_API_KEY }}
-          nuget-version: "5.x"
+          nuget-version: latest
 
       - name: Run Nuget pack
         run: nuget pack CSVFile.nuspec
