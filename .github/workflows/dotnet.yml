@@ -22,7 +22,7 @@ jobs:
     # As per https://github.com/NuGet/setup-nuget/issues/168#issuecomment-2576628231
     # We are now required to install mono separately
     - name: Install Mono
-      run: sudo apt install mono-devel
+      run: sudo apt install mono-complete msbuild
     - name: Setup Nuget
       uses: nuget/setup-nuget@v2
       with:
