@@ -8,9 +8,7 @@ on:
 
 jobs:
   build-ubuntu:
-    # As per https://github.com/NuGet/setup-nuget/issues/168#issuecomment-2576628231
-    # Setup Nuget only works on Ubuntu 24 04
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v5
       name: Checkout Code
@@ -20,6 +18,11 @@ jobs:
         dotnet-version: |
           8.0.x
           9.0.x
+
+    # As per https://github.com/NuGet/setup-nuget/issues/168#issuecomment-2576628231
+    # We are now required to install mono separately
+    - name: Install Mono
+      run: sudo apt install mono-devel
     - name: Setup Nuget
       uses: nuget/setup-nuget@v2
       with:
