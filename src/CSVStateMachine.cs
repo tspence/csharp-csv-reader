@@ -65,6 +65,13 @@ namespace CSVFile
         /// <returns></returns>
         public bool NeedsMoreText()
         {
+            // https://github.com/tspence/csharp-csv-reader/issues/68
+            // If we're inside a text qualifier, we always need more text
+            if (_inTextQualifier)
+            {
+                return true;
+            }
+            
             return String.IsNullOrEmpty(_line) || _position + _settings.LineSeparator.Length >= _line.Length;
         }
 
