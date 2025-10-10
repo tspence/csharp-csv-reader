@@ -66,7 +66,7 @@ namespace CSVTestSuite
                             Assert.AreEqual("x100", line[2]);
                             break;
                         default:
-                            Assert.IsTrue(false, "Should not get here");
+                            Assert.Fail("Should not get here");
                             break;
                     }
 
@@ -139,7 +139,7 @@ namespace CSVTestSuite
                             Assert.AreEqual("", line[3]);
                             break;
                         default:
-                            Assert.IsTrue(false, "Should not get here");
+                            Assert.Fail("Should not get here");
                             break;
                     }
 
