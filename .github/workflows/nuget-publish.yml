@@ -31,8 +31,8 @@ jobs:
         run: xbuild ./src/net40/src.net40.csproj /property:Configuration=Release
       - name: Build (Framework 4.5)
         run: xbuild ./src/net45/src.net45.csproj /property:Configuration=Release
-      - name: Build (DotNetCore 5.0)
-        run: dotnet build -c Release ./src/net50/src.net50.csproj
+      - name: Build (DotNetCore 8.0)
+        run: dotnet build -c Release ./src/net80/src.net80.csproj
       - name: Build (NetStandard 2.0)
         run: dotnet build -c Release ./src/netstandard20/src.netstandard20.csproj
       - name: Setup Nuget
