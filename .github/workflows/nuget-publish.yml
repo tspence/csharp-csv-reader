@@ -19,7 +19,11 @@ jobs:
         uses: actions/setup-dotnet@v5
         with:
           dotnet-version: |
-            8.0.x
+            8.0.x      
+      # As per https://github.com/NuGet/setup-nuget/issues/168#issuecomment-2576628231
+      # We are now required to install mono separately
+      - name: Install Mono
+        run: sudo apt install mono-devel
 
       - name: Build (Framework 2.0)
         run: xbuild ./src/net20/src.net20.csproj /property:Configuration=Release
@@ -31,11 +35,6 @@ jobs:
         run: dotnet build -c Release ./src/net50/src.net50.csproj
       - name: Build (NetStandard 2.0)
         run: dotnet build -c Release ./src/netstandard20/src.netstandard20.csproj
-        
-      # As per https://github.com/NuGet/setup-nuget/issues/168#issuecomment-2576628231
-      # We are now required to install mono separately
-      - name: Install Mono
-        run: sudo apt install mono-complete
       - name: Setup Nuget
         uses: nuget/setup-nuget@v2
         with:
