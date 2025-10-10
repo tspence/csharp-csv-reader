@@ -508,7 +508,9 @@ namespace CSVFile
             if (spacesRemoved.StartsWith("sep", StringComparison.OrdinalIgnoreCase))
             {
                 var equals = spacesRemoved.Substring(3);
-                if (equals.StartsWith('='))
+                
+                // for compatibility with dotnet framework 2.0, this cannot be a char
+                if (equals.StartsWith("="))
                 {
                     var separator = equals.Substring(1);
                     if (separator.Length > 1)
