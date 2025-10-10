@@ -503,12 +503,14 @@ namespace CSVFile
         /// <returns>The separator</returns>
         public static char? ParseSepLine(string line)
         {
-            if (line.StartsWith("sep", StringComparison.OrdinalIgnoreCase))
+            // We can't trim whitespace since the separator might be a tab
+            string spacesRemoved = line.Replace(" ", "");
+            if (spacesRemoved.StartsWith("sep", StringComparison.OrdinalIgnoreCase))
             {
-                var equals = line.Substring(3).Trim();
+                var equals = spacesRemoved.Substring(3);
                 if (equals.StartsWith("="))
                 {
-                    var separator = equals.Substring(1).Trim();
+                    var separator = equals.Substring(1);
                     if (separator.Length > 1)
                     {
                         throw new Exception("Separator in 'sep=' line must be a single character");
