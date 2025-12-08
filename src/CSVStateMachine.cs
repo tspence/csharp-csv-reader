@@ -180,6 +180,18 @@ namespace CSVFile
                             return null;
                         }
 
+                        //If the line ends with a qualifier and we're not at the end of the stream,
+                        //it may be first qualifier from a doubled-up qualifier, so we should read the next chunk.
+                        if (p2 == _line.Length - 1)
+                        {
+                            if (!reachedEnd)
+                            {
+                                // Backtrack one character so we can move forward when the next chunk loads
+                                _position--;
+                                return null;
+                            }
+                        }
+
                         // Append the text between the qualifiers
                         _work.Append(_line.Substring(_position + 1, p2 - _position - 1));
                         _position = p2;
